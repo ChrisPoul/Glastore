@@ -3,6 +3,7 @@ from flask import (
     redirect, flash
 )
 from Glastore.models import Customer
+from Glastore import get_form
 
 bp = Blueprint('customer', __name__, url_prefix='/customer')
 
@@ -27,6 +28,7 @@ def customers():
 
 @bp.route('/add', methods=('GET', 'POST'))
 def add():
+    form = get_form(customer_heads)
 
     if request.method == 'POST':
         customer = Customer(
@@ -46,7 +48,8 @@ def add():
 
     return render_template(
         'customer/add.html',
-        heads=customer_heads
+        heads=customer_heads,
+        form=form
     )
 
 
@@ -72,4 +75,14 @@ def update(customer_id):
         'customer/update.html',
         heads=customer_heads,
         customer=customer
+    )
+
+
+@bp.route('/delete/<int:customer_id>', methods=('POST',))
+def delete(customer_id):
+    customer = Customer.get(customer_id)
+    customer.delete()
+
+    return redirect(
+        url_for('customer.customers')
     )

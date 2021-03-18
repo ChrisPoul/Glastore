@@ -1,17 +1,21 @@
 {% extends "base.html" %}
 
 {% block header %}
-    <h1>{% block title %}{{ customer.name }}{% endblock %}</h1>
+<h1>{% block title %}{{ customer.name }}{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
 <div>
-<form method="post">
-    {% for head in heads %}
-    <label for="{{ head }}">{{ heads[head] }}</label>
-    <input name="{{ head }}" id="{{ head }}" value="{{ customer[head] }}">
-    {% endfor %}
-    <input type="submit" value="Aceptar">
-</form>
+    <form method="post">
+        {% for head in heads %}
+        <label for="{{ head }}">{{ heads[head] }}</label>
+        <input name="{{ head }}" id="{{ head }}" value="{{ customer[head] }}">
+        {% endfor %}
+        <input type="submit" value="Aceptar">
+    </form>
+    <hr>
+    <form action="{{ url_for('customer.delete', customer_id=customer.id) }}" method="post">
+        <input class="danger" type="submit" value="Eliminar" onclick="return confirm('Estás Seguro?');">
+    </form>
 </div>
 {% endblock %}

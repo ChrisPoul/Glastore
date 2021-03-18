@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 
 {% block header %}
-    <h1>{%block title %}Registrar Cliente{% endblock %}</h1>
+<h1>{%block title %}Registrar Cliente{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
 <div>
-<form method="post">
-    {% for head in heads %}
-    <label for="{{ head }}">{{ heads[head] }}</label>
-    <input name="{{ head }}" id="{{ head }}">
-    {% endfor %}
-    <input type="submit" value="Aceptar">
-</form>
+    <form method="post">
+        {% for head in heads %}
+        <label for="{{ head }}">{{ heads[head] }}</label>
+        <input name="{{ head }}" id="{{ head }}" value="{{ form[head] }}">
+        {% endfor %}
+        <input type="submit" value="Aceptar">
+    </form>
 </div>
 {% endblock %}
