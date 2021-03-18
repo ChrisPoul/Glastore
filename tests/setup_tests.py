@@ -1,5 +1,6 @@
 from flask_testing import TestCase
-from Glastore import create_app, db
+from Glastore.models import db
+from Glastore import create_app
 
 
 class MyTest(TestCase):

@@ -2,8 +2,26 @@
 
 {% block header %}
     <h1>{%block title %}Clientes{% endblock %}</h1>
+    <a style="text-decoration: none; float: right;" href="{{ url_for('customer.add_customer') }}">
+        <h1>Registrar Cliente</h1>
+    </a>
 {% endblock %}
 
 {% block content %}
-pene
+<table>
+    <tr>
+        {% for head in heads %}
+        <th>{{ heads[head] }}</th>
+        {% endfor %}
+    </tr>
+{% for customer in customers %}
+    <tr>
+        {% for head in heads %}
+        <td>
+            {{ customer[head] }}
+        </td>
+        {% endfor %}
+    </tr>
+{% endfor %}
+</table>
 {% endblock %}

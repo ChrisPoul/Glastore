@@ -5,5 +5,13 @@
 {% endblock %}
 
 {% block content %}
-pene
+<div>
+    <form method="post">
+        {% for head in heads %}
+        <label for="{{ head }}">{{ heads[head] }}</label>
+        <input name="{{ head }}" id="{{ head }}">
+        {% endfor %}
+        <input type="submit" value="Aceptar">
+    </form>
+</div>
 {% endblock %}

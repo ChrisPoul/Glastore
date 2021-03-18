@@ -44,3 +44,5 @@ li a {
 li a:hover {
     background-color: #111;
 }
+form { margin: 1em 0; display: flex; flex-direction: column; }
+label { font-weight: bold; margin-bottom: 0.5em }

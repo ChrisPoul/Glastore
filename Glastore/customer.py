@@ -1,10 +1,16 @@
 from flask import (
     Blueprint, render_template, request, url_for,
-    redirect
+    redirect, flash
 )
-from Glastore.models import Customer, add_to_db
+from Glastore.models import Customer
 
 bp = Blueprint('customer', __name__, url_prefix='/customer')
+
+customer_heads = {
+    "name": "Nombre del Cliente",
+    "email": "Correo electrónico",
+    "address": "Dirección"
+}
 
 
 @bp.route('/customers')
@@ -13,7 +19,8 @@ def customers():
 
     return render_template(
         'customer/customers.html',
-        customers=customers
+        customers=customers,
+        heads=customer_heads
     )
 
 
@@ -26,12 +33,15 @@ def add_customer():
             email=request.form['email'],
             address=request.form['address']
         )
-        add_to_db(customer)
+        error = customer.add()
 
-        return redirect(
-            url_for('customer.customers')
-        )
+        if not error:
+            return redirect(
+                url_for('customer.customers')
+            )
+        flash(error)
 
     return render_template(
-        'customer/add_customer.html'
+        'customer/add_customer.html',
+        heads=customer_heads
     )

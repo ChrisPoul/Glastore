@@ -1,6 +1,5 @@
 from .setup_tests import MyTest
-from Glastore.models import add_to_db, Customer
-from Glastore import db
+from Glastore.models import add_to_db, Customer, db
 
 
 class DbTests(MyTest):
@@ -20,4 +19,5 @@ class DbTests(MyTest):
             address="Fake address Apt. 12"
         )
         error = add_to_db(customer2)
-        assert error == "Ese Valor ya está en uso"
+        assert error == "Introdujo un valor que ya está en uso"
+        assert customer2 not in db.session
