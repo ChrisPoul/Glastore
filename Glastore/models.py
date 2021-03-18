@@ -4,6 +4,7 @@ from sqlalchemy import (
     Column, Integer, String
 )
 from Glastore import db
+from sqlalchemy.exc import IntegrityError
 
 
 class Customer(db.Model):
@@ -30,4 +31,10 @@ def init_db_command():
 
 def add_to_db(item):
     db.session.add(item)
-    db.commit()
+    error = None
+    try:
+        db.session.commit()
+    except IntegrityError:
+        error = "Ese Valor ya está en uso"
+
+    return error
