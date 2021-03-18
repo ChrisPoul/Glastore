@@ -20,22 +20,53 @@ class Customer(db.Model):
         return self.__dict__
 
     def add(self):
-        error = None
+        self.error = None
+        self.validate_name()
+        self.validate_email()
+        if not self.error:
+            self.error = add_to_db(self)
 
-        nums = "1234567890"
-        for num in nums:
-            if num in self.name:
-                error = "El nombre del cliente no puede llevar numeros, solo letras"
-                break
+        return self.error
 
-        if self.email:
-            if "@" not in self.email:
-                error = "El correo que introdujiste es invalido"
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
 
-        if not error:
-            error = add_to_db(self)
+    def get(search_term):
+        customer = Customer.query.get(search_term)
+        if not customer:
+            customer = Customer.query.filter_by(name=search_term).first()
+        if not customer:
+            customer = Customer.query.filter_by(email=search_term).first()
+        if not customer:
+            customer = Customer.query.filter_by(address=search_term).first()
+        if not customer:
+            customer = Customer.query.filter_by(cotizacion=search_term).first()
 
-        return error
+        return customer
+
+    def update(self):
+        self.error = None
+        self.validate_name()
+        self.validate_email()
+        if not self.error:
+            self.error = commit_to_db()
+
+        return self.error
+
+    def validate_name(self):
+        if not self.error:
+            nums = "1234567890"
+            for num in nums:
+                if num in self.name:
+                    self.error = "El nombre del cliente no puede llevar numeros, solo letras"
+                    break
+
+    def validate_email(self):
+        if not self.error:
+            if self.email:
+                if "@" not in self.email:
+                    self.error = "El correo que introdujo es invalido"
 
 
 def init_db():
@@ -50,12 +81,19 @@ def init_db_command():
     click.echo('Initialized Database')
 
 
-def add_to_db(item):
-    db.session.add(item)
+def commit_to_db():
     error = None
     try:
         db.session.commit()
     except IntegrityError:
         error = "Introdujo un valor que ya está en uso"
+        db.session.rollback()
+
+    return error
+
+
+def add_to_db(item):
+    db.session.add(item)
+    error = commit_to_db()
 
     return error

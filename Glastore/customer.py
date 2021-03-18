@@ -9,7 +9,8 @@ bp = Blueprint('customer', __name__, url_prefix='/customer')
 customer_heads = {
     "name": "Nombre del Cliente",
     "email": "Correo electrónico",
-    "address": "Dirección"
+    "address": "Dirección",
+    "cotizacion": "Cotización"
 }
 
 
@@ -31,9 +32,35 @@ def add_customer():
         customer = Customer(
             name=request.form['name'],
             email=request.form['email'],
-            address=request.form['address']
+            address=request.form['address'],
+            cotizacion=request.form['cotizacion']
         )
         error = customer.add()
+
+        if not error:
+            return redirect(
+                url_for('customer.customers')
+            )
+
+        flash(error)
+
+    return render_template(
+        'customer/add.html',
+        heads=customer_heads,
+        customer=customer
+    )
+
+
+@bp.route('/update_customer/<int:customer_id>', methods=('GET', 'POST'))
+def update_customer(customer_id):
+    customer = Customer.get(customer_id)
+
+    if request.method == "POST":
+        customer.name = request.form['name']
+        customer.email = request.form['email']
+        customer.address = request.form['address']
+        customer.cotizacion = request.form['cotizacion']
+        error = customer.update()
 
         if not error:
             return redirect(
@@ -42,6 +69,5 @@ def add_customer():
         flash(error)
 
     return render_template(
-        'customer/add_customer.html',
-        heads=customer_heads
+        'customer/update.html'
     )

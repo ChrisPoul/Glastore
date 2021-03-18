@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block header %}
+    <h1>{% block title %}{{ customer.name }}{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<div>
+<form method="post">
+    {% for head in heads %}
+    <label for="{{ head }}">{{ heads[head] }}</label>
+    <input name="{{ head }}" id="{{ head }}" value="{{ customer[head] }}">
+    {% endfor %}
+    <input type="submit" value="Aceptar">
+</form>
+</div>
+{% endblock %}
