@@ -1,5 +1,9 @@
+body {
+    max-width: 100%;
+    background: white;
+    margin: 0;
+}
 
-body { max-width: 100%; background: white; margin: 0; }
 header {
     width: 100%;
     height: 5em;
@@ -8,16 +12,30 @@ header {
     background: lightgray;
     padding-top: 2em;
 }
+
+.flash {
+    margin: 1em 0;
+    padding: 1em;
+    background: #cae6f6;
+    border: 1px solid #377ba8;
+    text-align: center;
+}
+
 section {
     margin-top: 2em;
     margin-left: 10%;
     margin-right: 10%;
 }
+
 nav {
     display: flex;
     background: white;
 }
-header h1 { padding: 7px; }
+
+header h1 {
+    padding: 7px;
+}
+
 ul {
     list-style-type: none;
     width: 100%;
@@ -28,11 +46,16 @@ ul {
     position: fixed;
     top: 0;
 }
+
 li {
     float: left;
     border-right: 1px solid #bbb;
 }
-li:last-child { border-right: none; }
+
+li:last-child {
+    border-right: none;
+}
+
 li a {
     display: block;
     color: white;
@@ -40,18 +63,46 @@ li a {
     padding: 14px 16px;
     text-decoration: none;
 }
+
 /* Change the link color to black on hover */
 li a:hover {
     background-color: #111;
 }
-form { margin: 1em 0; display: flex; flex-direction: column; }
-label { font-weight: bold; margin-bottom: 0.5em }
-input, textarea { margin-bottom: 1em; }
-input { font-size: small; }
-input.danger { color: #cc2f2e; }
-input[type=submit] { align-self: start; min-width: 10em; }
-textarea { min-height: 12em; resize: vertical; }
+
+form {
+    margin: 1em 0;
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 0.5em
+}
+
+input,
+textarea {
+    margin-bottom: 1em;
+}
+
+input {
+    font-size: small;
+}
+
+input.danger {
+    color: #cc2f2e;
+}
+
+input[type=submit] {
+    align-self: start;
+    min-width: 10em;
+}
+
+textarea {
+    min-height: 12em;
+    resize: vertical;
+}
+
 table {
     width: 100%;
 }
-

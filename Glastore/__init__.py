@@ -6,6 +6,7 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{app.instance_path}/Glastore.sqlite"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SECRET_KEY'] = "dev"
 
     if test_config is None:
         app.config.from_pyfile('config.py', silent=True)

@@ -65,6 +65,7 @@ def update(customer_id):
             return redirect(
                 url_for('customer.customers')
             )
+
         flash(error)
 
     return render_template(
