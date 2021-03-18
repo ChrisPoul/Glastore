@@ -25,8 +25,8 @@ def customers():
     )
 
 
-@bp.route('/add_customer', methods=('GET', 'POST'))
-def add_customer():
+@bp.route('/add', methods=('GET', 'POST'))
+def add():
 
     if request.method == 'POST':
         customer = Customer(
@@ -46,13 +46,12 @@ def add_customer():
 
     return render_template(
         'customer/add.html',
-        heads=customer_heads,
-        customer=customer
+        heads=customer_heads
     )
 
 
-@bp.route('/update_customer/<int:customer_id>', methods=('GET', 'POST'))
-def update_customer(customer_id):
+@bp.route('/update/<int:customer_id>', methods=('GET', 'POST'))
+def update(customer_id):
     customer = Customer.get(customer_id)
 
     if request.method == "POST":
@@ -69,5 +68,7 @@ def update_customer(customer_id):
         flash(error)
 
     return render_template(
-        'customer/update.html'
+        'customer/update.html',
+        heads=customer_heads,
+        customer=customer
     )

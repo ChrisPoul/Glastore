@@ -2,7 +2,7 @@
 
 {% block header %}
     <h1>{%block title %}Clientes{% endblock %}</h1>
-    <a style="text-decoration: none; float: right;" href="{{ url_for('customer.add_customer') }}">
+    <a style="text-decoration: none; float: right;" href="{{ url_for('customer.add') }}">
         <h1>Registrar Cliente</h1>
     </a>
 {% endblock %}
@@ -19,7 +19,13 @@
     <tr>
         {% for head in heads %}
         <td>
-            {{ customer[head] }}
+            {% if head == "name" %}
+            <a href="{{ url_for('customer.update', customer_id=customer.id) }}">
+                {{ customer[head] }}
+            </a>
+            {% else %}
+                {{ customer[head] }}
+            {% endif %}
         </td>
         {% endfor %}
     </tr>
