@@ -208,3 +208,14 @@ class UpdateWindow(MyTest):
         window.herrajes = ["Herraje"]
         window.update()
         assert window.herrajes == ["Herraje"]
+
+
+class DeleteWindow(MyTest):
+
+    def test_delete(self):
+        window = Window(
+            name="Test"
+        )
+        window.add()
+        window.delete()
+        assert window not in db.session

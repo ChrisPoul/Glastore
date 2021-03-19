@@ -94,13 +94,15 @@ class Window(db.Model):
 
     def add(self):
         error = add_to_db(self)
-
         return error
 
     def update(self):
         error = commit_to_db()
-
         return error
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
 
     def get(search_term):
         window = Window.query.get(search_term)

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block header %}
+<h1>{%block title %}Ventanas{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<div style="margin-left: 10%; margin-right: 10%;">
+    <table>
+        <tr>
+            {% for head in heads %}
+            <th>{{ heads[head] }}</th>
+            {% endfor %}
+        </tr>
+        {% for window in windows %}
+        <tr>
+            {% for head in heads %}
+            <td>
+                {% if head == "name" %}
+                <a href="{{ url_for('window.update', window_id=window.id) }}">
+                    {{ window[head] }}
+                </a>
+                {% else %}
+                {{ window[head] }}
+                {% endif %}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
