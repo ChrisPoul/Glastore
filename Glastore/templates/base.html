@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,8 +10,8 @@
 </head>
 <nav>
     <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Ventanas</a></li>
+        <li><a href="{{ url_for('home.home') }}">Home</a></li>
+        <li><a href="{{ url_for('window.windows') }}">Ventanas</a></li>
         <li><a href="{{ url_for('customer.customers') }}">Clientes</a></li>
         <li style="float: right;"><a href="#">About</a></li>
     </ul>
@@ -20,8 +21,9 @@
 </header>
 <section>
     {% for message in get_flashed_messages() %}
-        <div class="flash">{{ message }}</div>
+    <div class="flash">{{ message }}</div>
     {% endfor %}
     {% block content %}{% endblock %}
 </section>
+
 </html>

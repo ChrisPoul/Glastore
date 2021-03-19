@@ -2,6 +2,9 @@
 
 {% block header %}
 <h1>{%block title %}Ventanas{% endblock %}</h1>
+<a style="text-decoration: none;" href="{{ url_for('window.add') }}">
+    <h1>Añadir Ventana</h1>
+</a>
 {% endblock %}
 
 {% block content %}
