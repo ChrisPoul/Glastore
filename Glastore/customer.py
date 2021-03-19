@@ -9,8 +9,7 @@ bp = Blueprint('customer', __name__, url_prefix='/customer')
 customer_heads = {
     "name": "Nombre del Cliente",
     "email": "Correo electrónico",
-    "address": "Dirección",
-    "cotizacion": "Cotización"
+    "address": "Dirección"
 }
 
 
@@ -34,8 +33,7 @@ def add():
         customer = Customer(
             name=form['name'],
             email=form['email'],
-            address=form['address'],
-            cotizacion=form['cotizacion']
+            address=form['address']
         )
         error = customer.add()
 
@@ -62,7 +60,6 @@ def update(customer_id):
         customer.name = form['name']
         customer.email = form['email']
         customer.address = form['address']
-        customer.cotizacion = form['cotizacion']
         error = customer.update()
 
         if not error:

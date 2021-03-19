@@ -2,28 +2,45 @@ from .setup import MyTest
 from Glastore.models import Customer, db, repeated_value_msg
 
 
+def make_test_customer(name="Test"):
+    customer = Customer(
+        name=name,
+        email=f"{name}@email.com",
+        address=f"Fake address of {name}"
+    )
+    error = customer.add()
+    if error:
+        return customer, error
+
+    return customer
+
+
 class CustomersView(MyTest):
 
     def test_view(self):
-        pass
+        response = self.client.get(
+            '/customer/customers'
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_customers(self):
+        make_test_customer("Test")
+        make_test_customer("Test second")
+        response = self.client.get(
+            '/customer/customers'
+        )
+        self.assertIn(b'Test', response.data)
+        self.assertIn(b'Test second', response.data)
 
 
 class AddCustomer(MyTest):
 
     def test_add(self):
-        customer = Customer(
-            name="Test",
-            email="test@email.com",
-            address="Fake address Apt. 12"
-        )
-        customer.add()
+        customer = make_test_customer()
         assert customer in db.session
 
     def test_invalid_name(self):
-        customer = Customer(
-            name="nam3 w1th numb3rs"
-        )
-        error = customer.add()
+        customer, error = make_test_customer("1nval1d nam3")
         assert error == customer.invalid_name_msg
 
     def test_invalid_email(self):
@@ -75,8 +92,7 @@ class AddCustomerView(MyTest):
         data = dict(
             name="Test",
             email="test@email.com",
-            address="Fake address",
-            cotizacion="G200"
+            address="Fake address"
         )
         response = self.client.post(
             '/customer/add',
@@ -88,55 +104,29 @@ class AddCustomerView(MyTest):
 class UpdateCustomer(MyTest):
 
     def test_update(self):
-        customer = Customer(
-            name="Test",
-            email="test@email.com",
-            address="Fake address Apt. 12"
-        )
-        customer.add()
-        customer.name = "Testsecond"
-        customer.update()
-
-        customer = Customer.get("Testsecond")
-        assert customer
+        customer = make_test_customer()
+        customer.name = "Test second"
+        error = customer.update()
+        self.assertEqual(customer.name, "Test second")
+        assert error is None
 
     def test_repeated_name(self):
-        customer = Customer(
-            name="Test",
-            email="test@email.com",
-            address="Fake address Apt. 12"
-        )
-        customer.add()
-        customer2 = Customer(
-            name="Testsecond",
-            email="test2@email.com",
-            address="Fake address Apt. 10"
-        )
-        customer2.add()
-
-        customer.name = "Testsecond"
+        customer = make_test_customer()
+        make_test_customer("Test second")
+        customer.name = "Test second"
         error = customer.update()
+
         assert error == repeated_value_msg
-        customer = Customer.get("test@email.com")
         assert customer.name == "Test"
 
     def test_invalid_name(self):
-        customer = Customer(
-            name="Test",
-            email="test@email.com",
-            address="Fake address Apt. 12"
-        )
-        customer.add()
+        customer = make_test_customer()
         customer.name = "Test2"
         error = customer.update()
-        assert error == customer.invalid_name_msg
+        self.assertEqual(error, customer.invalid_name_msg)
 
     def test_invalid_email(self):
-        customer = Customer(
-            name="Test",
-            email="test@email.com"
-        )
-        customer.add()
+        customer = make_test_customer()
         customer.email = "test.email.com"
         error = customer.update()
         assert error == customer.invalid_email_msg
@@ -145,48 +135,29 @@ class UpdateCustomer(MyTest):
 class UpdateCustomerView(MyTest):
 
     def test_view(self):
-        customer = Customer(
-            name="Test",
-            email="test@email.com",
-            address="Fake address",
-            cotizacion="G200"
-        )
-        customer.add()
+        make_test_customer()
         response = self.client.get(
             '/customer/update/1'
         )
         self.assertIn(b'Test', response.data)
-        self.assertIn(b'test@email.com', response.data)
-        self.assertIn(b'Fake address', response.data)
-        self.assertIn(b'G200', response.data)
 
     def test_update(self):
-        customer = Customer(
-            name="Test",
-            email="test@email.com",
-            address="Fake address Apt. 12"
-        )
-        customer.add()
+        customer = make_test_customer()
         data = dict(
-            cotizacion="G200"
+            name="Changed name"
         )
         response = self.client.post(
             '/customer/update/1',
-            data=data,
-            follow_redirects=True
+            data=data
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, '/customer/customers')
+        self.assertEqual(customer.name, "Changed name")
 
 
 class DeleteCustomer(MyTest):
 
     def test_delete(self):
-        customer = Customer(
-            name="Test",
-            email="test@email.com",
-            address="Fake address Apt. 12"
-        )
-        customer.add()
+        customer = make_test_customer()
         assert customer in db.session
         customer.delete()
         assert customer not in db.session
@@ -195,12 +166,7 @@ class DeleteCustomer(MyTest):
 class DeleteCustomerView(MyTest):
 
     def test_delete(self):
-        customer = Customer(
-            name="Test",
-            email="test@email.com",
-            address="Fake address"
-        )
-        customer.add()
+        customer = make_test_customer()
         response = self.client.post(
             '/customer/delete/1'
         )
@@ -211,65 +177,29 @@ class DeleteCustomerView(MyTest):
 class GetCustomer(MyTest):
 
     def test_get(self):
-        customer = Customer(
-            name="Test",
-            email="test@email.com",
-            address="Fake address Apt. 12"
-        )
-        customer.add()
+        customer = make_test_customer()
         assert Customer.get("Test") == customer
         assert Customer.get("Testing") is None
 
     def test_with_id(self):
-        customer = Customer(
-            name="Test",
-            email="test@email.com",
-            address="Fake address Apt. 12"
-        )
-        customer.add()
+        customer = make_test_customer()
         assert Customer.get(1) == customer
 
     def test_with_email(self):
-        customer = Customer(
-            name="Test",
-            email="test@email.com",
-            address="Fake address Apt. 12"
-        )
-        customer.add()
-        customer_search = Customer.get("test@email.com")
+        customer = make_test_customer()
+        customer_search = Customer.get("Test@email.com")
         assert customer_search == customer
 
     def test_with_address(self):
-        customer = Customer(
-            name="Test",
-            email="test@email.com",
-            address="Fake address Apt. 12"
-        )
-        customer.add()
-        customer_search = Customer.get("Fake address Apt. 12")
-        assert customer_search == customer
-
-    def test_with_cotizacion(self):
-        customer = Customer(
-            name="Test",
-            email="test@email.com",
-            address="Fake address Apt. 12",
-            cotizacion="G20010"
-        )
-        customer.add()
-        customer_search = Customer.get("G20010")
+        customer = make_test_customer()
+        customer_search = Customer.get("Fake address of Test")
         assert customer_search == customer
 
 
 class GetCustomers(MyTest):
 
     def test_get_all(self):
-        customer = Customer(
-            name="Test"
-        )
-        customer.add()
-        customer2 = Customer(
-            name="Test second"
-        )
+        customer = make_test_customer()
+        customer2 = make_test_customer("Test second")
         customer2.add()
         assert Customer.get_all() == [customer, customer2]

@@ -2,6 +2,36 @@ from .setup import MyTest
 from Glastore.models import Window, db, repeated_value_msg
 
 
+def make_test_window(name="Test"):
+    window = Window(
+        name=f"{name}",
+        modelo="Test modelo"
+    )
+    error = window.add()
+    if error:
+        return window, error
+
+    return window
+
+
+class WindowsView(MyTest):
+
+    def test_view(self):
+        response = self.client.get(
+            '/window/windows'
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_windows(self):
+        make_test_window()
+        make_test_window("Test 2")
+        response = self.client.get(
+            '/window/windows'
+        )
+        self.assertIn(b'Test', response.data)
+        self.assertIn(b'Test 2', response.data)
+
+
 class AddWindow(MyTest):
 
     def test_add(self):
@@ -13,14 +43,8 @@ class AddWindow(MyTest):
         assert error is None
 
     def test_repeated_name(self):
-        window = Window(
-            name="Test"
-        )
-        window.add()
-        window2 = Window(
-            name="Test"
-        )
-        error = window2.add()
+        make_test_window("Test")
+        window2, error = make_test_window("Test")
         assert window2 not in db.session
         assert error == repeated_value_msg
 
@@ -49,10 +73,7 @@ class AddWindow(MyTest):
         assert error is None
 
     def test_pickletype(self):
-        window = Window(
-            name="Test"
-        )
-        window.add()
+        window = make_test_window()
         assert window.herrajes == []
 
 
@@ -78,43 +99,28 @@ class AddWindowView(MyTest):
 class UpdateWindow(MyTest):
 
     def test_update(self):
-        window = Window(
-            name="Test"
-        )
-        window.add()
+        window = make_test_window()
         window.name = "New Test"
         window.update()
         assert Window.get(1).name == "New Test"
 
     def test_repeated_name(self):
-        window = Window(
-            name="Test"
-        )
-        window.add()
-        window2 = Window(
-            name="Test2"
-        )
-        window2.add()
+        window = make_test_window()
+        make_test_window("Test2")
         window.name = "Test2"
         error = window.update()
         assert error == repeated_value_msg
         assert window.name == "Test"
 
     def test_modelo(self):
-        window = Window(
-            name="Test"
-        )
-        window.add()
+        window = make_test_window()
         window.modelo = "Modelo"
         error = window.update()
-        assert error is None
         assert window.modelo == "Modelo"
+        assert error is None
 
     def test_pickletype(self):
-        window = Window(
-            name="Test"
-        )
-        window.add()
+        window = make_test_window()
         window.herrajes = ["Herraje"]
         window.update()
         assert window.herrajes == ["Herraje"]
@@ -123,22 +129,14 @@ class UpdateWindow(MyTest):
 class UpdateWindowView(MyTest):
 
     def test_view(self):
-        window = Window(
-            name="Test",
-            material="Un material"
-        )
-        window.add()
+        make_test_window()
         response = self.client.get(
             '/window/update/1'
         )
         self.assertIn(b'Test', response.data)
-        self.assertIn(b'Un material', response.data)
 
     def test_update(self):
-        window = Window(
-            name="Test"
-        )
-        window.add()
+        window = make_test_window()
         data = dict(
             name="Changed Name"
         )
@@ -153,10 +151,7 @@ class UpdateWindowView(MyTest):
 class DeleteWindow(MyTest):
 
     def test_delete(self):
-        window = Window(
-            name="Test"
-        )
-        window.add()
+        window = make_test_window()
         window.delete()
         assert window not in db.session
 
@@ -164,10 +159,7 @@ class DeleteWindow(MyTest):
 class DeleteWindowView(MyTest):
 
     def test_delete(self):
-        window = Window(
-            name="Test"
-        )
-        window.add()
+        window = make_test_window()
         response = self.client.post(
             '/window/delete/1'
         )
@@ -178,107 +170,53 @@ class DeleteWindowView(MyTest):
 class GetWindow(MyTest):
 
     def test_get(self):
-        window = Window(
-            name="Test"
-        )
-        window.add()
+        window = make_test_window()
         assert Window.get(1) == window
 
     def test_with_name(self):
-        window = Window(
-            name="Test"
-        )
-        window.add()
+        window = make_test_window()
         assert Window.get("Test") == window
 
 
 class GetWindows(MyTest):
 
     def test_get_all(self):
-        window = Window(
-            name="Test"
-        )
-        window.add()
-        window2 = Window(
-            name="Test2"
-        )
-        window2.add()
+        window = make_test_window()
+        window2 = make_test_window("Test2")
         assert Window.get_all() == [window, window2]
 
     def test_with_modelo(self):
-        window = Window(
-            name="Test",
-            modelo="Modelo"
-        )
-        window.add()
-        window2 = Window(
-            name="Test2",
-            modelo="Modelo"
-        )
-        window2.add()
-        assert Window.get_all("Modelo") == [window, window2]
+        window = make_test_window()
+        window2 = make_test_window("Test2")
+        assert Window.get_all("Test modelo") == [window, window2]
 
     def test_with_color(self):
-        window = Window(
-            name="Test",
-            color="Color"
-        )
-        window.add()
-        window2 = Window(
-            name="Test2",
-            color="Color"
-        )
-        window2.add()
-        assert Window.get_all() == [window, window2]
+        make_test_window()
+        window = make_test_window("Test2")
+        window.color = "Test color"
+        assert Window.get_all("Test color") == [window]
 
     def test_with_cristal(self):
-        window = Window(
-            name="Test",
-            cristal="Cristal"
-        )
-        window.add()
-        window2 = Window(
-            name="Test2",
-            cristal="Cristal"
-        )
-        window2.add()
-        assert Window.get_all("Cristal") == [window, window2]
+        window = make_test_window()
+        window.cristal = "Test cristal"
+        window2 = make_test_window("Test2")
+        window2.cristal = "Test cristal"
+        assert Window.get_all("Test cristal") == [window, window2]
 
     def test_with_acabado(self):
-        window = Window(
-            name="Test",
-            acabado="acabado"
-        )
-        window.add()
-        window2 = Window(
-            name="Test2",
-            acabado="acabado"
-        )
-        window2.add()
-        assert Window.get_all("acabado") == [window, window2]
+        window = make_test_window()
+        window.acabado = "Test acabado"
+        make_test_window("Test2")
+        assert Window.get_all("Test acabado") == [window]
 
     def test_with_sellado(self):
-        window = Window(
-            name="Test",
-            sellado="sellado"
-        )
-        window.add()
-        window2 = Window(
-            name="Test2",
-            sellado="sellado"
-        )
-        window2.add()
-        assert Window.get_all("sellado") == [window, window2]
+        window = make_test_window()
+        window.sellado = "Test sellado"
+        make_test_window("Test2")
+        assert Window.get_all("Test sellado") == [window]
 
     def test_with_material(self):
-        window = Window(
-            name="Test",
-            material="material"
-        )
-        window.add()
-        window2 = Window(
-            name="Test2",
-            material="material"
-        )
-        window2.add()
-        assert Window.get_all("material") == [window, window2]
+        window = make_test_window()
+        window.material = "Test material"
+        make_test_window("Test2")
+        assert Window.get_all("Test material") == [window]

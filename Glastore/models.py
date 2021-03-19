@@ -17,7 +17,6 @@ class Customer(db.Model):
     name = Column(String(100), nullable=False, unique=True)
     email = Column(String(100), nullable=True, unique=True)
     address = Column(String(150), nullable=True, unique=True)
-    cotizacion = Column(String(100), nullable=True, unique=True)
 
     invalid_name_msg = "El nombre del cliente no puede llevar numeros, solo letras"
     invalid_email_msg = "El correo que introdujo es invalido"
@@ -69,8 +68,6 @@ class Customer(db.Model):
             customer = Customer.query.filter_by(email=search_term).first()
         if not customer:
             customer = Customer.query.filter_by(address=search_term).first()
-        if not customer:
-            customer = Customer.query.filter_by(cotizacion=search_term).first()
 
         return customer
 
@@ -81,14 +78,14 @@ class Customer(db.Model):
 class Window(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False, unique=True)
-    description = Column(Text, nullable=True, unique=False)
-    material = Column(String(100), nullable=True, unique=False)
-    color = Column(String(100), nullable=True, unique=False)
-    cristal = Column(String(100), nullable=True, unique=False)
-    acabado = Column(String(100), nullable=True, unique=False)
-    modelo = Column(String(100), nullable=True, unique=False)
+    description = Column(Text, nullable=True, unique=False, default="")
+    material = Column(String(100), nullable=True, unique=False, default="")
+    color = Column(String(100), nullable=True, unique=False, default="")
+    cristal = Column(String(100), nullable=True, unique=False, default="")
+    acabado = Column(String(100), nullable=True, unique=False, default="")
+    modelo = Column(String(100), nullable=True, unique=False, default="")
     herrajes = Column(PickleType, nullable=False, unique=False, default=[])
-    sellado = Column(String(100), nullable=True, unique=False)
+    sellado = Column(String(100), nullable=True, unique=False, default="")
 
     def __repr__(self):
         return self.__dict__
@@ -132,6 +129,7 @@ class Window(db.Model):
 
 
 def init_db():
+    Customer.__table__.drop(db.engine)
     db.create_all()
 
 
