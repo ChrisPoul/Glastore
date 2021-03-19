@@ -2,6 +2,12 @@ from .setup_tests import MyTest
 from Glastore.models import Customer, db, repeated_value_msg
 
 
+class CustomersView(MyTest):
+
+    def test_view(self):
+        pass
+
+
 class AddCustomer(MyTest):
 
     def test_add(self):
@@ -57,6 +63,23 @@ class AddCustomer(MyTest):
         assert customer2 in db.session
 
 
+class AddCustomerView(MyTest):
+
+    def test_view(self):
+        data = dict(
+            name="Test",
+            email="test@email.com",
+            address="Fake address",
+            cotizacion="G200"
+        )
+        response = self.client.post(
+            '/customer/add',
+            data=data,
+            follow_redirects=True
+        )
+        self.assertEqual(response.status_code, 200)
+
+
 class DeleteCustomer(MyTest):
 
     def test_delete(self):
@@ -69,59 +92,6 @@ class DeleteCustomer(MyTest):
         assert customer in db.session
         customer.delete()
         assert customer not in db.session
-
-
-class GetCustomer(MyTest):
-
-    def test_get(self):
-        customer = Customer(
-            name="Test",
-            email="test@email.com",
-            address="Fake address Apt. 12"
-        )
-        customer.add()
-        assert Customer.get("Test") == customer
-        assert Customer.get("Testing") is None
-
-    def test_with_id(self):
-        customer = Customer(
-            name="Test",
-            email="test@email.com",
-            address="Fake address Apt. 12"
-        )
-        customer.add()
-        assert Customer.get(1) == customer
-
-    def test_with_email(self):
-        customer = Customer(
-            name="Test",
-            email="test@email.com",
-            address="Fake address Apt. 12"
-        )
-        customer.add()
-        customer_search = Customer.get("test@email.com")
-        assert customer_search == customer
-
-    def test_with_address(self):
-        customer = Customer(
-            name="Test",
-            email="test@email.com",
-            address="Fake address Apt. 12"
-        )
-        customer.add()
-        customer_search = Customer.get("Fake address Apt. 12")
-        assert customer_search == customer
-
-    def test_with_cotizacion(self):
-        customer = Customer(
-            name="Test",
-            email="test@email.com",
-            address="Fake address Apt. 12",
-            cotizacion="G20010"
-        )
-        customer.add()
-        customer_search = Customer.get("G20010")
-        assert customer_search == customer
 
 
 class UpdateCustomer(MyTest):
@@ -179,6 +149,59 @@ class UpdateCustomer(MyTest):
         customer.email = "test.email.com"
         error = customer.update()
         assert error == customer.invalid_email_msg
+
+
+class GetCustomer(MyTest):
+
+    def test_get(self):
+        customer = Customer(
+            name="Test",
+            email="test@email.com",
+            address="Fake address Apt. 12"
+        )
+        customer.add()
+        assert Customer.get("Test") == customer
+        assert Customer.get("Testing") is None
+
+    def test_with_id(self):
+        customer = Customer(
+            name="Test",
+            email="test@email.com",
+            address="Fake address Apt. 12"
+        )
+        customer.add()
+        assert Customer.get(1) == customer
+
+    def test_with_email(self):
+        customer = Customer(
+            name="Test",
+            email="test@email.com",
+            address="Fake address Apt. 12"
+        )
+        customer.add()
+        customer_search = Customer.get("test@email.com")
+        assert customer_search == customer
+
+    def test_with_address(self):
+        customer = Customer(
+            name="Test",
+            email="test@email.com",
+            address="Fake address Apt. 12"
+        )
+        customer.add()
+        customer_search = Customer.get("Fake address Apt. 12")
+        assert customer_search == customer
+
+    def test_with_cotizacion(self):
+        customer = Customer(
+            name="Test",
+            email="test@email.com",
+            address="Fake address Apt. 12",
+            cotizacion="G20010"
+        )
+        customer.add()
+        customer_search = Customer.get("G20010")
+        assert customer_search == customer
 
 
 class GetCustomers(MyTest):

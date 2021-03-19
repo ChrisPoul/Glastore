@@ -15,7 +15,6 @@ window_heads = {
     "cristal": "Cristal",
     "acabado": "Acabado",
     "modelo": "Modelo",
-    "herrajes": "Herrajes",
     "sellado": "Sellado"
 }
 
@@ -33,7 +32,7 @@ def windows():
 
 @bp.route('/add', methods=('GET', 'POST'))
 def add():
-    form = get_form()
+    form = get_form(window_heads)
 
     if request.method == "POST":
         form = get_form(window_heads)
@@ -45,7 +44,6 @@ def add():
             cristal=form["cristal"],
             acabado=form["acabado"],
             modelo=form["modelo"],
-            herrajes=form["herrajes"],
             sellado=form["sellado"]
         )
         error = window.add()
@@ -68,15 +66,15 @@ def update(window_id):
     window = Window.get(window_id)
 
     if request.method == 'POST':
-        window.name = request.form["name"]
-        window.description = request.form["description"]
-        window.material = request.form["material"]
-        window.color = request.form["color"]
-        window.cristal = request.form["cristal"]
-        window.acabado = request.form["acabado"]
-        window.modelo = request.form["modelo"]
-        window.herrajes = request.form["herrajes"]
-        window.sellado = request.form["sellado"]
+        form = get_form(window_heads)
+        window.name = form["name"]
+        window.description = form["description"]
+        window.material = form["material"]
+        window.color = form["color"]
+        window.cristal = form["cristal"]
+        window.acabado = form["acabado"]
+        window.modelo = form["modelo"]
+        window.sellado = form["sellado"]
         error = window.update()
 
         if not error:

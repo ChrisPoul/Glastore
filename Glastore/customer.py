@@ -31,11 +31,12 @@ def add():
     form = get_form(customer_heads)
 
     if request.method == 'POST':
+        form = get_form(customer_heads)
         customer = Customer(
-            name=request.form['name'],
-            email=request.form['email'],
-            address=request.form['address'],
-            cotizacion=request.form['cotizacion']
+            name=form['name'],
+            email=form['email'],
+            address=form['address'],
+            cotizacion=form['cotizacion']
         )
         error = customer.add()
 

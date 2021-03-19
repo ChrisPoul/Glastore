@@ -56,6 +56,94 @@ class AddWindow(MyTest):
         assert window.herrajes == []
 
 
+class AddWindowView(MyTest):
+
+    def test_view(self):
+        data = dict(
+            name="Test"
+        )
+        response = self.client.post(
+            '/window/add',
+            data=data,
+            follow_redirects=True
+        )
+        self.assertEqual(response.status_code, 200)
+
+
+class UpdateWindow(MyTest):
+
+    def test_update(self):
+        window = Window(
+            name="Test"
+        )
+        window.add()
+        window.name = "New Test"
+        window.update()
+        assert Window.get(1).name == "New Test"
+
+    def test_repeated_name(self):
+        window = Window(
+            name="Test"
+        )
+        window.add()
+        window2 = Window(
+            name="Test2"
+        )
+        window2.add()
+        window.name = "Test2"
+        error = window.update()
+        assert error == repeated_value_msg
+        assert window.name == "Test"
+
+    def test_modelo(self):
+        window = Window(
+            name="Test"
+        )
+        window.add()
+        window.modelo = "Modelo"
+        error = window.update()
+        assert error is None
+        assert window.modelo == "Modelo"
+
+    def test_pickletype(self):
+        window = Window(
+            name="Test"
+        )
+        window.add()
+        window.herrajes = ["Herraje"]
+        window.update()
+        assert window.herrajes == ["Herraje"]
+
+
+class UpdateWindowView(MyTest):
+
+    def test_view(self):
+        window = Window(
+            name="Test"
+        )
+        window.add()
+        data = dict(
+            name="Changed Name"
+        )
+        response = self.client.post(
+            '/window/update/1',
+            data=data,
+            follow_redirects=True
+        )
+        self.assertEqual(response.status_code, 200)
+
+
+class DeleteWindow(MyTest):
+
+    def test_delete(self):
+        window = Window(
+            name="Test"
+        )
+        window.add()
+        window.delete()
+        assert window not in db.session
+
+
 class GetWindow(MyTest):
 
     def test_get(self):
@@ -163,59 +251,3 @@ class GetWindows(MyTest):
         )
         window2.add()
         assert Window.get_all("material") == [window, window2]
-
-
-class UpdateWindow(MyTest):
-
-    def test_update(self):
-        window = Window(
-            name="Test"
-        )
-        window.add()
-        window.name = "New Test"
-        window.update()
-        assert Window.get(1).name == "New Test"
-
-    def test_repeated_name(self):
-        window = Window(
-            name="Test"
-        )
-        window.add()
-        window2 = Window(
-            name="Test2"
-        )
-        window2.add()
-        window.name = "Test2"
-        error = window.update()
-        assert error == repeated_value_msg
-        assert window.name == "Test"
-
-    def test_modelo(self):
-        window = Window(
-            name="Test"
-        )
-        window.add()
-        window.modelo = "Modelo"
-        error = window.update()
-        assert error is None
-        assert window.modelo == "Modelo"
-
-    def test_pickletype(self):
-        window = Window(
-            name="Test"
-        )
-        window.add()
-        window.herrajes = ["Herraje"]
-        window.update()
-        assert window.herrajes == ["Herraje"]
-
-
-class DeleteWindow(MyTest):
-
-    def test_delete(self):
-        window = Window(
-            name="Test"
-        )
-        window.add()
-        window.delete()
-        assert window not in db.session
