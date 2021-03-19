@@ -59,10 +59,11 @@ def update(customer_id):
     customer = Customer.get(customer_id)
 
     if request.method == "POST":
-        customer.name = request.form['name']
-        customer.email = request.form['email']
-        customer.address = request.form['address']
-        customer.cotizacion = request.form['cotizacion']
+        form = get_form(customer_heads)
+        customer.name = form['name']
+        customer.email = form['email']
+        customer.address = form['address']
+        customer.cotizacion = form['cotizacion']
         error = customer.update()
 
         if not error:

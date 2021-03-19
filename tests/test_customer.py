@@ -66,6 +66,12 @@ class AddCustomer(MyTest):
 class AddCustomerView(MyTest):
 
     def test_view(self):
+        response = self.client.get(
+            '/customer/add'
+        )
+        self.assertIn(b'Registrar Cliente', response.data)
+
+    def test_add(self):
         data = dict(
             name="Test",
             email="test@email.com",
@@ -78,20 +84,6 @@ class AddCustomerView(MyTest):
             follow_redirects=True
         )
         self.assertEqual(response.status_code, 200)
-
-
-class DeleteCustomer(MyTest):
-
-    def test_delete(self):
-        customer = Customer(
-            name="Test",
-            email="test@email.com",
-            address="Fake address Apt. 12"
-        )
-        customer.add()
-        assert customer in db.session
-        customer.delete()
-        assert customer not in db.session
 
 
 class UpdateCustomer(MyTest):
@@ -149,6 +141,56 @@ class UpdateCustomer(MyTest):
         customer.email = "test.email.com"
         error = customer.update()
         assert error == customer.invalid_email_msg
+
+
+class UpdateCustomerView(MyTest):
+
+    def test_view(self):
+        customer = Customer(
+            name="Test",
+            email="test@email.com",
+            address="Fake address",
+            cotizacion="G200"
+        )
+        customer.add()
+        response = self.client.get(
+            '/customer/update/1'
+        )
+        self.assertIn(b'Test', response.data)
+        self.assertIn(b'test@email.com', response.data)
+        self.assertIn(b'Fake address', response.data)
+        self.assertIn(b'G200', response.data)
+
+    def test_update(self):
+        customer = Customer(
+            name="Test",
+            email="test@email.com",
+            address="Fake address Apt. 12"
+        )
+        customer.add()
+        data = dict(
+            cotizacion="G200"
+        )
+        response = self.client.post(
+            '/customer/update/1',
+            data=data,
+            follow_redirects=True
+        )
+        self.assertEqual(response.status_code, 200)
+
+
+class DeleteCustomer(MyTest):
+
+    def test_delete(self):
+        customer = Customer(
+            name="Test",
+            email="test@email.com",
+            address="Fake address Apt. 12"
+        )
+        customer.add()
+        assert customer in db.session
+        customer.delete()
+        assert customer not in db.session
 
 
 class GetCustomer(MyTest):
