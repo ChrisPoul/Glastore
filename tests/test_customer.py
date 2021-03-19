@@ -1,5 +1,5 @@
 from .setup_tests import MyTest
-from Glastore.models import Customer, db
+from Glastore.models import Customer, db, repeated_value_msg
 
 
 class AddCustomer(MyTest):
@@ -18,7 +18,7 @@ class AddCustomer(MyTest):
             name="nam3 w1th numb3rs"
         )
         error = customer.add()
-        assert error == "El nombre del cliente no puede llevar numeros, solo letras"
+        assert error == customer.invalid_name_msg
 
     def test_invalid_email(self):
         customer = Customer(
@@ -26,7 +26,7 @@ class AddCustomer(MyTest):
             email="test.email.com"
         )
         error = customer.add()
-        assert error == "El correo que introdujo es invalido"
+        assert error == customer.invalid_email_msg
 
     def test_empty_emial(self):
         customer = Customer(
@@ -155,7 +155,7 @@ class UpdateCustomer(MyTest):
 
         customer.name = "Testsecond"
         error = customer.update()
-        assert error == "Introdujo un valor que ya está en uso"
+        assert error == repeated_value_msg
         customer = Customer.get("test@email.com")
         assert customer.name == "Test"
 
@@ -168,7 +168,7 @@ class UpdateCustomer(MyTest):
         customer.add()
         customer.name = "Test2"
         error = customer.update()
-        assert error == "El nombre del cliente no puede llevar numeros, solo letras"
+        assert error == customer.invalid_name_msg
 
     def test_invalid_email(self):
         customer = Customer(
@@ -178,4 +178,18 @@ class UpdateCustomer(MyTest):
         customer.add()
         customer.email = "test.email.com"
         error = customer.update()
-        assert error == "El correo que introdujo es invalido"
+        assert error == customer.invalid_email_msg
+
+
+class GetCustomers(MyTest):
+
+    def test_get_all(self):
+        customer = Customer(
+            name="Test"
+        )
+        customer.add()
+        customer2 = Customer(
+            name="Test second"
+        )
+        customer2.add()
+        assert Customer.get_all() == [customer, customer2]
