@@ -80,10 +80,9 @@ class AddCustomerView(MyTest):
         )
         response = self.client.post(
             '/customer/add',
-            data=data,
-            follow_redirects=True
+            data=data
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, '/customer/customers')
 
 
 class UpdateCustomer(MyTest):
@@ -190,6 +189,22 @@ class DeleteCustomer(MyTest):
         customer.add()
         assert customer in db.session
         customer.delete()
+        assert customer not in db.session
+
+
+class DeleteCustomerView(MyTest):
+
+    def test_delete(self):
+        customer = Customer(
+            name="Test",
+            email="test@email.com",
+            address="Fake address"
+        )
+        customer.add()
+        response = self.client.post(
+            '/customer/delete/1'
+        )
+        self.assertRedirects(response, '/customer/customers')
         assert customer not in db.session
 
 

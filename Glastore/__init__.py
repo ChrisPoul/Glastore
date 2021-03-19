@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request
+from flask import Flask
 
 
 def create_app(test_config=None):
@@ -34,14 +34,3 @@ def create_app(test_config=None):
     app.register_blueprint(window.bp)
 
     return app
-
-
-def get_form(heads):
-    form = {}
-    for head in heads:
-        try:
-            form[head] = request.form[head]
-        except KeyError:
-            form[head] = ""
-
-    return form

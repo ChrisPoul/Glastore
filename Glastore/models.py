@@ -1,4 +1,5 @@
 import click
+from flask import request
 from flask.cli import with_appcontext
 from sqlalchemy import (
     Column, Integer, String, Text,
@@ -157,3 +158,14 @@ def add_to_db(item):
     error = commit_to_db()
 
     return error
+
+
+def get_form(heads):
+    form = {}
+    for head in heads:
+        try:
+            form[head] = request.form[head]
+        except KeyError:
+            form[head] = ""
+
+    return form

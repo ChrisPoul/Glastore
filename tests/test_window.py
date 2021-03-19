@@ -59,15 +59,20 @@ class AddWindow(MyTest):
 class AddWindowView(MyTest):
 
     def test_view(self):
+        response = self.client.get(
+            '/window/add'
+        )
+        self.assertIn(b'Agregar Ventana', response.data)
+
+    def test_add(self):
         data = dict(
             name="Test"
         )
         response = self.client.post(
             '/window/add',
-            data=data,
-            follow_redirects=True
+            data=data
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, '/window/windows')
 
 
 class UpdateWindow(MyTest):
@@ -119,6 +124,18 @@ class UpdateWindowView(MyTest):
 
     def test_view(self):
         window = Window(
+            name="Test",
+            material="Un material"
+        )
+        window.add()
+        response = self.client.get(
+            '/window/update/1'
+        )
+        self.assertIn(b'Test', response.data)
+        self.assertIn(b'Un material', response.data)
+
+    def test_update(self):
+        window = Window(
             name="Test"
         )
         window.add()
@@ -127,10 +144,10 @@ class UpdateWindowView(MyTest):
         )
         response = self.client.post(
             '/window/update/1',
-            data=data,
-            follow_redirects=True
+            data=data
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, '/window/windows')
+        assert window.name == "Changed Name"
 
 
 class DeleteWindow(MyTest):
@@ -141,6 +158,20 @@ class DeleteWindow(MyTest):
         )
         window.add()
         window.delete()
+        assert window not in db.session
+
+
+class DeleteWindowView(MyTest):
+
+    def test_delete(self):
+        window = Window(
+            name="Test"
+        )
+        window.add()
+        response = self.client.post(
+            '/window/delete/1'
+        )
+        self.assertRedirects(response, '/window/windows')
         assert window not in db.session
 
 

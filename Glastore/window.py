@@ -2,8 +2,7 @@ from flask import (
     Blueprint, render_template, request, redirect,
     url_for, flash
 )
-from Glastore.models import Window
-from Glastore import get_form
+from Glastore.models import Window, get_form
 
 bp = Blueprint('window', __name__, url_prefix='/window')
 
@@ -87,4 +86,14 @@ def update(window_id):
         'window/update.html',
         heads=window_heads,
         window=window
+    )
+
+
+@bp.route('/delete/<int:window_id>', methods=('POST',))
+def delete(window_id):
+    window = Window.get(window_id)
+    window.delete()
+
+    return redirect(
+        url_for('window.windows')
     )
