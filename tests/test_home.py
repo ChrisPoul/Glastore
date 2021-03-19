@@ -1,4 +1,4 @@
-from .setup_tests import MyTest
+from .setup import MyTest
 
 
 class HomePage(MyTest):

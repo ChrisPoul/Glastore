@@ -1,4 +1,4 @@
-from .setup_tests import MyTest
+from .setup import MyTest
 from Glastore.models import Customer, db, repeated_value_msg
 
 

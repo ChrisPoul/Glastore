@@ -1,4 +1,4 @@
-from .setup_tests import MyTest
+from .setup import MyTest
 from Glastore.models import add_to_db, Customer, db
 
 
