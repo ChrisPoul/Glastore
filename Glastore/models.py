@@ -3,7 +3,7 @@ from flask import request
 from flask.cli import with_appcontext
 from sqlalchemy import (
     Column, Integer, String, Text,
-    PickleType, Float
+    PickleType
 )
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
@@ -145,7 +145,6 @@ class Window(db.Model):
 class Quote(db.Model):
     id = Column(Integer, primary_key=True)
     products = Column(PickleType, nullable=False, unique=False, default={})
-    total = Column(Float, nullable=False, unique=False, default=0)
     customer_id = Column(Integer, nullable=False, default=0)
 
     def __repr__(self):
@@ -155,7 +154,16 @@ class Quote(db.Model):
         error = add_to_db(self)
         return error
 
-    def get_folio(self):
+    def update(self):
+        error = commit_to_db()
+        return error
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    @property
+    def folio(self):
         id = str(self.id)
         folio = "G"
         num_of_zeros = 5 - len(id)
@@ -164,6 +172,22 @@ class Quote(db.Model):
         folio += id
 
         return folio
+
+    @property
+    def totals(self):
+        totals = {}
+        for id in self.products:
+            totals[id] = self.products[id]
+
+        return totals
+
+    @property
+    def total(self):
+        total = 0
+        for id in self.totals:
+            total += self.totals[id]
+
+        return total
 
 
 def init_db():
