@@ -57,10 +57,7 @@ def update(customer_id):
 
     if request.method == "POST":
         form = get_form(customer_heads)
-        customer.name = form['name']
-        customer.email = form['email']
-        customer.address = form['address']
-        error = customer.update()
+        error = customer.update(form)
 
         if not error:
             return redirect(

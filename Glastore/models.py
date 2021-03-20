@@ -3,7 +3,7 @@ from flask import request
 from flask.cli import with_appcontext
 from sqlalchemy import (
     Column, Integer, String, Text,
-    PickleType
+    PickleType, Float
 )
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
@@ -37,7 +37,11 @@ class Customer(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-    def update(self):
+    def update(self, form=None):
+        if form:
+            self.name = form['name']
+            self.email = form['email']
+            self.address = form['address']
         self.error = None
         self.validate_name()
         self.validate_email()
@@ -126,6 +130,30 @@ class Window(db.Model):
             windows = Window.query.all()
 
         return windows
+
+
+class Quote(db.Model):
+    id = Column(Integer, primary_key=True)
+    products = Column(PickleType, nullable=False, unique=False, default={})
+    total = Column(Float, nullable=False, unique=False, default=0)
+    customer_id = Column(Integer, nullable=False, default=0)
+
+    def __repr__(self):
+        return self.__dict__
+
+    def add(self):
+        error = add_to_db(self)
+        return error
+
+    def get_folio(self):
+        id = str(self.id)
+        folio = "G"
+        num_of_zeros = 5 - len(id)
+        for _ in range(num_of_zeros):
+            folio += "0"
+        folio += id
+
+        return folio
 
 
 def init_db():
