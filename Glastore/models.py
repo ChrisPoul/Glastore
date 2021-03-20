@@ -98,8 +98,18 @@ class Window(db.Model):
         error = add_to_db(self)
         return error
 
-    def update(self):
+    def update(self, form=None):
+        if form:
+            self.name = form["name"]
+            self.description = form["description"]
+            self.material = form["material"]
+            self.color = form["color"]
+            self.cristal = form["cristal"]
+            self.acabado = form["acabado"]
+            self.modelo = form["modelo"]
+            self.sellado = form["sellado"]
         error = commit_to_db()
+
         return error
 
     def delete(self):

@@ -66,15 +66,7 @@ def update(window_id):
 
     if request.method == 'POST':
         form = get_form(window_heads)
-        window.name = form["name"]
-        window.description = form["description"]
-        window.material = form["material"]
-        window.color = form["color"]
-        window.cristal = form["cristal"]
-        window.acabado = form["acabado"]
-        window.modelo = form["modelo"]
-        window.sellado = form["sellado"]
-        error = window.update()
+        error = window.update(form)
 
         if not error:
             return redirect(
