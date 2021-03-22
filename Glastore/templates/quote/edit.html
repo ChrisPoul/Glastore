@@ -1,0 +1,21 @@
+{% extends "quote/base.html" %}
+
+{% block content %}
+<div>
+    <table>
+        <tr>
+            <td rowspan=2>
+                <img src="{{ url_for('static', filename='private_images/glastore.png') }}">
+            </td>
+            <td>
+                cotizacion
+            </td>
+        </tr>
+        <tr>
+            <td>
+                fecha
+            </td>
+        </tr>
+    </table>
+</div>
+{% endblock %}

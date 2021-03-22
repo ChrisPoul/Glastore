@@ -17,6 +17,10 @@ class Customer(db.Model):
     name = Column(String(100), nullable=False, unique=True)
     email = Column(String(100), nullable=True, unique=True)
     address = Column(String(150), nullable=True, unique=True)
+    quotes = db.relationship(
+        'Quote', backref='author', lazy=True,
+        cascade='all, delete-orphan'
+    )
 
     invalid_name_msg = "El nombre del cliente no puede llevar numeros, solo letras"
     invalid_email_msg = "El correo que introdujo es invalido"
@@ -216,7 +220,7 @@ class Quote(db.Model):
 
 
 def init_db():
-    Customer.__table__.drop(db.engine)
+    db.drop_all()
     db.create_all()
 
 

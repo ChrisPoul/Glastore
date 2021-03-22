@@ -7,11 +7,6 @@
 {% endblock %}
 
 {% block content %}
-<datalist id="autocomplete-inv">
-    {% for name in autocomplete_data %}
-    <option>{{ name }}</option>
-    {% endfor %}
-</datalist>
 <div>
     <form method="post">
         {% for head in heads %}

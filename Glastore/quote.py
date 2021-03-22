@@ -33,6 +33,6 @@ def edit(quote_id):
         pass
 
     return render_template(
-        'quote/edit.py',
+        'quote/edit.html',
         quote=quote
     )
