@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block header %}
+<h1>
+    {% block title %}Crear Nueva Cotización{% endblock %}
+</h1>
+{% endblock %}
+
+{% block content %}
+<datalist id="autocomplete-data">
+    {% for name in autocomplete_data %}
+    <option>{{ name }}</option>
+    {% endfor %}
+</datalist>
+<h3>Cliente de Cotización</h3>
+<form method="post" autocomplete="off">
+    <table class="search_bar">
+        <tr>
+            <td>
+                <input name="search_term" id="search_term"
+                    placeholder="Escribe el nombre o el email del cliente que buscas..." list="autocomplete-data">
+            </td>
+            <td>
+                <input type="submit" value="Aceptar">
+            </td>
+        </tr>
+    </table>
+</form>
+{% endblock %}

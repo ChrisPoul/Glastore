@@ -3,7 +3,7 @@ from flask import request
 from flask.cli import with_appcontext
 from sqlalchemy import (
     Column, Integer, String, Text,
-    PickleType
+    PickleType, ForeignKey
 )
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
@@ -116,6 +116,14 @@ class Window(db.Model):
         db.session.delete(self)
         db.session.commit()
 
+    def new(name):
+        window = Window(name=name)
+        error = window.add()
+        if error:
+            return window, error
+
+        return window
+
     def get(search_term):
         window = Window.query.get(search_term)
         if not window:
@@ -124,7 +132,9 @@ class Window(db.Model):
         return window
 
     def get_all(search_term=None):
-        if search_term:
+        if not search_term:
+            windows = Window.query.all()
+        else:
             windows = Window.query.filter_by(modelo=search_term).all()
             if not windows:
                 windows = Window.query.filter_by(cristal=search_term).all()
@@ -136,8 +146,6 @@ class Window(db.Model):
                 windows = Window.query.filter_by(sellado=search_term).all()
             if not windows:
                 windows = Window.query.filter_by(color=search_term).all()
-        else:
-            windows = Window.query.all()
 
         return windows
 
@@ -145,22 +153,10 @@ class Window(db.Model):
 class Quote(db.Model):
     id = Column(Integer, primary_key=True)
     products = Column(PickleType, nullable=False, unique=False, default={})
-    customer_id = Column(Integer, nullable=False, default=0)
+    customer_id = Column(Integer, ForeignKey('customer.id'), nullable=False)
 
     def __repr__(self):
         return self.__dict__
-
-    def add(self):
-        error = add_to_db(self)
-        return error
-
-    def update(self):
-        error = commit_to_db()
-        return error
-
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
 
     @property
     def folio(self):
@@ -188,6 +184,35 @@ class Quote(db.Model):
             total += self.totals[id]
 
         return total
+
+    def add(self):
+        error = add_to_db(self)
+        return error
+
+    def update(self):
+        error = commit_to_db()
+        return error
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def new(customer_id=1):
+        quote = Quote(customer_id=customer_id)
+        quote.add()
+
+        return quote
+
+    def get(id):
+        return Quote.query.get(id)
+
+    def get_all(customer_id=None):
+        if not customer_id:
+            quotes = Quote.query.all()
+        else:
+            quotes = Quote.query.filter_by(customer_id=customer_id).all()
+
+        return quotes
 
 
 def init_db():

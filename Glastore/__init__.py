@@ -33,4 +33,7 @@ def create_app(test_config=None):
     from . import window
     app.register_blueprint(window.bp)
 
+    from . import quote
+    app.register_blueprint(quote.bp)
+
     return app
