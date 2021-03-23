@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block header %}
-<h1>{% block title %}{{ window.name }}{% endblock %}</h1>
+<h1>{% block title %}{{ product.name }}{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
@@ -9,12 +9,12 @@
     <form method="post">
         {% for head in heads %}
         <label for="{{ head }}">{{ heads[head] }}</label>
-        <input name="{{ head }}" id="{{ head }}" value="{{ window[head] }}">
+        <input name="{{ head }}" id="{{ head }}" value="{{ product[head] }}">
         {% endfor %}
         <input type="submit" value="Aceptar">
     </form>
     <hr>
-    <form action="{{ url_for('window.delete', window_id=window.id) }}" method="post">
+    <form action="{{ url_for('product.delete', product_id=product.id) }}" method="post">
         <input class="danger" type="submit" value="Eliminar" onclick="return confirm('Estás Seguro?');">
     </form>
 </div>

@@ -1,9 +1,10 @@
 import click
+from datetime import datetime
 from flask import request
 from flask.cli import with_appcontext
 from sqlalchemy import (
-    Column, Integer, String, Text,
-    PickleType, ForeignKey
+    Column, Integer, String,
+    PickleType, ForeignKey, DateTime
 )
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
@@ -83,17 +84,13 @@ class Customer(db.Model):
         return Customer.query.all()
 
 
-class Window(db.Model):
+class Product(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False, unique=True)
-    description = Column(Text, nullable=True, unique=False, default="")
     material = Column(String(100), nullable=True, unique=False, default="")
-    color = Column(String(100), nullable=True, unique=False, default="")
     cristal = Column(String(100), nullable=True, unique=False, default="")
+    medidas = Column(String(50), nullable=True, unique=False, default="")
     acabado = Column(String(100), nullable=True, unique=False, default="")
-    modelo = Column(String(100), nullable=True, unique=False, default="")
-    herrajes = Column(PickleType, nullable=False, unique=False, default=[])
-    sellado = Column(String(100), nullable=True, unique=False, default="")
 
     def __repr__(self):
         return self.__dict__
@@ -105,58 +102,61 @@ class Window(db.Model):
     def update(self, form=None):
         if form:
             self.name = form["name"]
-            self.description = form["description"]
             self.material = form["material"]
-            self.color = form["color"]
             self.cristal = form["cristal"]
-            self.acabado = form["acabado"]
-            self.modelo = form["modelo"]
-            self.sellado = form["sellado"]
+            self.medidas = form["medidas"]
         error = commit_to_db()
 
         return error
+
+    def edit(self):
+        try:
+            self.material = request.form[f"{self.id}material"]
+        except KeyError:
+            pass
+        try:
+            self.cristal = request.form[f"{self.id}cristal"]
+        except KeyError:
+            pass
+        try:
+            self.medidas = request.form[f"{self.id}medidas"]
+        except KeyError:
+            pass
 
     def delete(self):
         db.session.delete(self)
         db.session.commit()
 
     def new(name):
-        window = Window(name=name)
-        error = window.add()
+        product = Product(name=name)
+        error = product.add()
         if error:
-            return window, error
+            return product, error
 
-        return window
+        return product
 
     def get(search_term):
-        window = Window.query.get(search_term)
-        if not window:
-            window = Window.query.filter_by(name=search_term).first()
+        product = Product.query.get(search_term)
+        if not product:
+            product = Product.query.filter_by(name=search_term).first()
 
-        return window
+        return product
 
     def get_all(search_term=None):
         if not search_term:
-            windows = Window.query.all()
+            products = Product.query.all()
         else:
-            windows = Window.query.filter_by(modelo=search_term).all()
-            if not windows:
-                windows = Window.query.filter_by(cristal=search_term).all()
-            if not windows:
-                windows = Window.query.filter_by(acabado=search_term).all()
-            if not windows:
-                windows = Window.query.filter_by(material=search_term).all()
-            if not windows:
-                windows = Window.query.filter_by(sellado=search_term).all()
-            if not windows:
-                windows = Window.query.filter_by(color=search_term).all()
+            products = Product.query.filter_by(material=search_term).all()
+            if not products:
+                products = Product.query.filter_by(cristal=search_term).all()
 
-        return windows
+        return products
 
 
 class Quote(db.Model):
     id = Column(Integer, primary_key=True)
-    products = Column(PickleType, nullable=False, unique=False, default={})
+    cantidades = Column(PickleType, nullable=False, unique=False, default={})
+    date = Column(DateTime, nullable=False, default=datetime.now)
     customer_id = Column(Integer, ForeignKey('customer.id'), nullable=False)
 
     def __repr__(self):
@@ -174,10 +174,20 @@ class Quote(db.Model):
         return folio
 
     @property
+    def products(self):
+        products = []
+        for id in self.cantidades:
+            product = Product.get(id)
+            product.edit()
+            products.append(product)
+
+        return products
+
+    @property
     def totals(self):
         totals = {}
-        for id in self.products:
-            totals[id] = self.products[id]
+        for id in self.cantidades:
+            totals[id] = self.cantidades[id]
 
         return totals
 
@@ -218,8 +228,15 @@ class Quote(db.Model):
 
         return quotes
 
+    def add_product(self, product):
+        cantidades = obj_as_dict(self.cantidades)
+        cantidades[product.id] = 0
+        self.cantidades = cantidades
+        self.update()
+
 
 def init_db():
+    # Product.__table__.drop(db.engine)
     db.drop_all()
     db.create_all()
 
@@ -258,3 +275,42 @@ def get_form(heads):
             form[head] = ""
 
     return form
+
+
+days = {
+    "0": "Lunes", "1": "Martes",
+    "2": "Miercoles", "3": "Jueves",
+    "4": "Viernes", "5": "Sábado",
+    "6": "Domingo"
+}
+months = {
+    "01": "Enero", "02": "Febrero",
+    "03": "Marzo", "04": "Abril",
+    "05": "Mayo", "06": "Junio",
+    "07": "Julio", "08": "Agosto",
+    "09": "Septiembre", "10": "Octubre",
+    "11": "Noviembre", "12": "Diciembre"
+}
+
+
+def format_date(date):
+    str_date = date.strftime("%d/%m/%Y")
+    date_parts = str_date.split("/")
+
+    week_day = date.weekday()
+    day = days[str(week_day)]
+    day_num = date_parts[0]
+
+    month = date_parts[1]
+    month = months[month]
+    year = date_parts[2]
+
+    return f"{day} {day_num} de {month} del {year}"
+
+
+def obj_as_dict(obj_tuple):
+    obj_dict = {}
+    for key in obj_tuple:
+        obj_dict[key] = obj_tuple[key]
+
+    return obj_dict

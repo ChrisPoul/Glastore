@@ -9,6 +9,9 @@ body {
 section {
     margin-top: 1em;
 }
+div {
+    margin-top: 1em;
+}
 .flash {
     margin: 1em 0;
     padding: 1em;
@@ -23,4 +26,17 @@ table {
 table, tr, td {
     border: 1px solid black;
     padding: 2px;
+}
+td.description {
+    width: 45%;
+}
+.description input {
+    width: 14vw;
+}
+td.image {
+    width: 65%;
+}
+input[type=submit] {
+    align-self: start;
+    min-width: 10em;
 }

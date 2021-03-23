@@ -2,20 +2,17 @@
 
 {% block content %}
 <div>
-    <table>
-        <tr>
-            <td rowspan=2>
-                <img src="{{ url_for('static', filename='private_images/glastore.png') }}">
-            </td>
-            <td>
-                cotizacion
-            </td>
-        </tr>
-        <tr>
-            <td>
-                fecha
-            </td>
-        </tr>
-    </table>
+    {% include "quote/quote_info.html" %}
+</div>
+
+<div>
+    {% include "quote/customer.html" %}
+</div>
+
+<div>
+    <form method="post">
+        {% include "quote/products.html" %}
+        <input type="submit" value="Aceptar">
+    </form>
 </div>
 {% endblock %}

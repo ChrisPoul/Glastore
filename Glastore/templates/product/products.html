@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
 {% block header %}
-<h1>{%block title %}Ventanas{% endblock %}</h1>
-<a style="text-decoration: none;" href="{{ url_for('window.add') }}">
-    <h1>Añadir Ventana</h1>
+<h1>{%block title %}Productos{% endblock %}</h1>
+<a style="text-decoration: none;" href="{{ url_for('product.add') }}">
+    <h1>Añadir Producto</h1>
 </a>
 {% endblock %}
 
@@ -15,16 +15,16 @@
             <th>{{ heads[head] }}</th>
             {% endfor %}
         </tr>
-        {% for window in windows %}
+        {% for product in products %}
         <tr>
             {% for head in heads %}
             <td>
                 {% if head == "name" %}
-                <a href="{{ url_for('window.update', window_id=window.id) }}">
-                    {{ window[head] }}
+                <a href="{{ url_for('product.update', product_id=product.id) }}">
+                    {{ product[head] }}
                 </a>
                 {% else %}
-                {{ window[head] }}
+                {{ product[head] }}
                 {% endif %}
             </td>
             {% endfor %}

@@ -33,10 +33,10 @@ class UpdateQuote(MyTest):
 
     def test_update(self):
         quote = Quote.new()
-        quote.products = {1: 20}
+        quote.cantidades = {1: 20}
         error = quote.update()
         assert error is None
-        assert quote.products == {1: 20}
+        assert quote.cantidades == {1: 20}
 
 
 class DeleteQuote(MyTest):
@@ -57,12 +57,12 @@ class Attributes(MyTest):
 
     def test_totals(self):
         quote = Quote.new()
-        quote.products = {1: 10, 2: 20}
+        quote.cantidades = {1: 10, 2: 20}
         assert quote.totals == {1: 10, 2: 20}
 
     def test_total(self):
         quote = Quote.new()
-        quote.products = {1: 10, 2: 10}
+        quote.cantidades = {1: 10, 2: 10}
         self.assertEqual(quote.total, 20)
 
 

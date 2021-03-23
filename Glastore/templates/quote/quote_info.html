@@ -1,0 +1,21 @@
+<table>
+    <tr>
+        <td class="image" rowspan=2>
+            <a href="{{ url_for('home.home') }}">
+                <img src="{{ url_for('static', filename='private_images/glastore.png') }}">
+            </a>
+        </td>
+        <td>
+            <b>Cotización:</b>
+            <br>
+            {{ quote.folio }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <b>Fecha:</b>
+            <br>
+            {{ format_date(quote.date) }}
+        </td>
+    </tr>
+</table>

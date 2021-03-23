@@ -2,7 +2,7 @@
 
 {% block header %}
 <h1>
-    {% block title %}Agregar Ventana{% endblock %}
+    {% block title %}Agregar Producto{% endblock %}
 </h1>
 {% endblock %}
 
@@ -11,11 +11,7 @@
     <form method="post">
         {% for head in heads %}
         <label for="{{ head }}">{{ heads[head] }}</label>
-        {% if head == "description" %}
-        <textarea name="{{ head }}" id="{{ head }}">{{ form[head] }}</textarea>
-        {% else %}
         <input name="{{ head }}" id="{{ head }}" value="{{ form[head] }}">
-        {% endif %}
         {% endfor %}
         <input type="submit" value="Aceptar">
     </form>

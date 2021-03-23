@@ -30,8 +30,8 @@ def create_app(test_config=None):
     from . import customer
     app.register_blueprint(customer.bp)
 
-    from . import window
-    app.register_blueprint(window.bp)
+    from . import product
+    app.register_blueprint(product.bp)
 
     from . import quote
     app.register_blueprint(quote.bp)
