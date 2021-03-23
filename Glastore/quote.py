@@ -4,7 +4,7 @@ from flask import (
 )
 from Glastore.models import (
     Quote, Customer, Product, format_date,
-    get_form, commit_to_db, obj_as_dict
+    get_form
 )
 
 bp = Blueprint("quote", __name__, url_prefix="/quote")
@@ -50,7 +50,12 @@ def add():
 @bp.route("/edit/<int:quote_id>", methods=('GET', 'POST'))
 def edit(quote_id):
     quote = Quote.get(quote_id)
-    new_product = Product(name="")
+    new_product = Product(
+        name="",
+        material="",
+        cristal="",
+        medidas=""
+    )
     if request.method == "POST":
         form = get_form(product_heads)
         product = Product.get(form['name'])

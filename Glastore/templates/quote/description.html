@@ -1,3 +1,4 @@
+{% if product %}
 <p>
     Suministro y colocación de 
     <a href="{{ url_for('product.update', product_id=product.id) }}">
@@ -11,3 +12,16 @@
     <input name="{{ product.id }}medidas" id="{{ product.id }}medidas" placeholder="medidas..." value="{{ product.medidas }}">.
     Incluye herrajes, selladores, y todo lo necesario para su correcta instalación.
 </p>
+{% else %}
+<p>
+    Suministro y colocación de 
+    <input name="name" id="name" placeholder="nombre de pieza..." value="{{ new_product.name }}">
+    en 
+    <input name="material" id="material" placeholder="material..." value="{{ new_product.material }}">
+    con 
+    <input name="cristal" id="cristal" placeholder="cristal o vidrio..." value="{{ new_product.cristal }}">.
+    Dimenciones 
+    <input name="medidas" id="medidas" placeholder="medidas..." value="{{ new_product.medidas }}">.
+    Incluye herrajes, selladores, y todo lo necesario para su correcta instalación.
+</p>
+{% endif %}

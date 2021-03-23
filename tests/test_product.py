@@ -107,6 +107,45 @@ class UpdateProductView(MyTest):
         assert product.name == "Changed Name"
 
 
+class EditProductInQuote(MyTest):
+
+    def test_edit_in_quote(self):
+        product = Product(
+            name="Name",
+            material="Material"
+        )
+        product.add()
+        form = {
+            "1material": "New Material"
+        }
+        product.edit_in_quote(form)
+        self.assertEqual(product.material, "New Material")
+
+    def test_with_empty_value(self):
+        product = Product(
+            name="Name",
+            cristal="Cristal"
+        )
+        product.add()
+        form = {
+            "1cristal": ""
+        }
+        product.edit_in_quote(form)
+        self.assertEqual(product.cristal, "")
+
+    def test_no_id_in_key(self):
+        product = Product(
+            name="Name",
+            cristal="Cristal"
+        )
+        product.add()
+        form = {
+            "cristal": ""
+        }
+        product.edit_in_quote(form)
+        self.assertEqual(product.cristal, "Cristal")
+
+
 class DeleteProduct(MyTest):
 
     def test_delete(self):
@@ -114,10 +153,7 @@ class DeleteProduct(MyTest):
         product.delete()
         assert product not in db.session
 
-
-class DeleteProductView(MyTest):
-
-    def test_delete(self):
+    def test_view(self):
         product = Product.new("Test")
         response = self.client.post(
             '/product/delete/1'

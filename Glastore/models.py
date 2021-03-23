@@ -109,17 +109,17 @@ class Product(db.Model):
 
         return error
 
-    def edit(self):
+    def edit_in_quote(self, form):
         try:
-            self.material = request.form[f"{self.id}material"]
+            self.material = form[f"{self.id}material"]
         except KeyError:
             pass
         try:
-            self.cristal = request.form[f"{self.id}cristal"]
+            self.cristal = form[f"{self.id}cristal"]
         except KeyError:
             pass
         try:
-            self.medidas = request.form[f"{self.id}medidas"]
+            self.medidas = form[f"{self.id}medidas"]
         except KeyError:
             pass
 
@@ -178,7 +178,7 @@ class Quote(db.Model):
         products = []
         for id in self.cantidades:
             product = Product.get(id)
-            product.edit()
+            product.edit_in_quote(request.form)
             products.append(product)
 
         return products
