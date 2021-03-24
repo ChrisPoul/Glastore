@@ -58,9 +58,13 @@ def edit(quote_id):
         medidas=form['medidas']
     )
     if request.method == "POST":
-        product = Product.get(request.form['name'])
+        try:
+            product = Product.get(request.form['name'])
+        except KeyError:
+            product = None
         if product:
             quote.add_product(product)
+        quote.update_products()
 
     return render_template(
         'quote/edit.html',

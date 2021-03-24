@@ -2,18 +2,25 @@
     {% for key in product_keys %}
     {{ product_keys[key][0] }}
     {% if sold_product %}
-        {% if key == "name" %}
-        <a href="{{ url_for('product.update', product_id=sold_product.product.id) }}">
-            {{ sold_product.product[key] }}
-        </a>
-        {% else %}
-        <input name="{{ '{0}{1}'.format(sold_product.product.id, key) }}" id="{{ '{0}{1}'.format(sold_product.product.id, key) }}"
-            placeholder="{{ product_keys[key][1] }}" value="{{ sold_product.product[key] }}">
-        {% endif %}
+    {% if key == "name" %}
+    <a href="{{ url_for('product.update', product_id=sold_product.product_id) }}">
+        {{ sold_product.product[key] }}
+    </a>
     {% else %}
-    <input name="{{ key }}" id="{{ key }}"
-        placeholder="{{ product_keys[key][1] }}" value="{{ new_product[key] }}">
+    <input name="{{ '{0}{1}'.format(key, sold_product.product_id) }}"
+        id="{{ '{0}{1}'.format(key, sold_product.product_id) }}" placeholder="{{ product_keys[key][1] }}"
+        value="{{ sold_product.product[key] }}">
+    {% endif %}
+    {% else %}
+    <input name="{{ key }}" id="{{ key }}" placeholder="{{ product_keys[key][1] }}" value="{{ new_product[key] }}">
     {% endif %}
     {% endfor %}
     . Incluye herrajes, selladores, y todo lo necesario para su correcta instalación.
 </p>
+{% if not sold_product %}
+<div style="display: flex;">
+    <a href="{{ url_for('product.add') }}">
+        <input type="button" value="Añadir">
+    </a>
+</div>
+{% endif %}

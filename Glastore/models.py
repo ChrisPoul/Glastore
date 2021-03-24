@@ -246,6 +246,16 @@ class Quote(db.Model):
             )
             sold_product.add()
 
+    def update_products(self):
+        for product in self.products:
+            id = product.id
+            try:
+                product.material = request.form[f"material{id}"]
+                product.cristal = request.form[f"cristal{id}"]
+                product.medidas = request.form[f"medidas{id}"]
+            except KeyError:
+                pass
+
 
 class SoldProduct(db.Model):
     id = Column(Integer, primary_key=True)
