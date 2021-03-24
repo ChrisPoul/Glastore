@@ -1,26 +1,30 @@
 <table>
-    {% for head in products_heads %}
+    {% for head in product_heads %}
     <th>
-        {{ products_heads[head] }}
+        {{ product_heads[head] }}
     </th>
     {% endfor %}
-    {% for product in quote.products %}
+    {% for sold_product in quote.sold_products %}
     <tr>
-        {% for head in products_heads %}
+        {% for head in product_heads %}
         {% if head == "description" %}
         <td class="description">
             {% include "quote/description.html" %}
         </td>
+        {% elif head == "unit_price" %}
+        <td>
+            {{ sold_product.product[head] }}
+        </td>
         {% else %}
         <td>
-            {{ head }}
+            {{ sold_product[head] }}
         </td>
         {% endif %}
         {% endfor %}
     </tr>
     {% endfor %}
     <tr>
-        {% for head in products_heads %}
+        {% for head in product_heads %}
         {% if head == "description" %}
         <td class="description">
             {% include "quote/description.html" %}

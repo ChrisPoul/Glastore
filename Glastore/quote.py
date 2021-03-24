@@ -13,19 +13,19 @@ customer_heads = {
     "email": "Email",
     "address": "Dirección"
 }
-products_heads = {
-    "cant": "Cant.",
+product_heads = {
+    "cantidad": "Cant.",
     "description": "Descripción",
     "diseño": "Diseño",
-    "retail_price": "P.Unidad",
+    "unit_price": "P.Unidad",
     "total": "Total"
 }
-product_heads = [
-    "name",
-    "material",
-    "cristal",
-    "medidas"
-]
+product_keys = {
+    "name": ["Suministro y colocación de ", "nombre de pieza..."],
+    "material": ["en ", "material..."],
+    "cristal": ["con ", "cristal o vidrio..."],
+    "medidas": [". Dimenciones", "medidas..."]
+}
 
 
 @bp.route('/add', methods=('GET', 'POST'))
@@ -50,15 +50,15 @@ def add():
 @bp.route("/edit/<int:quote_id>", methods=('GET', 'POST'))
 def edit(quote_id):
     quote = Quote.get(quote_id)
+    form = get_form(product_keys)
     new_product = Product(
-        name="",
-        material="",
-        cristal="",
-        medidas=""
+        name=form['name'],
+        material=form['material'],
+        cristal=form['cristal'],
+        medidas=form['medidas']
     )
     if request.method == "POST":
-        form = get_form(product_heads)
-        product = Product.get(form['name'])
+        product = Product.get(request.form['name'])
         if product:
             quote.add_product(product)
 
@@ -66,7 +66,8 @@ def edit(quote_id):
         'quote/edit.html',
         quote=quote,
         customer_heads=customer_heads,
-        products_heads=products_heads,
+        product_heads=product_heads,
+        product_keys=product_keys,
         format_date=format_date,
         new_product=new_product
     )

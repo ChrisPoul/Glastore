@@ -4,7 +4,7 @@ from flask import request
 from flask.cli import with_appcontext
 from sqlalchemy import (
     Column, Integer, String,
-    PickleType, ForeignKey, DateTime
+    ForeignKey, DateTime, Float
 )
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
@@ -87,16 +87,23 @@ class Customer(db.Model):
 class Product(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False, unique=True)
-    material = Column(String(100), nullable=True, unique=False, default="")
-    cristal = Column(String(100), nullable=True, unique=False, default="")
-    medidas = Column(String(50), nullable=True, unique=False, default="")
-    acabado = Column(String(100), nullable=True, unique=False, default="")
+    material = Column(String(100), nullable=False, unique=False, default="")
+    cristal = Column(String(100), nullable=False, unique=False, default="")
+    medidas = Column(String(50), nullable=False, unique=False, default="")
+    acabado = Column(String(100), nullable=False, unique=False, default="")
+    unit_price = Column(Float, nullable=False, default=0)
+    sold_products = db.relationship(
+        'SoldProduct', backref='product', lazy=True,
+        cascade='all, delete-orphan'
+    )
 
     def __repr__(self):
         return self.__dict__
 
     def add(self):
-        error = add_to_db(self)
+        error = self.validate_price()
+        if not error:
+            error = add_to_db(self)
         return error
 
     def update(self, form=None):
@@ -105,7 +112,23 @@ class Product(db.Model):
             self.material = form["material"]
             self.cristal = form["cristal"]
             self.medidas = form["medidas"]
-        error = commit_to_db()
+            self.unit_price = form["unit_price"]
+        error = self.validate_price()
+        if not error:
+            error = commit_to_db()
+
+        return error
+
+    def validate_price(self):
+        error = None
+        if self.unit_price:
+            try:
+                int(self.unit_price)
+            except ValueError:
+                error = "Numero invalido"
+                self.unit_price = 0
+        else:
+            self.unit_price = 0
 
         return error
 
@@ -155,9 +178,12 @@ class Product(db.Model):
 
 class Quote(db.Model):
     id = Column(Integer, primary_key=True)
-    cantidades = Column(PickleType, nullable=False, unique=False, default={})
     date = Column(DateTime, nullable=False, default=datetime.now)
     customer_id = Column(Integer, ForeignKey('customer.id'), nullable=False)
+    sold_products = db.relationship(
+        'SoldProduct', backref='quote', lazy=True,
+        cascade='all, delete-orphan'
+    )
 
     def __repr__(self):
         return self.__dict__
@@ -175,28 +201,12 @@ class Quote(db.Model):
 
     @property
     def products(self):
-        products = []
-        for id in self.cantidades:
-            product = Product.get(id)
-            product.edit_in_quote(request.form)
-            products.append(product)
-
+        products = [sold_product.product for sold_product in self.sold_products]
         return products
-
-    @property
-    def totals(self):
-        totals = {}
-        for id in self.cantidades:
-            totals[id] = self.cantidades[id]
-
-        return totals
 
     @property
     def total(self):
         total = 0
-        for id in self.totals:
-            total += self.totals[id]
-
         return total
 
     def add(self):
@@ -229,10 +239,31 @@ class Quote(db.Model):
         return quotes
 
     def add_product(self, product):
-        cantidades = obj_as_dict(self.cantidades)
-        cantidades[product.id] = 0
-        self.cantidades = cantidades
-        self.update()
+        if product not in self.products:
+            sold_product = SoldProduct(
+                quote_id=self.id,
+                product_id=product.id
+            )
+            sold_product.add()
+
+
+class SoldProduct(db.Model):
+    id = Column(Integer, primary_key=True)
+    quote_id = Column(Integer, ForeignKey('quote.id'), nullable=False)
+    product_id = Column(Integer, ForeignKey('product.id'), nullable=False)
+    cantidad = Column(Integer, nullable=False, default=0)
+    total = Column(Integer, nullable=False, default=0)
+
+    def __repr__(self):
+        return self.__dict__
+
+    def add(self):
+        error = add_to_db(self)
+        return error
+
+    def update(self):
+        error = commit_to_db()
+        return error
 
 
 def init_db():

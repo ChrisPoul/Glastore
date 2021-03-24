@@ -10,7 +10,8 @@ product_heads = {
     "name": "Nombre",
     "material": "Material",
     "cristal": "Cristal",
-    "medidas": "Medidas"
+    "medidas": "Medidas",
+    "unit_price": "Precio de Venta"
 }
 
 
@@ -35,7 +36,8 @@ def add():
             name=form["name"],
             material=form["material"],
             cristal=form["cristal"],
-            medidas=form["medidas"]
+            medidas=form["medidas"],
+            unit_price=form["unit_price"]
         )
         error = product.add()
 

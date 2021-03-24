@@ -1,27 +1,19 @@
-{% if product %}
 <p>
-    Suministro y colocación de 
-    <a href="{{ url_for('product.update', product_id=product.id) }}">
-        {{ product.name }}
-    </a>
-    en 
-    <input name="{{ product.id }}material" id="{{ product.id }}material" placeholder="material..." value="{{ product.material }}">
-    con 
-    <input name="{{ product.id }}cristal" id="{{ product.id }}cristal" placeholder="cristal o vidrio..." value="{{ product.cristal }}">.
-    Dimenciones 
-    <input name="{{ product.id }}medidas" id="{{ product.id }}medidas" placeholder="medidas..." value="{{ product.medidas }}">.
-    Incluye herrajes, selladores, y todo lo necesario para su correcta instalación.
+    {% for key in product_keys %}
+    {{ product_keys[key][0] }}
+    {% if sold_product %}
+        {% if key == "name" %}
+        <a href="{{ url_for('product.update', product_id=sold_product.product.id) }}">
+            {{ sold_product.product[key] }}
+        </a>
+        {% else %}
+        <input name="{{ '{0}{1}'.format(sold_product.product.id, key) }}" id="{{ '{0}{1}'.format(sold_product.product.id, key) }}"
+            placeholder="{{ product_keys[key][1] }}" value="{{ sold_product.product[key] }}">
+        {% endif %}
+    {% else %}
+    <input name="{{ key }}" id="{{ key }}"
+        placeholder="{{ product_keys[key][1] }}" value="{{ new_product[key] }}">
+    {% endif %}
+    {% endfor %}
+    . Incluye herrajes, selladores, y todo lo necesario para su correcta instalación.
 </p>
-{% else %}
-<p>
-    Suministro y colocación de 
-    <input name="name" id="name" placeholder="nombre de pieza..." value="{{ new_product.name }}">
-    en 
-    <input name="material" id="material" placeholder="material..." value="{{ new_product.material }}">
-    con 
-    <input name="cristal" id="cristal" placeholder="cristal o vidrio..." value="{{ new_product.cristal }}">.
-    Dimenciones 
-    <input name="medidas" id="medidas" placeholder="medidas..." value="{{ new_product.medidas }}">.
-    Incluye herrajes, selladores, y todo lo necesario para su correcta instalación.
-</p>
-{% endif %}

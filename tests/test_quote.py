@@ -2,6 +2,7 @@ from .setup import MyTest
 from Glastore.models import (
     db, Quote, Customer, Product, format_date
 )
+from datetime import datetime
 
 
 class NewQuote(MyTest):
@@ -35,10 +36,11 @@ class UpdateQuote(MyTest):
 
     def test_update(self):
         quote = Quote.new()
-        quote.cantidades = {1: 20}
+        date = datetime.now()
+        quote.date = date
         error = quote.update()
         assert error is None
-        assert quote.cantidades == {1: 20}
+        assert quote.date == date
 
 
 class DeleteQuote(MyTest):
@@ -50,22 +52,12 @@ class DeleteQuote(MyTest):
         assert quote not in db.session
 
 
-class Attributes(MyTest):
+class FolioAttribute(MyTest):
 
     def test_folio(self):
         quote = Quote.new()
         self.assertEqual(quote.id, 1)
         self.assertEqual(quote.folio, "G00001")
-
-    def test_totals(self):
-        quote = Quote.new()
-        quote.cantidades = {1: 10, 2: 20}
-        assert quote.totals == {1: 10, 2: 20}
-
-    def test_total(self):
-        quote = Quote.new()
-        quote.cantidades = {1: 10, 2: 10}
-        self.assertEqual(quote.total, 20)
 
 
 class GetQuote(MyTest):
@@ -101,11 +93,9 @@ class AddProduct(MyTest):
         )
         product.add()
         quote = Quote.new(customer.id)
-        self.assertEqual(quote.cantidades, {})
-        self.assertEqual(quote.products, [])
+        self.assertEqual(quote.sold_products, [])
         quote.add_product(product)
-        self.assertEqual(quote.cantidades, {1: 0})
-        self.assertEqual(quote.products, [product])
+        self.assertEqual(quote.sold_products[0].product, product)
 
 
 class EditProductView(MyTest):
@@ -184,7 +174,7 @@ class EditProductView(MyTest):
         self.assertIn(b'value="">', response.data)
         assert b'value="None">' not in response.data
 
-    def test_product(self):
+    def test_with_a_product_previously_added(self):
         customer = Customer(
             name="Test Customer",
             email="test@email.com",
@@ -232,3 +222,31 @@ class EditProductView(MyTest):
         self.assertIn(b"Test Cristal", response.data)
         self.assertIn(b"1x1", response.data)
         self.assertIn(b'<input name="name"', response.data)
+
+    def test_add_product_twice(self):
+        customer = Customer(
+            name="Test Customer",
+            email="test@email.com",
+            address="Fake address"
+        )
+        customer.add()
+        Quote.new(customer.id)
+        product = Product(
+            name="Test Product",
+            material="Test Material",
+            cristal="Test Cristal",
+            medidas="1x1"
+        )
+        product.add()
+        data = dict(
+            name="Test Product"
+        )
+        response = self.client.post(
+            'quote/edit/1',
+            data=data
+        )
+        new_response = self.client.post(
+            'quote/edit/1',
+            data=data
+        )
+        self.assertCountEqual(new_response.data, response.data)
