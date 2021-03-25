@@ -51,6 +51,8 @@ def edit(quote_id):
     quote = Quote.get(quote_id)
     if request.method == "POST":
         quote.handle_submit()
+        if quote.error:
+            flash(quote.error)
 
     return render_template(
         'quote/edit.html',

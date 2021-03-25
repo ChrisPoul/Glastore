@@ -16,6 +16,7 @@ class Quote(db.Model):
         'SoldProduct', backref='quote', lazy=True,
         cascade='all, delete-orphan'
     )
+    error = None
 
     def __repr__(self):
         return self.__dict__
@@ -34,6 +35,7 @@ class Quote(db.Model):
     @property
     def products(self):
         products = [sold_product.product for sold_product in self.sold_products]
+        products = set(products)
         return products
 
     @property
@@ -42,12 +44,13 @@ class Quote(db.Model):
         return total
 
     def add(self):
-        error = add_to_db(self)
-        return error
+        self.error = add_to_db(self)
+        return self.error
 
     def update(self):
-        error = commit_to_db()
-        return error
+        if not self.error:
+            self.error = commit_to_db()
+        return self.error
 
     def delete(self):
         db.session.delete(self)
@@ -97,12 +100,14 @@ class Quote(db.Model):
 
     def update_products(self):
         for sold_product in self.sold_products:
-            # sold_product.update_cantidades()
             sold_product.edit_on_submit()
 
     def handle_submit(self):
         try:
             product = Product.get(request.form['name'])
+            if not product:
+                product = self.new_product
+                product.add()
         except KeyError:
             product = None
         if product:
@@ -135,6 +140,7 @@ class SoldProduct(db.Model):
     @property
     def unique_keys(self):
         unique_value_keys = dict(
+            name=f"name{self.id}",
             material=f"material{self.id}",
             cristal=f"cristal{self.id}",
             medidas=f"medidas{self.id}",
@@ -151,6 +157,10 @@ class SoldProduct(db.Model):
     def edit_product_on_submit(self):
         product = self.product
         try:
+            product.name = request.form[self.unique_keys["name"]]
+        except KeyError:
+            pass
+        try:
             product.material = request.form[self.unique_keys["material"]]
         except KeyError:
             pass
@@ -162,6 +172,7 @@ class SoldProduct(db.Model):
             product.medidas = request.form[self.unique_keys["medidas"]]
         except KeyError:
             pass
+        self.quote.error = product.update()
 
     def edit_cantidad_on_submit(self):
         try:

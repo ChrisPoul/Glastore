@@ -38,7 +38,8 @@ class MyTest(TestCase):
             name="Test Product",
             material="Test Material",
             cristal="Test Cristal",
-            medidas="1x1"
+            medidas="1x1",
+            unit_price=10
         )
         self.product.add()
         self.quote = Quote.new(self.customer.id)
