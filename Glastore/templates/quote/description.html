@@ -3,14 +3,15 @@
     {{ product_keys[key][0] }}
     {% if sold_product %}
     {% if not done %}
-    <input name="{{ sold_product.unique_keys[key] }}"
-        id="{{ sold_product.unique_keys[key] }}" placeholder="{{ product_keys[key][1] }}"
-        value="{{ sold_product.product[key] }}">
+    <input name="{{ sold_product.unique_keys[key] }}" id="{{ sold_product.unique_keys[key] }}"
+        placeholder="{{ product_keys[key][1] }}" value="{{ sold_product.product[key] }}" {% if key !='medidas'
+        %}list="autocomplete-{{ key }}s" {% endif %}>
     {% else %}
     {{ sold_product.product[key] }}
     {% endif %}
     {% else %}
-    <input name="{{ key }}" id="{{ key }}" placeholder="{{ product_keys[key][1] }}" value="{{ quote.new_product[key] }}">
+    <input name="{{ key }}" id="{{ key }}" placeholder="{{ product_keys[key][1] }}" value="{{ quote.new_product[key] }}"
+        {% if key !='medidas' %}list="autocomplete-{{ key }}s" {% endif %}>
     {% endif %}
     {% endfor %}
     . Incluye herrajes, selladores, y todo lo necesario para su correcta instalación.

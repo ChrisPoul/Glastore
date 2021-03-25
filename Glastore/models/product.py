@@ -22,7 +22,9 @@ class Product(db.Model):
         return self.__dict__
 
     def add(self):
-        error = self.validate_price()
+        error = self.validate_name()
+        if not error:
+            error = self.validate_price()
         if not error:
             error = add_to_db(self)
         return error
@@ -34,10 +36,18 @@ class Product(db.Model):
             self.cristal = form["cristal"]
             self.medidas = form["medidas"]
             self.unit_price = form["unit_price"]
-        error = self.validate_price()
+        error = self.validate_name()
+        if not error:
+            error = self.validate_price()
         if not error:
             error = commit_to_db()
 
+        return error
+
+    def validate_name(self):
+        error = None
+        if self.name == "":
+            error = "El nombre no puede ser dejado en blanco"
         return error
 
     def validate_price(self):

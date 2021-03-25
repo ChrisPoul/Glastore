@@ -1,3 +1,21 @@
+{% if not done %}
+<datalist id="autocomplete-names">
+    {% for name in autocomplete["names"] %}
+    <option>{{ name }}</option>
+    {% endfor %}
+</datalist>
+<datalist id="autocomplete-materials">
+    {% for materials in autocomplete["materials"] %}
+    <option>{{ materials }}</option>
+    {% endfor %}
+</datalist>
+<datalist id="autocomplete-cristals">
+    {% for cristals in autocomplete["cristals"] %}
+    <option>{{ cristals }}</option>
+    {% endfor %}
+</datalist>
+{% endif %}
+
 <table>
     {% for head in product_heads %}
     <th>

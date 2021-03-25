@@ -82,8 +82,12 @@ class Quote(db.Model):
             "medidas"
         ]
         form = get_form(product_keys)
+        if form['name'] in set(get_autocomplete_data()["names"]):
+            name = ""
+        else:
+            name = form["name"]
         new_product = Product(
-            name=form['name'],
+            name=name,
             material=form['material'],
             cristal=form['cristal'],
             medidas=form['medidas']
@@ -107,7 +111,8 @@ class Quote(db.Model):
             product = Product.get(request.form['name'])
             if not product:
                 product = self.new_product
-                product.add()
+                if product.name != "":
+                    product.add()
         except KeyError:
             product = None
         if product:
@@ -156,6 +161,7 @@ class SoldProduct(db.Model):
 
     def edit_product_on_submit(self):
         product = self.product
+        previous_name = self.product.name
         try:
             product.name = request.form[self.unique_keys["name"]]
         except KeyError:
@@ -172,7 +178,10 @@ class SoldProduct(db.Model):
             product.medidas = request.form[self.unique_keys["medidas"]]
         except KeyError:
             pass
-        self.quote.error = product.update()
+        error = product.update()
+        if error:
+            product.name = previous_name
+            self.quote.error = error
 
     def edit_cantidad_on_submit(self):
         try:
@@ -183,3 +192,19 @@ class SoldProduct(db.Model):
     def update_total(self):
         cantidad = float(self.cantidad)
         self.total = cantidad * self.product.unit_price
+
+
+def get_autocomplete_data():
+    autocomplete = {
+        "names": [],
+        "materials": [],
+        "cristals": []
+    }
+    for product in Product.get_all():
+        if product.name not in set(autocomplete["names"]):
+            autocomplete["names"].append(product.name)
+        if product.material not in set(autocomplete["materials"]):
+            autocomplete["materials"].append(product.material)
+        if product.cristal not in set(autocomplete["cristals"]):
+            autocomplete["cristals"].append(product.cristal)
+    return autocomplete

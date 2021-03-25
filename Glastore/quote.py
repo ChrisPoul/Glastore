@@ -3,7 +3,7 @@ from flask import (
     redirect, url_for, flash
 )
 from Glastore.models import format_date
-from Glastore.models.quote import Quote
+from Glastore.models.quote import Quote, get_autocomplete_data
 from Glastore.models.customer import Customer
 
 bp = Blueprint("quote", __name__, url_prefix="/quote")
@@ -29,7 +29,7 @@ product_keys = {
 
 @bp.route('/add', methods=('GET', 'POST'))
 def add():
-    autocomplete_data = ["Pene", "Vagina"]
+    autocomplete = [customer.name for customer in Customer.get_all()]
     if request.method == "POST":
         search_term = request.form["search_term"]
         customer = Customer.get(search_term)
@@ -42,13 +42,14 @@ def add():
 
     return render_template(
         'quote/add.html',
-        autocomplete_data=autocomplete_data
+        autocomplete=autocomplete
     )
 
 
 @bp.route("/edit/<int:quote_id>", methods=('GET', 'POST'))
 def edit(quote_id):
     quote = Quote.get(quote_id)
+    autocomplete = get_autocomplete_data()
     if request.method == "POST":
         quote.handle_submit()
         if quote.error:
@@ -60,7 +61,8 @@ def edit(quote_id):
         customer_heads=customer_heads,
         product_heads=product_heads,
         product_keys=product_keys,
-        format_date=format_date
+        format_date=format_date,
+        autocomplete=autocomplete
     )
 
 

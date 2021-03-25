@@ -7,8 +7,8 @@
 {% endblock %}
 
 {% block content %}
-<datalist id="autocomplete-data">
-    {% for name in autocomplete_data %}
+<datalist id="autocomplete">
+    {% for name in autocomplete %}
     <option>{{ name }}</option>
     {% endfor %}
 </datalist>
@@ -18,7 +18,7 @@
         <tr>
             <td>
                 <input name="search_term" id="search_term"
-                    placeholder="Escribe el nombre o el email del cliente que buscas..." list="autocomplete-data">
+                    placeholder="Escribe el nombre o el email del cliente que buscas..." list="autocomplete">
             </td>
             <td>
                 <input type="submit" value="Aceptar">
