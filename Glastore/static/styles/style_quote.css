@@ -44,3 +44,11 @@ div.bottom {
     display: flex;
     margin: 0;
 }
+td.cantidad {
+    padding: 1px;
+    width: 3em;
+}
+.cantidad input {
+    width: 2em;
+    text-align: center;
+}

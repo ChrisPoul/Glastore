@@ -2,7 +2,8 @@ from flask import (
     Blueprint, render_template, request, redirect,
     url_for, flash
 )
-from Glastore.models import Product, get_form
+from Glastore.models import get_form
+from Glastore.models.product import Product
 
 bp = Blueprint('product', __name__, url_prefix='/product')
 

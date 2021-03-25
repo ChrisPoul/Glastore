@@ -1,5 +1,6 @@
 from .setup import MyTest
-from Glastore.models import Product, db, repeated_value_msg
+from Glastore.models import db, repeated_value_msg
+from Glastore.models.product import Product
 
 
 class ProductsView(MyTest):
@@ -11,7 +12,6 @@ class ProductsView(MyTest):
         self.assertEqual(response.status_code, 200)
 
     def test_products(self):
-        Product.new("Test")
         Product.new("Test 2")
         response = self.client.get(
             '/product/products'
@@ -24,33 +24,27 @@ class AddProduct(MyTest):
 
     def test_add(self):
         product = Product(
-            name="Test"
+            name="Test 2"
         )
         error = product.add()
         assert product in db.session
         assert error is None
 
     def test_repeated_name(self):
-        Product.new("Test")
-        product2, error = Product.new("Test")
-        assert product2 not in db.session
-        assert error == repeated_value_msg
-
-    def test_empty_values(self):
         product = Product(
-            name="Test"
+            name="Test2"
         )
         product.add()
         product2 = Product(
             name="Test2"
         )
-        product2.add()
-        assert product in db.session
-        assert product2 in db.session
+        error = product2.add()
+        assert product2 not in db.session
+        assert error == repeated_value_msg
 
     def test_price(self):
         product = Product(
-            name="Test",
+            name="Test 2",
             unit_price=10
         )
         error = product.add()
@@ -68,7 +62,7 @@ class AddProductView(MyTest):
 
     def test_add(self):
         data = dict(
-            name="Test"
+            name="Test2"
         )
         response = self.client.post(
             '/product/add',
@@ -80,31 +74,27 @@ class AddProductView(MyTest):
 class UpdateProduct(MyTest):
 
     def test_update(self):
-        product = Product.new("Test")
-        product.name = "New Test"
-        product.update()
-        assert Product.get(1).name == "New Test"
+        self.product.name = "New Test"
+        self.product.update()
+        assert Product.get(1) == self.product
 
     def test_repeated_name(self):
-        product = Product.new("Test")
-        Product.new("Test2")
-        product.name = "Test2"
+        product = Product.new("Test2")
+        product.name = "Test Product"
         error = product.update()
-        assert error == repeated_value_msg
-        assert product.name == "Test"
+        self.assertEqual(error, repeated_value_msg)
+        assert product.name == "Test2"
 
 
 class UpdateProductView(MyTest):
 
     def test_view(self):
-        Product.new("Test")
         response = self.client.get(
             '/product/update/1'
         )
         self.assertIn(b'Test', response.data)
 
     def test_update(self):
-        product = Product.new("Test")
         data = dict(
             name="Changed Name"
         )
@@ -113,91 +103,45 @@ class UpdateProductView(MyTest):
             data=data
         )
         self.assertRedirects(response, '/product/products')
-        assert product.name == "Changed Name"
+        assert self.product.name == "Changed Name"
 
 
-# class EditProductInQuote(MyTest):
+class DeleteProduct(MyTest):
 
-#     def test_edit_in_quote(self):
-#         product = Product(
-#             name="Name",
-#             material="Material"
-#         )
-#         product.add()
-#         form = {
-#             "1material": "New Material"
-#         }
-#         product.edit_in_quote(form)
-#         self.assertEqual(product.material, "New Material")
+    def test_delete(self):
+        self.product.delete()
+        assert self.product not in db.session
 
-#     def test_with_empty_value(self):
-#         product = Product(
-#             name="Name",
-#             cristal="Cristal"
-#         )
-#         product.add()
-#         form = {
-#             "1cristal": ""
-#         }
-#         product.edit_in_quote(form)
-#         self.assertEqual(product.cristal, "")
-
-#     def test_no_id_in_key(self):
-#         product = Product(
-#             name="Name",
-#             cristal="Cristal"
-#         )
-#         product.add()
-#         form = {
-#             "cristal": ""
-#         }
-#         product.edit_in_quote(form)
-#         self.assertEqual(product.cristal, "Cristal")
+    def test_view(self):
+        response = self.client.post(
+            '/product/delete/1'
+        )
+        self.assertRedirects(response, '/product/products')
+        assert self.product not in db.session
 
 
-# class DeleteProduct(MyTest):
+class GetProduct(MyTest):
 
-#     def test_delete(self):
-#         product = Product.new("Test")
-#         product.delete()
-#         assert product not in db.session
+    def test_get(self):
+        assert Product.get(1) == self.product
 
-#     def test_view(self):
-#         product = Product.new("Test")
-#         response = self.client.post(
-#             '/product/delete/1'
-#         )
-#         self.assertRedirects(response, '/product/products')
-#         assert product not in db.session
+    def test_with_name(self):
+        assert Product.get("Test Product") == self.product
 
 
-# class GetProduct(MyTest):
+class GetProducts(MyTest):
 
-#     def test_get(self):
-#         product = Product.new("Test")
-#         assert Product.get(1) == product
+    def test_get_all(self):
+        product2 = Product.new("Test2")
+        assert Product.get_all() == [self.product, product2]
 
-#     def test_with_name(self):
-#         product = Product.new("Test")
-#         assert Product.get("Test") == product
+    def test_with_cristal(self):
+        self.product.cristal = "Test cristal"
+        product2 = Product.new("Test2")
+        product2.cristal = "Test cristal"
+        assert Product.get_all("Test cristal") == [self.product, product2]
 
-
-# class GetProducts(MyTest):
-
-#     def test_get_all(self):
-#         product = Product.new("Test")
-#         product2 = Product.new("Test2")
-#         assert Product.get_all() == [product, product2]
-
-#     def test_with_cristal(self):
-#         product = Product.new("Test")
-#         product.cristal = "Test cristal"
-#         product2 = Product.new("Test2")
-#         product2.cristal = "Test cristal"
-#         assert Product.get_all("Test cristal") == [product, product2]
-
-#     def test_with_material(self):
-#         product = Product.new("Test")
-#         product.material = "Test material"
-#         Product.new("Test2")
-#         assert Product.get_all("Test material") == [product]
+    def test_with_material(self):
+        self.product.material = "Test material"
+        Product.new("Test2")
+        assert Product.get_all("Test material") == [self.product]

@@ -1,8 +1,9 @@
 from .setup import MyTest
 from Glastore.models import (
-    add_to_db, Customer, db, commit_to_db,
+    add_to_db, db, commit_to_db,
     repeated_value_msg, get_form
 )
+from Glastore.models.customer import Customer
 from Glastore.customer import customer_heads
 
 
@@ -10,7 +11,7 @@ class CommitToDb(MyTest):
 
     def test_commit_to_db(self):
         customer = Customer(
-            name="Test",
+            name="test",
             email="test@email.com",
             address="Fake address Apt. 12"
         )
@@ -21,13 +22,13 @@ class CommitToDb(MyTest):
 
     def test_repeated_value(self):
         customer = Customer(
-            name="Test",
+            name="test",
             email="test@email.com",
             address="Fake address"
         )
         db.session.add(customer)
         customer2 = Customer(
-            name="Test",
+            name="test",
             email="test@email.com",
             address="Fake address"
         )
@@ -42,7 +43,7 @@ class AddToDb(MyTest):
 
     def test_add_to_db(self):
         customer = Customer(
-            name="Test",
+            name="test",
             email="test@email.com",
             address="Fake address Apt. 12"
         )
@@ -52,13 +53,13 @@ class AddToDb(MyTest):
 
     def test_repeated_value(self):
         customer = Customer(
-            name="Test",
+            name="test",
             email="test@email.com",
             address="Fake address Apt. 12"
         )
         add_to_db(customer)
         customer2 = Customer(
-            name="Test",
+            name="test",
             email="test@email.com",
             address="Fake address Apt. 12"
         )
@@ -72,10 +73,9 @@ class GetForm(MyTest):
 
     def test_get_form(self):
         data = {"name": "Test"}
-        with self.client:
-            with self.app.test_request_context(
-                    '/customer/update/1', data=data):
-                form = get_form(customer_heads)
+        url = '/customer/update/1'
+        with self.request_context(url, data):
+            form = get_form(customer_heads)
 
         self.assertEqual(form['name'], "Test")
         self.assertEqual(form['email'], "")

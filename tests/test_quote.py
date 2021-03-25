@@ -1,8 +1,6 @@
 from .setup import MyTest
-from .test_customer import make_test_customer
-from Glastore.models import (
-    db, Quote, Customer, Product, format_date
-)
+from Glastore.models import db, format_date
+from Glastore.models.quote import Quote, SoldProduct
 from datetime import datetime
 
 
@@ -57,82 +55,63 @@ class FolioAttribute(MyTest):
 
     def test_folio(self):
         quote = Quote.new()
-        self.assertEqual(quote.id, 1)
-        self.assertEqual(quote.folio, "G00001")
+        self.assertEqual(quote.id, 2)
+        self.assertEqual(quote.folio, "G00002")
 
 
 class GetQuote(MyTest):
 
     def test_get(self):
         quote = Quote.new()
-        quote_search = Quote.get(1)
+        quote_search = Quote.get(2)
         self.assertEqual(quote_search, quote)
 
     def test_get_all(self):
         quote = Quote.new(customer_id=1)
         quote2 = Quote.new(customer_id=2)
-        self.assertEqual(Quote.get_all(), [quote, quote2])
+        self.assertEqual(Quote.get_all(), [self.quote, quote, quote2])
 
     def test_get_all_customer_quotes(self):
-        quote = Quote.new(customer_id=1)
         quote2 = Quote.new(customer_id=1)
         Quote.new(customer_id=2)
-        self.assertEqual(Quote.get_all(customer_id=1), [quote, quote2])
+        self.assertEqual(Quote.get_all(customer_id=1), [self.quote, quote2])
 
 
 class AddProduct(MyTest):
 
     def test_add_product(self):
-        customer = make_test_customer()
-        product = Product(
-            name="Test Product"
-        )
-        product.add()
-        quote = Quote.new(customer.id)
-        self.assertEqual(quote.sold_products, [])
-        quote.add_product(product)
-        self.assertEqual(quote.sold_products[0].product, product)
+        self.assertEqual(self.quote.sold_products, [])
+        self.quote.add_product(self.product)
+        self.assertEqual(self.quote.sold_products[0].product, self.product)
 
 
 class EditProductView(MyTest):
 
     def test_view(self):
-        customer = make_test_customer()
-        Quote.new(customer.id)
         response = self.client.get(
             'quote/edit/1'
         )
         self.assertEqual(response.status_code, 200)
 
     def test_quote_info(self):
-        customer = make_test_customer()
-        quote = Quote.new(customer.id)
         response = self.client.get(
             'quote/edit/1'
         )
-        formated_date = format_date(quote.date)
+        formated_date = format_date(self.quote.date)
         self.assertIn(b"<img", response.data)
-        self.assertIn(bytes(quote.folio, "utf-8"), response.data)
+        self.assertIn(bytes(self.quote.folio, "utf-8"), response.data)
         self.assertIn(bytes(formated_date, "utf-8"), response.data)
 
     def test_customer_info(self):
-        customer = Customer(
-            name="Test Customer",
-            email="test@email.com",
-            address="Fake address"
-        )
-        customer.add()
-        Quote.new(customer.id)
+        self.customer.name = "Test Customer"
         response = self.client.get(
             'quote/edit/1'
         )
         self.assertIn(b"Test Customer", response.data)
-        self.assertIn(b"test@email.com", response.data)
+        self.assertIn(b"Test@email.com", response.data)
         self.assertIn(b"Fake address", response.data)
 
     def test_empty_product_inputs(self):
-        customer = make_test_customer()
-        Quote.new(customer.id)
         response = self.client.get(
             'quote/edit/1'
         )
@@ -141,9 +120,7 @@ class EditProductView(MyTest):
         self.assertIn(b'<input name="cristal"', response.data)
         self.assertIn(b'<input name="medidas"', response.data)
 
-    def test_empty_product_values(self):
-        customer = make_test_customer()
-        Quote.new(customer.id)
+    def test_empty_values(self):
         response = self.client.get(
             'quote/edit/1'
         )
@@ -151,13 +128,7 @@ class EditProductView(MyTest):
         assert b'value="None">' not in response.data
 
     def test_add_product_function(self):
-        customer = make_test_customer()
-        product = Product(
-            name="Test Product"
-        )
-        product.add()
-        quote = Quote.new(customer.id)
-        quote.add_product(product)
+        self.quote.add_product(self.product)
         response = self.client.get(
             'quote/edit/1'
         )
@@ -167,15 +138,6 @@ class EditProductView(MyTest):
         self.assertIn(b'<input name="medidas1"', response.data)
 
     def test_add_product_from_view(self):
-        customer = make_test_customer()
-        Quote.new(customer.id)
-        product = Product(
-            name="Test Product",
-            material="Test Material",
-            cristal="Test Cristal",
-            medidas="1x1"
-        )
-        product.add()
         data = dict(
             name="Test Product"
         )
@@ -190,15 +152,6 @@ class EditProductView(MyTest):
         self.assertIn(b'<input name="name"', response.data)
 
     def test_add_product_twice(self):
-        customer = make_test_customer()
-        Quote.new(customer.id)
-        product = Product(
-            name="Test Product",
-            material="Test Material",
-            cristal="Test Cristal",
-            medidas="1x1"
-        )
-        product.add()
         data = dict(
             name="Test Product"
         )
@@ -213,16 +166,7 @@ class EditProductView(MyTest):
         self.assertCountEqual(new_response.data, response.data)
 
     def test_update_products(self):
-        customer = make_test_customer()
-        quote = Quote.new(customer.id)
-        product = Product(
-            name="Test Product",
-            material="Test Material",
-            cristal="Test Cristal",
-            medidas="1x1"
-        )
-        product.add()
-        quote.add_product(product)
+        self.quote.add_product(self.product)
         data = dict(
             material1="New Material"
         )
@@ -231,3 +175,45 @@ class EditProductView(MyTest):
             data=data
         )
         self.assertIn(b"New Material", response.data)
+
+
+class TestSoldProduct(MyTest):
+
+    def test_add(self):
+        sold_product = SoldProduct(
+            quote_id=1,
+            product_id=1
+        )
+        error = sold_product.add()
+        self.assertIn(sold_product, db.session)
+        self.assertEqual(error, None)
+
+    def test_update(self):
+        sold_product = SoldProduct(
+            quote_id=1,
+            product_id=1
+        )
+        sold_product.add()
+        sold_product.total = 1
+        error = sold_product.update()
+        self.assertEqual(error, None)
+        self.assertEqual(sold_product.total, 1.0)
+
+    def test_get(self):
+        sold_product = SoldProduct(
+            quote_id=1,
+            product_id=1
+        )
+        sold_product.add()
+        self.assertEqual(SoldProduct.get(1), sold_product)
+
+    def test_edit_product_on_submit(self):
+        self.quote.add_product(self.product)
+        sold_product = SoldProduct.get(1)
+        data = dict(
+            material1="New Material"
+        )
+        url = 'quote/edit/1'
+        with self.request_context(url, data):
+            sold_product.edit_product_on_submit()
+        self.assertEqual(self.product.material, "New Material")

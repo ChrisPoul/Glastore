@@ -15,6 +15,11 @@
         <td>
             {{ sold_product.product[head] }}
         </td>
+        {% elif head == "cantidad" %}
+        <td class="cantidad">
+            <input name="{{ sold_product.unique_keys[head] }}" id="{{ sold_product.unique_keys[head] }}"
+                value="{{ sold_product.cantidad }}">
+        </td>
         {% else %}
         <td>
             {{ sold_product[head] }}

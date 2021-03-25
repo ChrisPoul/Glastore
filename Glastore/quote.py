@@ -2,10 +2,9 @@ from flask import (
     Blueprint, render_template, request,
     redirect, url_for, flash
 )
-from Glastore.models import (
-    Quote, Customer, Product, format_date,
-    get_form
-)
+from Glastore.models import format_date
+from Glastore.models.quote import Quote
+from Glastore.models.customer import Customer
 
 bp = Blueprint("quote", __name__, url_prefix="/quote")
 customer_heads = {
@@ -50,21 +49,8 @@ def add():
 @bp.route("/edit/<int:quote_id>", methods=('GET', 'POST'))
 def edit(quote_id):
     quote = Quote.get(quote_id)
-    form = get_form(product_keys)
-    new_product = Product(
-        name=form['name'],
-        material=form['material'],
-        cristal=form['cristal'],
-        medidas=form['medidas']
-    )
     if request.method == "POST":
-        try:
-            product = Product.get(request.form['name'])
-        except KeyError:
-            product = None
-        if product:
-            quote.add_product(product)
-        quote.update_products()
+        quote.handle_submit()
 
     return render_template(
         'quote/edit.html',
@@ -72,6 +58,5 @@ def edit(quote_id):
         customer_heads=customer_heads,
         product_heads=product_heads,
         product_keys=product_keys,
-        format_date=format_date,
-        new_product=new_product
+        format_date=format_date
     )
