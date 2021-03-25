@@ -15,7 +15,7 @@
         <td>
             {{ sold_product.product[head] }}
         </td>
-        {% elif head == "cantidad" %}
+        {% elif head == "cantidad" and not done %}
         <td class="cantidad">
             <input name="{{ sold_product.unique_keys[head] }}" id="{{ sold_product.unique_keys[head] }}"
                 value="{{ sold_product.cantidad }}">
@@ -28,6 +28,7 @@
         {% endfor %}
     </tr>
     {% endfor %}
+    {% if not done %}
     <tr>
         {% for head in product_heads %}
         {% if head == "description" %}
@@ -39,4 +40,5 @@
         {% endif %}
         {% endfor %}
     </tr>
+    {% endif %}
 </table>

@@ -1,0 +1,15 @@
+{% extends "base_quote.html" %}
+
+{% block content %}
+<div>
+    {% include "quote/quote_info.html" %}
+</div>
+
+<div>
+    {% include "quote/customer.html" %}
+</div>
+
+<div style="margin-bottom: 2em;">
+    {% include "quote/products.html" %}
+</div>
+{% endblock %}

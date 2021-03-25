@@ -2,19 +2,16 @@
     {% for key in product_keys %}
     {{ product_keys[key][0] }}
     {% if sold_product %}
+    {% if not done %}
     <input name="{{ sold_product.unique_keys[key] }}"
         id="{{ sold_product.unique_keys[key] }}" placeholder="{{ product_keys[key][1] }}"
         value="{{ sold_product.product[key] }}">
+    {% else %}
+    {{ sold_product.product[key] }}
+    {% endif %}
     {% else %}
     <input name="{{ key }}" id="{{ key }}" placeholder="{{ product_keys[key][1] }}" value="{{ quote.new_product[key] }}">
     {% endif %}
     {% endfor %}
     . Incluye herrajes, selladores, y todo lo necesario para su correcta instalación.
 </p>
-{% if not sold_product %}
-<div style="display: flex;">
-    <a href="{{ url_for('product.add') }}">
-        <input type="button" value="Añadir">
-    </a>
-</div>
-{% endif %}

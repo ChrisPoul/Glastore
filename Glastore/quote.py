@@ -62,3 +62,18 @@ def edit(quote_id):
         product_keys=product_keys,
         format_date=format_date
     )
+
+
+@bp.route("/done/<int:quote_id>")
+def done(quote_id):
+    quote = Quote.get(quote_id)
+
+    return render_template(
+        'quote/done.html',
+        quote=quote,
+        customer_heads=customer_heads,
+        product_heads=product_heads,
+        product_keys=product_keys,
+        format_date=format_date,
+        done=True
+    )

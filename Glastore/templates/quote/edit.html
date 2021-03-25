@@ -16,5 +16,8 @@
             <input type="submit" value="Aceptar">
         </div>
     </form>
+    <a href="{{ url_for('quote.done', quote_id=quote.id) }}">
+        <input type="button" value="Done">
+    </a>
 </div>
 {% endblock %}
