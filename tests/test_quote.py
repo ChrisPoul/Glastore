@@ -118,14 +118,13 @@ class EditProductView(MyTest):
         self.assertIn(b'<input name="name"', response.data)
         self.assertIn(b'<input name="material"', response.data)
         self.assertIn(b'<input name="cristal"', response.data)
-        self.assertIn(b'<input name="medidas"', response.data)
 
     def test_empty_values(self):
         response = self.client.get(
             'quote/edit/1'
         )
-        self.assertIn(b'value="">', response.data)
-        assert b'value="None">' not in response.data
+        self.assertIn(b'value=""', response.data)
+        assert b'value="None"' not in response.data
 
     def test_add_product_function(self):
         self.quote.add_product(self.product)
@@ -148,7 +147,6 @@ class EditProductView(MyTest):
         self.assertIn(b"Test Product", response.data)
         self.assertIn(b"Test Material", response.data)
         self.assertIn(b"Test Cristal", response.data)
-        self.assertIn(b"1x1", response.data)
         self.assertIn(b'<input name="name"', response.data)
 
     def test_add_product_twice(self):
@@ -163,7 +161,7 @@ class EditProductView(MyTest):
             'quote/edit/1',
             data=data
         )
-        self.assertCountEqual(new_response.data, response.data)
+        self.assertNotEqual(new_response.data, response.data)
 
     def test_update_products(self):
         self.quote.add_product(self.product)

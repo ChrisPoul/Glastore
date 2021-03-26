@@ -52,3 +52,11 @@ td.cantidad {
     width: 2em;
     text-align: center;
 }
+td.unit_price {
+    padding: 1px;
+    width: 5em;
+}
+.unit_price input {
+    width: 4em;
+    text-align: center;
+}

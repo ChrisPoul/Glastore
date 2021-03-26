@@ -1,16 +1,16 @@
 {% if not done %}
 <datalist id="autocomplete-names">
-    {% for name in autocomplete["names"] %}
+    {% for name in quote.autocomplete_data["names"] %}
     <option>{{ name }}</option>
     {% endfor %}
 </datalist>
 <datalist id="autocomplete-materials">
-    {% for materials in autocomplete["materials"] %}
+    {% for materials in quote.autocomplete_data["materials"] %}
     <option>{{ materials }}</option>
     {% endfor %}
 </datalist>
 <datalist id="autocomplete-cristals">
-    {% for cristals in autocomplete["cristals"] %}
+    {% for cristals in quote.autocomplete_data["cristals"] %}
     <option>{{ cristals }}</option>
     {% endfor %}
 </datalist>
@@ -29,14 +29,19 @@
         <td class="description">
             {% include "quote/description.html" %}
         </td>
-        {% elif head == "unit_price" %}
-        <td>
-            {{ sold_product.product[head] }}
+        {% elif head == "unit_price" and not done %}
+        <td class="unit_price">
+            <input name="{{ sold_product.unique_keys[head] }}" id="{{ sold_product.unique_keys[head] }}"
+                value="{{ sold_product.product[head] }}">
         </td>
         {% elif head == "cantidad" and not done %}
         <td class="cantidad">
             <input name="{{ sold_product.unique_keys[head] }}" id="{{ sold_product.unique_keys[head] }}"
                 value="{{ sold_product.cantidad }}">
+        </td>
+        {% elif head == "total" %}
+        <td>
+            {{ format_price(sold_product[head]) }}
         </td>
         {% else %}
         <td>

@@ -9,9 +9,9 @@ repeated_value_msg = "Introdujo un valor que ya está en uso"
 
 
 def init_db():
-    from .quote import SoldProduct
-    SoldProduct.__table__.drop(db.engine)
-    # db.drop_all()
+    # from .quote import SoldProduct
+    # SoldProduct.__table__.drop(db.engine)
+    db.drop_all()
     db.create_all()
 
 
@@ -52,18 +52,27 @@ def get_form(heads):
 
 
 days = {
-    "0": "Lunes", "1": "Martes",
-    "2": "Miercoles", "3": "Jueves",
-    "4": "Viernes", "5": "Sábado",
+    "0": "Lunes",
+    "1": "Martes",
+    "2": "Miércoles",
+    "3": "Jueves",
+    "4": "Viernes",
+    "5": "Sábado",
     "6": "Domingo"
 }
 months = {
-    "01": "Enero", "02": "Febrero",
-    "03": "Marzo", "04": "Abril",
-    "05": "Mayo", "06": "Junio",
-    "07": "Julio", "08": "Agosto",
-    "09": "Septiembre", "10": "Octubre",
-    "11": "Noviembre", "12": "Diciembre"
+    "01": "Enero",
+    "02": "Febrero",
+    "03": "Marzo",
+    "04": "Abril",
+    "05": "Mayo",
+    "06": "Junio",
+    "07": "Julio",
+    "08": "Agosto",
+    "09": "Septiembre",
+    "10": "Octubre",
+    "11": "Noviembre",
+    "12": "Diciembre"
 }
 
 
@@ -88,3 +97,33 @@ def obj_as_dict(obj_tuple):
         obj_dict[key] = obj_tuple[key]
 
     return obj_dict
+
+
+def format_price(price):
+    price = float(price)
+    price = round(price, 2)
+    price = str(price)
+    price_int, price_dec = price.split(".")
+    price_int = add_comma_separators_to_num(price_int)
+    price_dec = format_decimal_of_price(price_dec)
+    formated_price = f"${price_int}.{price_dec}"
+
+    return formated_price
+
+
+def add_comma_separators_to_num(num):
+    num = str(num)
+    formated_num = ""
+    for i, digit in enumerate(num[::-1], start=1):
+        formated_num += digit
+        if i % 3 == 0:
+            formated_num += ","
+    formated_num = formated_num[::-1]
+
+    return formated_num
+
+
+def format_decimal_of_price(decimal):
+    if len(decimal) == 1:
+        decimal += "0"
+    return decimal

@@ -1,5 +1,5 @@
 from .setup import MyTest
-from Glastore.models import db, repeated_value_msg
+from Glastore.models import db
 from Glastore.models.product import Product
 
 
@@ -39,8 +39,8 @@ class AddProduct(MyTest):
             name="Test2"
         )
         error = product2.add()
-        assert product2 not in db.session
-        assert error == repeated_value_msg
+        assert product2 in db.session
+        self.assertEqual(error, None)
 
     def test_price(self):
         product = Product(
@@ -62,7 +62,9 @@ class AddProductView(MyTest):
 
     def test_add(self):
         data = dict(
-            name="Test2"
+            name="Test2",
+            material="test material",
+            cristal="test cristal"
         )
         response = self.client.post(
             '/product/add',
@@ -82,8 +84,8 @@ class UpdateProduct(MyTest):
         product = Product.new("Test2")
         product.name = "Test Product"
         error = product.update()
-        self.assertEqual(error, repeated_value_msg)
-        assert product.name == "Test2"
+        self.assertEqual(error, None)
+        assert product.name == "Test Product"
 
 
 class UpdateProductView(MyTest):
@@ -96,7 +98,9 @@ class UpdateProductView(MyTest):
 
     def test_update(self):
         data = dict(
-            name="Changed Name"
+            name="Changed Name",
+            material="test material",
+            cristal="test cristal"
         )
         response = self.client.post(
             '/product/update/1',
