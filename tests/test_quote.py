@@ -1,6 +1,7 @@
 from .setup import MyTest
 from Glastore.models import db, format_date
 from Glastore.models.quote import Quote
+from Glastore.models.product import Product
 from datetime import datetime
 
 
@@ -77,15 +78,7 @@ class GetQuote(MyTest):
         self.assertEqual(Quote.get_all(customer_id=1), [self.quote, quote2])
 
 
-class AddProduct(MyTest):
-
-    def test_add_product(self):
-        self.assertEqual(self.quote.sold_products, [])
-        self.quote.add_product(self.product)
-        self.assertEqual(self.quote.sold_products[0].product, self.product)
-
-
-class EditProductView(MyTest):
+class EditQuoteView(MyTest):
 
     def test_view(self):
         response = self.client.get(
@@ -126,7 +119,68 @@ class EditProductView(MyTest):
         self.assertIn(b'value=""', response.data)
         assert b'value="None"' not in response.data
 
-    def test_add_product_function(self):
+
+class EditQuoteProducts(MyTest):
+
+    def test_add_product(self):
+        self.quote.add_product(self.product)
+        self.assertEqual(self.quote.products, [self.product])
+
+    def test_add_empty_product(self):
+        url = 'quote/edit/1'
+        data = dict(
+            name="A product",
+            material="",
+            cristal=""
+        )
+        with self.request_context(url, data):
+            self.quote.add_product_on_submit()
+        self.assertEqual(len(self.quote.products), 0)
+
+    def test_add_new_product(self):
+        url = 'quote/edit/1'
+        data = dict(
+            name="A product",
+            material="a material",
+            cristal="a material"
+        )
+        with self.request_context(url, data):
+            self.quote.add_product_on_submit()
+        self.assertEqual(len(self.quote.products), 1)
+
+    def test_add_product_twice(self):
+        self.quote.add_product(self.product)
+        url = 'quote/edit/1'
+        data = dict(
+            name="Test Product"
+        )
+        with self.request_context(url, data):
+            self.quote.add_product_on_submit()
+        duplicate_product = Product.get(2)
+        self.assertEqual(self.quote.products, [self.product, duplicate_product])
+        self.assertEqual(duplicate_product, self.product)
+
+    def test_update_sold_product(self):
+        self.quote.add_product(self.product)
+        url = 'quote/edit/1'
+        data = dict(
+            material1="New Material",
+            unit_price1=100,
+            cantidad1=10,
+            medidas1="2x2"
+        )
+        with self.request_context(url, data):
+            self.quote.update_sold_products()
+            sold_product = self.quote.sold_products[0]
+        self.assertEqual(self.product.material, "New Material")
+        self.assertEqual(self.product.unit_price, 100.0)
+        self.assertEqual(sold_product.cantidad, 10)
+        self.assertEqual(sold_product.medidas, "2x2")
+
+
+class EditQuoteProductsView(MyTest):
+
+    def test_add_product(self):
         self.quote.add_product(self.product)
         response = self.client.get(
             'quote/edit/1'
@@ -149,21 +203,7 @@ class EditProductView(MyTest):
         self.assertIn(b"Test Cristal", response.data)
         self.assertIn(b'<input name="name"', response.data)
 
-    def test_add_product_twice(self):
-        data = dict(
-            name="Test Product"
-        )
-        response = self.client.post(
-            'quote/edit/1',
-            data=data
-        )
-        new_response = self.client.post(
-            'quote/edit/1',
-            data=data
-        )
-        self.assertNotEqual(new_response.data, response.data)
-
-    def test_update_products(self):
+    def test_update_sold_product_from_view(self):
         self.quote.add_product(self.product)
         data = dict(
             material1="New Material"
@@ -172,4 +212,33 @@ class EditProductView(MyTest):
             'quote/edit/1',
             data=data
         )
+        self.assertIn(b"New Material", response.data)
+
+    def test_add_product_twice(self):
+        data = dict(
+            name="Test Product"
+        )
+        response = self.client.post(
+            'quote/edit/1',
+            data=data
+        )
+        self.assertEqual(len(Product.get_all()), 1)
+        new_response = self.client.post(
+            'quote/edit/1',
+            data=data
+        )
+        self.assertNotEqual(new_response.data, response.data)
+        self.assertEqual(len(Product.get_all()), 2)
+
+    def test_update_repeated_product(self):
+        self.quote.add_product(self.product)
+        data = dict(
+            name="Test Product",
+            material1="New Material"
+        )
+        response = self.client.post(
+            'quote/edit/1',
+            data=data
+        )
+        self.assertIn(b"Test Material", response.data)
         self.assertIn(b"New Material", response.data)

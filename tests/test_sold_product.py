@@ -33,6 +33,9 @@ class TestSoldProduct(MyTest):
         sold_product.add()
         self.assertEqual(SoldProduct.get(1), sold_product)
 
+
+class EditOnSumbit(MyTest):
+
     def test_edit_product_on_submit(self):
         self.quote.add_product(self.product)
         sold_product = SoldProduct.get(1)

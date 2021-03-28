@@ -75,7 +75,6 @@ class Quote(db.Model):
     @property
     def products(self):
         products = [sold_product.product for sold_product in self.sold_products]
-        products = set(products)
         return products
 
     @property
@@ -111,12 +110,43 @@ class Quote(db.Model):
                 autocomplete["cristals"].append(product.cristal)
         return autocomplete
 
+    def handle_submit(self):
+        self.add_product_on_submit()
+        self.update_sold_products()
+
+    def update_sold_products(self):
+        for sold_product in self.sold_products:
+            sold_product.edit_on_submit()
+
+    def add_product_on_submit(self):
+        try:
+            product = Product.get(request.form['name'])
+        except KeyError:
+            product = None
+        if product:
+            if product in set(self.products):
+                self.add_new_duplicate_product(product)
+            else:
+                self.add_product(product)
+        else:
+            self.add_product(self.new_product)
+
+    def add_new_duplicate_product(self, product):
+        new_product = Product(
+            name=product.name,
+            material=product.material,
+            cristal=product.cristal,
+            unit_price=product.unit_price
+        )
+        new_product.add()
+        self.add_product(new_product)
+
     def add_product(self, product):
+        error = product.add()
         sold_product = SoldProduct(
             quote_id=self.id,
             product_id=product.id
         )
-        error = product.add()
         if not error:
             sold_product.add()
         self.form = {
@@ -126,32 +156,6 @@ class Quote(db.Model):
             "medidas": "",
             "unit_price": 0
         }
-
-    def update_products(self):
-        for sold_product in self.sold_products:
-            sold_product.edit_on_submit()
-
-    def handle_submit(self):
-        try:
-            product = Product.get(request.form['name'])
-        except KeyError:
-            product = None
-        if product:
-            if product in set(self.products):
-                new_product = Product(
-                    name=product.name,
-                    material=product.material,
-                    cristal=product.cristal,
-                    unit_price=product.unit_price
-                )
-                new_product.add()
-                self.add_product(new_product)
-            else:
-                self.add_product(product)
-        else:
-            product = self.new_product
-            self.add_product(product)
-        self.update_products()
 
 
 class SoldProduct(db.Model):
