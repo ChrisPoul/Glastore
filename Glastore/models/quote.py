@@ -1,13 +1,22 @@
 from datetime import datetime
 from sqlalchemy import (
     Column, Integer, DateTime,
-    ForeignKey, Float, String
+    ForeignKey
 )
 from flask import request
 from Glastore.models import (
     db, add_to_db, commit_to_db, get_form
 )
 from Glastore.models.product import Product
+from Glastore.models.sold_product import SoldProduct
+
+empty_form = {
+    "name": "",
+    "material": "",
+    "cristal": "",
+    "medidas": "",
+    "unit_price": 0
+}
 
 
 class Quote(db.Model):
@@ -73,19 +82,21 @@ class Quote(db.Model):
         return folio
 
     @property
+    def total(self):
+        total = 0
+        for sold_product in self.sold_products:
+            total += sold_product.total
+        return total
+
+    @property
     def products(self):
         products = [sold_product.product for sold_product in self.sold_products]
         return products
 
     @property
-    def total(self):
-        total = 0
-        return total
-
-    @property
     def new_product(self):
         if not self.form:
-            self.form = get_form(self.product_keys)
+            self.form = self.get_form()
         new_product = Product(
             name=self.form['name'],
             material=self.form['material'],
@@ -93,6 +104,62 @@ class Quote(db.Model):
             unit_price=0
         )
         return new_product
+
+    def handle_submit(self):
+        self.add_product_on_submit()
+        self.update_sold_products_on_submit()
+
+    def add_product_on_submit(self):
+        product = self.get_product_on_submit()
+        if product:
+            self.add_existing_product(product)
+        else:
+            self.add_new_product_on_submit()
+
+    def add_existing_product(self, product):
+        if product in set(self.products):
+            self.add_new_duplicate_product(product)
+        else:
+            self.add_product(product)
+
+    def add_new_duplicate_product(self, product):
+        new_product = Product(
+            name=product.name,
+            material=product.material,
+            cristal=product.cristal,
+            unit_price=product.unit_price
+        )
+        new_product.add()
+        self.add_product(new_product)
+
+    def add_new_product_on_submit(self):
+        product = self.new_product
+        self.error = product.add()
+        if not self.error:
+            self.add_product(product)
+
+    def add_product(self, product):
+        sold_product = SoldProduct(
+            quote_id=self.id,
+            product_id=product.id
+        )
+        sold_product.add()
+        self.form = empty_form
+
+    def get_product_on_submit(self):
+        try:
+            product = Product.get(request.form['name'])
+        except KeyError:
+            product = None
+
+        return product
+
+    def get_form(self):
+        return get_form(self.product_keys)
+
+    def update_sold_products_on_submit(self):
+        for sold_product in self.sold_products:
+            sold_product.update_on_submit()
 
     @property
     def autocomplete_data(self):
@@ -109,133 +176,3 @@ class Quote(db.Model):
             if product.cristal not in set(autocomplete["cristals"]):
                 autocomplete["cristals"].append(product.cristal)
         return autocomplete
-
-    def handle_submit(self):
-        self.add_product_on_submit()
-        self.update_sold_products()
-
-    def update_sold_products(self):
-        for sold_product in self.sold_products:
-            sold_product.edit_on_submit()
-
-    def add_product_on_submit(self):
-        try:
-            product = Product.get(request.form['name'])
-        except KeyError:
-            product = None
-        if product:
-            if product in set(self.products):
-                self.add_new_duplicate_product(product)
-            else:
-                self.add_product(product)
-        else:
-            self.add_product(self.new_product)
-
-    def add_new_duplicate_product(self, product):
-        new_product = Product(
-            name=product.name,
-            material=product.material,
-            cristal=product.cristal,
-            unit_price=product.unit_price
-        )
-        new_product.add()
-        self.add_product(new_product)
-
-    def add_product(self, product):
-        error = product.add()
-        sold_product = SoldProduct(
-            quote_id=self.id,
-            product_id=product.id
-        )
-        if not error:
-            sold_product.add()
-        self.form = {
-            "name": "",
-            "material": "",
-            "cristal": "",
-            "medidas": "",
-            "unit_price": 0
-        }
-
-
-class SoldProduct(db.Model):
-    id = Column(Integer, primary_key=True)
-    quote_id = Column(Integer, ForeignKey('quote.id'), nullable=False)
-    product_id = Column(Integer, ForeignKey('product.id'), nullable=False)
-    medidas = Column(String(50), nullable=False, unique=False, default="")
-    cantidad = Column(Integer, nullable=False, default=0)
-    total = Column(Float, nullable=False, default=0)
-
-    def __repr__(self):
-        return self.__dict__
-
-    def add(self):
-        self.cantidad = 0
-        error = add_to_db(self)
-        return error
-
-    def update(self):
-        error = commit_to_db()
-        return error
-
-    def get(id):
-        return SoldProduct.query.get(id)
-
-    @property
-    def unique_keys(self):
-        unique_value_keys = dict(
-            name=f"name{self.id}",
-            material=f"material{self.id}",
-            cristal=f"cristal{self.id}",
-            medidas=f"medidas{self.id}",
-            cantidad=f"cantidad{self.id}",
-            unit_price=f"unit_price{self.id}"
-        )
-
-        return unique_value_keys
-
-    def edit_on_submit(self):
-        self.edit_medidas_on_submit()
-        self.edit_product_on_submit()
-        self.edit_cantidad_on_submit()
-        self.update_total()
-
-    def edit_medidas_on_submit(self):
-        try:
-            self.medidas = request.form[self.unique_keys["medidas"]]
-        except KeyError:
-            pass
-
-    def edit_product_on_submit(self):
-        product = self.product
-        previous_name = self.product.name
-        try:
-            product.name = request.form[self.unique_keys["name"]]
-        except KeyError:
-            pass
-        try:
-            product.material = request.form[self.unique_keys["material"]]
-        except KeyError:
-            pass
-        try:
-            product.cristal = request.form[self.unique_keys["cristal"]]
-        except KeyError:
-            pass
-        try:
-            product.unit_price = request.form[self.unique_keys["unit_price"]]
-        except KeyError:
-            pass
-        error = product.update()
-        if error:
-            product.name = previous_name
-            self.quote.error = error
-
-    def edit_cantidad_on_submit(self):
-        try:
-            self.cantidad = request.form[self.unique_keys["cantidad"]]
-        except KeyError:
-            pass
-
-    def update_total(self):
-        cantidad = float(self.cantidad)
-        self.total = cantidad * self.product.unit_price

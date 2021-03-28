@@ -31,8 +31,7 @@ product_keys = {
 def add():
     autocomplete = [customer.name for customer in Customer.get_all()]
     if request.method == "POST":
-        search_term = request.form["search_term"]
-        customer = Customer.get(search_term)
+        customer = Customer.get(request.form["search_term"])
         if customer:
             quote = Quote.new(customer.id)
             return redirect(

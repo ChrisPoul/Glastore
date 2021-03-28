@@ -34,9 +34,9 @@ class TestSoldProduct(MyTest):
         self.assertEqual(SoldProduct.get(1), sold_product)
 
 
-class EditOnSumbit(MyTest):
+class UpdateOnSumbit(MyTest):
 
-    def test_edit_product_on_submit(self):
+    def test_update_product_on_submit(self):
         self.quote.add_product(self.product)
         sold_product = SoldProduct.get(1)
         data = dict(
@@ -44,10 +44,10 @@ class EditOnSumbit(MyTest):
         )
         url = 'quote/edit/1'
         with self.request_context(url, data):
-            sold_product.edit_product_on_submit()
+            sold_product.update_product_on_submit()
         self.assertEqual(self.product.material, "New Material")
 
-    def test_edit_cantidad_on_submit(self):
+    def test_update_cantidad_on_submit(self):
         self.quote.add_product(self.product)
         sold_product = SoldProduct.get(1)
         data = dict(
@@ -55,7 +55,7 @@ class EditOnSumbit(MyTest):
         )
         url = 'quote/edit/1'
         with self.request_context(url, data):
-            sold_product.edit_cantidad_on_submit()
+            sold_product.update_cantidad_on_submit()
         self.assertEqual(sold_product.cantidad, str(1))
 
     def test_update_total(self):
@@ -68,7 +68,7 @@ class EditOnSumbit(MyTest):
         sold_product.update_total()
         self.assertEqual(sold_product.total, 10)
 
-    def edit_on_submit(self):
+    def test_update_on_submit(self):
         self.quote.add_product(self.product)
         sold_product = SoldProduct.get(1)
         data = dict(
@@ -77,7 +77,7 @@ class EditOnSumbit(MyTest):
         )
         url = 'quote/edit/1'
         with self.request_context(url, data):
-            sold_product.edit_on_submit()
+            sold_product.update_on_submit()
         self.assertEqual(self.product.material, "Nuevo Material")
         self.assertEqual(sold_product.cantidad, 1)
         self.assertEqual(sold_product.total, 10)
