@@ -2,7 +2,14 @@ from sqlalchemy import (
     Column, Integer, String,
     Float
 )
-from Glastore.models import db, add_to_db, commit_to_db
+from Glastore.models import db, add_to_db, commit_to_db, get_form
+
+product_heads = {
+    "name": "Nombre",
+    "material": "Material",
+    "cristal": "Cristal",
+    "unit_price": "Precio de Venta"
+}
 
 
 class Product(db.Model):
@@ -26,12 +33,7 @@ class Product(db.Model):
             error = add_to_db(self)
         return error
 
-    def update(self, form=None):
-        if form:
-            self.name = form["name"]
-            self.material = form["material"]
-            self.cristal = form["cristal"]
-            self.unit_price = form["unit_price"]
+    def update(self):
         error = self.validate_product()
         if not error:
             error = commit_to_db()
@@ -99,3 +101,13 @@ class Product(db.Model):
                 products = Product.query.filter_by(cristal=search_term).all()
 
         return products
+
+    def update_on_submit(self):
+        form = get_form(product_heads)
+        self.name = form["name"]
+        self.material = form["material"]
+        self.cristal = form["cristal"]
+        self.unit_price = form["unit_price"]
+        error = self.update()
+
+        return error

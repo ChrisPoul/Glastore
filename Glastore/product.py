@@ -3,16 +3,9 @@ from flask import (
     url_for, flash
 )
 from Glastore.models import get_form
-from Glastore.models.product import Product
+from Glastore.models.product import Product, product_heads
 
 bp = Blueprint('product', __name__, url_prefix='/product')
-
-product_heads = {
-    "name": "Nombre",
-    "material": "Material",
-    "cristal": "Cristal",
-    "unit_price": "Precio de Venta"
-}
 
 
 @bp.route('/products')
@@ -58,8 +51,7 @@ def update(product_id):
     product = Product.get(product_id)
 
     if request.method == 'POST':
-        form = get_form(product_heads)
-        error = product.update(form)
+        error = product.update_on_submit()
 
         if not error:
             return redirect(
