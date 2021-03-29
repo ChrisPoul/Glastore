@@ -108,6 +108,7 @@ class Quote(db.Model):
     def handle_submit(self):
         self.add_product_on_submit()
         self.update_sold_products_on_submit()
+        self.form = empty_form
 
     def add_product_on_submit(self):
         product = self.get_product_on_submit()
@@ -144,7 +145,6 @@ class Quote(db.Model):
             product_id=product.id
         )
         sold_product.add()
-        self.form = empty_form
 
     def get_product_on_submit(self):
         try:
