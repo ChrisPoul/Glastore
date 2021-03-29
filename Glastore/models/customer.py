@@ -1,7 +1,13 @@
 from sqlalchemy import (
     Column, Integer, String
 )
-from Glastore.models import db, add_to_db, commit_to_db
+from Glastore.models import db, add_to_db, commit_to_db, get_form
+
+customer_heads = {
+    "name": "Nombre del Cliente",
+    "email": "Correo electrónico",
+    "address": "Dirección"
+}
 
 
 class Customer(db.Model):
@@ -33,11 +39,7 @@ class Customer(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-    def update(self, form=None):
-        if form:
-            self.name = form['name']
-            self.email = form['email']
-            self.address = form['address']
+    def update(self):
         self.error = None
         self.validate_name()
         self.validate_email()
@@ -73,3 +75,10 @@ class Customer(db.Model):
 
     def get_all():
         return Customer.query.all()
+
+    def update_on_submit(self):
+        form = get_form(customer_heads)
+        self.name = form['name']
+        self.email = form['email']
+        self.address = form['address']
+        self.error = self.update()

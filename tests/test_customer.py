@@ -3,23 +3,6 @@ from Glastore.models import db, repeated_value_msg
 from Glastore.models.customer import Customer
 
 
-class CustomersView(MyTest):
-
-    def test_view(self):
-        response = self.client.get(
-            '/customer/customers'
-        )
-        self.assertEqual(response.status_code, 200)
-
-    def test_customers(self):
-        make_test_customer("Test second")
-        response = self.client.get(
-            '/customer/customers'
-        )
-        self.assertIn(b'Test', response.data)
-        self.assertIn(b'Test second', response.data)
-
-
 class AddCustomer(MyTest):
 
     def test_add(self):
@@ -153,3 +136,20 @@ class GetCustomers(MyTest):
         customer = make_test_customer("Test second")
         customer.add()
         assert Customer.get_all() == [self.customer, customer]
+
+
+class CustomersView(MyTest):
+
+    def test_view(self):
+        response = self.client.get(
+            '/customer/customers'
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_customers(self):
+        make_test_customer("Test second")
+        response = self.client.get(
+            '/customer/customers'
+        )
+        self.assertIn(b'Test', response.data)
+        self.assertIn(b'Test second', response.data)

@@ -3,20 +3,14 @@ from flask import (
     redirect, flash
 )
 from Glastore.models import get_form
-from Glastore.models.customer import Customer
+from Glastore.models.customer import Customer, customer_heads
 
 bp = Blueprint('customer', __name__, url_prefix='/customer')
-
-customer_heads = {
-    "name": "Nombre del Cliente",
-    "email": "Correo electrónico",
-    "address": "Dirección"
-}
 
 
 @bp.route('/customers')
 def customers():
-    customers = Customer.query.all()
+    customers = Customer.get_all()
 
     return render_template(
         'customer/customers.html',
@@ -57,15 +51,14 @@ def update(customer_id):
     customer = Customer.get(customer_id)
 
     if request.method == "POST":
-        form = get_form(customer_heads)
-        error = customer.update(form)
+        customer.update_on_submit()
 
-        if not error:
+        if not customer.error:
             return redirect(
                 url_for('customer.customers')
             )
 
-        flash(error)
+        flash(customer.error)
 
     return render_template(
         'customer/update.html',
