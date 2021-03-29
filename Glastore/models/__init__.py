@@ -99,8 +99,10 @@ def obj_as_dict(obj_tuple):
     return obj_dict
 
 
-def format_price(price):
+def format_price(price, iva=None):
     price = float(price)
+    if iva:
+        price = price * iva
     price = round(price, 2)
     price = str(price)
     price_int, price_dec = price.split(".")
