@@ -181,6 +181,17 @@ class Handle_submit(MyTest):
             self.quote.add_new_product_on_submit()
         self.assertEqual(len(self.quote.products), 0)
 
+    def test_new_product_empty_after_submit(self):
+        url = 'quote/edit/1'
+        data = dict(
+            name="A product",
+            material="",
+            cristal=""
+        )
+        with self.request_context(url, data):
+            self.quote.handle_submit()
+        self.assertEqual(self.quote.new_product.name, "")
+
     def test_add_duplicate_product_on_submit(self):
         self.quote.add_product(self.product)
         url = 'quote/edit/1'
