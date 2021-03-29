@@ -9,15 +9,9 @@
     {% include "quote/customer.html" %}
 </div>
 
-<div>
+<div class="bottom">
     <form method="post" autocomplete="off">
         {% include "quote/products.html" %}
-        <div class="bottom">
-            <input type="submit" value="Aceptar">
-        </div>
     </form>
-    <a href="{{ url_for('quote.done', quote_id=quote.id) }}">
-        <input type="button" value="Done">
-    </a>
 </div>
 {% endblock %}

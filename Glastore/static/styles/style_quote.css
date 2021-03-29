@@ -1,6 +1,6 @@
 body {
     max-width: 21.6cm;
-    background: white;
+    background: rgb(153, 150, 150);
     margin: 0;
     text-align: center;
     margin-left: auto;
@@ -40,10 +40,6 @@ input[type=submit] {
     align-self: start;
     min-width: 10em;
 }
-div.bottom {
-    display: flex;
-    margin: 0;
-}
 td.cantidad {
     padding: 1px;
     width: 3em;
@@ -59,4 +55,16 @@ td.unit_price {
 .unit_price input {
     width: 4em;
     text-align: center;
+}
+td.total {
+    width: 6em;
+}
+div.bottom {
+    margin-bottom: 2em;
+}
+td.bd-left-0 {
+    border-left: none;
+}
+td.bd-right-0 {
+    border-right: none;
 }
