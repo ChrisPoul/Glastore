@@ -5,8 +5,7 @@ from Glastore.models import (
     format_price, format_date,
     add_comma_separators_to_num
 )
-from Glastore.models.customer import Customer
-from Glastore.customer import customer_heads
+from Glastore.models.customer import Customer, customer_heads
 from datetime import datetime
 
 

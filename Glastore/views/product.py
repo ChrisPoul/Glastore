@@ -28,6 +28,7 @@ def add():
         product = Product(
             name=form["name"],
             material=form["material"],
+            acabado=form["acabado"],
             cristal=form["cristal"],
             unit_price=form["unit_price"]
         )

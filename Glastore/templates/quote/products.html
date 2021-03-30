@@ -1,19 +1,11 @@
 {% if not done %}
-<datalist id="autocomplete-names">
-    {% for name in quote.autocomplete_data["names"] %}
-    <option>{{ name }}</option>
+{% for key in quote.autocomplete_data %}
+<datalist id="autocomplete-{{ key }}">
+    {% for data in quote.autocomplete_data[key] %}
+    <option>{{ data }}</option>
     {% endfor %}
 </datalist>
-<datalist id="autocomplete-materials">
-    {% for materials in quote.autocomplete_data["materials"] %}
-    <option>{{ materials }}</option>
-    {% endfor %}
-</datalist>
-<datalist id="autocomplete-cristals">
-    {% for cristals in quote.autocomplete_data["cristals"] %}
-    <option>{{ cristals }}</option>
-    {% endfor %}
-</datalist>
+{% endfor %}
 {% endif %}
 
 <table>

@@ -22,6 +22,7 @@ product_heads = {
 product_keys = {
     "name": ["Suministro y colocación de ", "nombre de pieza..."],
     "material": ["en ", "material..."],
+    "acabado": ["acabado", "acabado..."],
     "cristal": ["con ", "cristal o vidrio..."],
     "medidas": [". Dimenciones", "medidas..."]
 }

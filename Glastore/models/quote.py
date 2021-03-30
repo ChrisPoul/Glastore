@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy import (
     Column, Integer, DateTime,
-    ForeignKey
+    ForeignKey, String
 )
 from flask import request
 from Glastore.models import (
@@ -10,9 +10,18 @@ from Glastore.models import (
 from Glastore.models.product import Product
 from Glastore.models.sold_product import SoldProduct
 
+product_keys = [
+    "name",
+    "material",
+    "acabado",
+    "cristal",
+    "medidas",
+    "unit_price"
+]
 empty_form = {
     "name": "",
     "material": "",
+    "acabado": "",
     "cristal": "",
     "medidas": "",
     "unit_price": 0
@@ -23,19 +32,13 @@ class Quote(db.Model):
     id = Column(Integer, primary_key=True)
     date = Column(DateTime, nullable=False, default=datetime.now)
     customer_id = Column(Integer, ForeignKey('customer.id'), nullable=False)
+    address = Column(String(100), nullable=True, unique=False)
     sold_products = db.relationship(
         'SoldProduct', backref='quote', lazy=True,
         cascade='all, delete-orphan'
     )
     error = None
     form = None
-    product_keys = [
-        "name",
-        "material",
-        "cristal",
-        "medidas",
-        "unit_price"
-    ]
 
     def __repr__(self):
         return self.__dict__
@@ -100,6 +103,7 @@ class Quote(db.Model):
         new_product = Product(
             name=self.form['name'],
             material=self.form['material'],
+            acabado=self.form['acabado'],
             cristal=self.form['cristal'],
             unit_price=0
         )
@@ -155,7 +159,7 @@ class Quote(db.Model):
         return product
 
     def get_form(self):
-        return get_form(self.product_keys)
+        return get_form(product_keys)
 
     def update_sold_products_on_submit(self):
         for sold_product in self.sold_products:
@@ -166,6 +170,7 @@ class Quote(db.Model):
         autocomplete = {
             "names": [],
             "materials": [],
+            "acabados": [],
             "cristals": []
         }
         for product in Product.get_all():
@@ -175,4 +180,6 @@ class Quote(db.Model):
                 autocomplete["materials"].append(product.material)
             if product.cristal not in set(autocomplete["cristals"]):
                 autocomplete["cristals"].append(product.cristal)
+            if product.acabado not in set(autocomplete["acabados"]):
+                autocomplete["acabados"].append(product.acabado)
         return autocomplete

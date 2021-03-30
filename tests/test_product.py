@@ -64,6 +64,7 @@ class AddProductView(MyTest):
         data = dict(
             name="Test2",
             material="test material",
+            acabado="test acabado",
             cristal="test cristal"
         )
         response = self.client.post(
@@ -78,7 +79,7 @@ class UpdateProduct(MyTest):
     def test_update(self):
         self.product.name = "New Test"
         self.product.update()
-        assert Product.get(1) == self.product
+        assert self.product.name == "New Test"
 
     def test_repeated_name(self):
         product = Product.new("Test2")
@@ -100,6 +101,7 @@ class UpdateProductView(MyTest):
         data = dict(
             name="Changed Name",
             material="test material",
+            acabado="un acabado",
             cristal="test cristal"
         )
         response = self.client.post(

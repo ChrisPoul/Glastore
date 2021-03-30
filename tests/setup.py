@@ -37,6 +37,7 @@ class MyTest(TestCase):
         self.product = Product(
             name="Test Product",
             material="Test Material",
+            acabado="Test Acabado",
             cristal="Test Cristal",
             unit_price=10
         )

@@ -36,6 +36,7 @@ class SoldProduct(db.Model):
         unique_value_keys = dict(
             name=f"name{self.id}",
             material=f"material{self.id}",
+            acabado=f"acabado{self.id}",
             cristal=f"cristal{self.id}",
             medidas=f"medidas{self.id}",
             cantidad=f"cantidad{self.id}",
@@ -64,12 +65,14 @@ class SoldProduct(db.Model):
 
     def update_total(self):
         cantidad = float(self.cantidad)
-        self.total = cantidad * self.product.unit_price
+        unit_price = float(self.product.unit_price)
+        self.total = cantidad * unit_price
 
     def update_product_on_submit(self):
         previous_name = self.product.name
         self.update_name_on_submit()
         self.update_material_on_submit()
+        self.update_acabado_on_submit()
         self.update_cristal_on_submit()
         self.update_unit_price_on_submit()
         self.quote.error = self.product.update()
@@ -85,6 +88,12 @@ class SoldProduct(db.Model):
     def update_material_on_submit(self):
         try:
             self.product.material = request.form[self.unique_keys["material"]]
+        except KeyError:
+            pass
+
+    def update_acabado_on_submit(self):
+        try:
+            self.product.acabado = request.form[self.unique_keys["acabado"]]
         except KeyError:
             pass
 

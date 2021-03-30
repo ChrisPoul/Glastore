@@ -24,16 +24,16 @@ def create_app(test_config=None):
     from .models import init_db_command
     app.cli.add_command(init_db_command)
 
-    from . import home
+    from .views import home
     app.register_blueprint(home.bp)
 
-    from . import customer
+    from .views import customer
     app.register_blueprint(customer.bp)
 
-    from . import product
+    from .views import product
     app.register_blueprint(product.bp)
 
-    from . import quote
+    from .views import quote
     app.register_blueprint(quote.bp)
 
     return app

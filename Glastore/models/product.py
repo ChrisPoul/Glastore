@@ -7,6 +7,7 @@ from Glastore.models import db, add_to_db, commit_to_db, get_form
 product_heads = {
     "name": "Nombre",
     "material": "Material",
+    "acabado": "Acabado",
     "cristal": "Cristal",
     "unit_price": "Precio de Venta"
 }
@@ -50,7 +51,7 @@ class Product(db.Model):
     def validate_fields(self):
         error_msg = "No se pueden dejar campos en blanco"
         error = None
-        if self.name == "" or self.material == "" or self.cristal == "":
+        if self.name == "" or self.material == "" or self.cristal == "" or self.acabado == "":
             error = error_msg
 
         return error
@@ -76,6 +77,7 @@ class Product(db.Model):
         product = Product(
             name=name,
             material=name,
+            acabado=name,
             cristal=name,
             unit_price=0
         )

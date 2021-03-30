@@ -164,6 +164,7 @@ class Handle_submit(MyTest):
         data = dict(
             name="A product",
             material="a material",
+            acabado="un acabado",
             cristal="a material"
         )
         with self.request_context(url, data):
@@ -176,6 +177,18 @@ class Handle_submit(MyTest):
             name="A product",
             material="",
             cristal=""
+        )
+        with self.request_context(url, data):
+            self.quote.add_new_product_on_submit()
+        self.assertEqual(len(self.quote.products), 0)
+
+    def test_add_product_with_empty_acabado(self):
+        url = 'quote/edit/1'
+        data = dict(
+            name="A product",
+            material="a material",
+            acabado="",
+            cristal="a cristal"
         )
         with self.request_context(url, data):
             self.quote.add_new_product_on_submit()
