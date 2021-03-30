@@ -130,6 +130,7 @@ class Quote(db.Model):
         new_product = Product(
             name=product.name,
             material=product.material,
+            acabado=product.acabado,
             cristal=product.cristal,
             unit_price=product.unit_price
         )

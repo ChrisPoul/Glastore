@@ -159,6 +159,16 @@ class Handle_submit(MyTest):
             self.quote.add_product_on_submit()
         self.assertIn(self.product, self.quote.products)
 
+    def test_add_existing_product_twice_on_submit(self):
+        self.quote.add_existing_product(self.product)
+        url = 'quote/edit/1'
+        data = dict(
+            name="Test Product"
+        )
+        with self.request_context(url, data):
+            self.quote.handle_submit()
+        self.assertEqual(self.quote.error, None)
+
     def test_add_new_product_on_submit(self):
         url = 'quote/edit/1'
         data = dict(
