@@ -1,5 +1,7 @@
 {% for key in product_keys %}
+{% if sold_product.product[key] != "" %}
 {{ product_keys[key][0] }}
+{% endif %}
 {% if key != "medidas" %}
 {{ sold_product.product[key] }}
 {% else %}

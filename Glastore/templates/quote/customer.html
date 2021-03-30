@@ -9,7 +9,11 @@
     <tr>
         {% for head in customer_heads %}
         <td style="height: 3em;">
+            {% if head != "address" %}
             {{ quote.author[head] }}
+            {% else %}
+            {{ quote[head] }}
+            {% endif %}
         </td>
         {% endfor %}
     </tr>
