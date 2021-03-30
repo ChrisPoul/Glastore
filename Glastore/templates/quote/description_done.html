@@ -1,0 +1,9 @@
+{% for key in product_keys %}
+{{ product_keys[key][0] }}
+{% if key != "medidas" %}
+{{ sold_product.product[key] }}
+{% else %}
+{{ sold_product[key] }}
+{% endif %}
+{% endfor %}
+. Incluye herrajes, selladores, y todo lo necesario para su correcta instalación.

@@ -50,6 +50,7 @@ class SoldProduct(db.Model):
         self.update_cantidad_on_submit()
         self.update_product_on_submit()
         self.update_total()
+        self.update()
 
     def update_medidas_on_submit(self):
         try:

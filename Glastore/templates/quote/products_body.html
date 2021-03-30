@@ -1,0 +1,54 @@
+{% for sold_product in quote.sold_products %}
+<tr>
+    {% for head in product_heads %}
+    {% if head == "description" %}
+    <td class="description">
+        <p>
+            {% if not done %}
+            {% include "quote/description_edit.html" %}
+            {% else %}
+            {% include "quote/description_done.html" %}
+            {% endif %}
+        </p>
+    </td>
+    {% elif head == "unit_price" %}
+    <td class="unit_price">
+        {% if not done %}
+        <input name="{{ sold_product.unique_keys[head] }}" id="{{ sold_product.unique_keys[head] }}"
+            value="{{ sold_product.product[head] }}">
+        {% else %}
+        {{ format_price(sold_product.product[head]) }}
+        {% endif %}
+    </td>
+    {% elif head == "cantidad" and not done %}
+    <td class="cantidad">
+        <input name="{{ sold_product.unique_keys[head] }}" id="{{ sold_product.unique_keys[head] }}"
+            value="{{ sold_product.cantidad }}">
+    </td>
+    {% elif head == "total" %}
+    <td class="total">
+        {{ format_price(sold_product[head]) }}
+    </td>
+    {% else %}
+    <td>
+        {{ sold_product[head] }}
+    </td>
+    {% endif %}
+    {% endfor %}
+</tr>
+{% endfor %}
+{% if not done %}
+<tr>
+    {% for head in product_heads %}
+    {% if head == "description" %}
+    <td class="description">
+        <p>
+            {% include "quote/description_edit.html" %}
+        </p>
+    </td>
+    {% else %}
+    <td></td>
+    {% endif %}
+    {% endfor %}
+</tr>
+{% endif %}

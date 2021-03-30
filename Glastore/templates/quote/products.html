@@ -17,67 +17,9 @@
         {% endfor %}
     </thead>
     <tbody>
-        {% for sold_product in quote.sold_products %}
-        <tr>
-            {% for head in product_heads %}
-            {% if head == "description" %}
-            <td class="description">
-                {% include "quote/description.html" %}
-            </td>
-            {% elif head == "unit_price" and not done %}
-            <td class="unit_price">
-                <input name="{{ sold_product.unique_keys[head] }}" id="{{ sold_product.unique_keys[head] }}"
-                    value="{{ sold_product.product[head] }}">
-            </td>
-            {% elif head == "cantidad" and not done %}
-            <td class="cantidad">
-                <input name="{{ sold_product.unique_keys[head] }}" id="{{ sold_product.unique_keys[head] }}"
-                    value="{{ sold_product.cantidad }}">
-            </td>
-            {% elif head == "total" %}
-            <td class="total">
-                {{ format_price(sold_product[head]) }}
-            </td>
-            {% else %}
-            <td>
-                {{ sold_product[head] }}
-            </td>
-            {% endif %}
-            {% endfor %}
-        </tr>
-        {% endfor %}
-        {% if not done %}
-        <tr>
-            {% for head in product_heads %}
-            {% if head == "description" %}
-            <td class="description">
-                {% include "quote/description.html" %}
-            </td>
-            {% else %}
-            <td></td>
-            {% endif %}
-            {% endfor %}
-        </tr>
-        {% endif %}
+        {% include "quote/products_body.html" %}
     </tbody>
     <tfoot>
-        <tr>
-            <td class="bd-right-0" style="text-align: left;" colspan=3>
-                {% if not done %}
-                <input type="submit" value="Aceptar"><br>
-                <a href="{{ url_for('quote.done', quote_id=quote.id) }}">
-                    <input type="button" value="Done">
-                </a>
-                {% endif %}
-            </td>
-            <td class="bd-right-0" style="text-align: right;">
-                Total:<br>
-                Mas Iva:
-            </td>
-            <td class="bd-left-0">
-                {{ format_price(quote.total) }}<br>
-                {{ format_price(quote.total, iva=1.16) }}
-            </td>
-        </tr>
+        {% include "quote/products_foot.html" %}
     </tfoot>
 </table>
