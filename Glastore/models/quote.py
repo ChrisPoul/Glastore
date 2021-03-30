@@ -10,14 +10,13 @@ from Glastore.models import (
 from Glastore.models.product import Product
 from Glastore.models.sold_product import SoldProduct
 
-product_keys = [
-    "name",
-    "material",
-    "acabado",
-    "cristal",
-    "medidas",
-    "unit_price"
-]
+product_keys = {
+    "name": ["Suministro y colocación de ", "nombre de pieza..."],
+    "material": ["en ", "material..."],
+    "acabado": ["acabado ", "acabado..."],
+    "cristal": ["con ", "cristal o vidrio..."],
+    "medidas": [". Dimenciones", "medidas..."]
+}
 empty_form = {
     "name": "",
     "material": "",

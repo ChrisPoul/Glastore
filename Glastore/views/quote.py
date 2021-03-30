@@ -3,7 +3,7 @@ from flask import (
     redirect, url_for, flash
 )
 from Glastore.models import format_date, format_price
-from Glastore.models.quote import Quote
+from Glastore.models.quote import Quote, product_keys
 from Glastore.models.customer import Customer
 
 bp = Blueprint("quote", __name__, url_prefix="/quote")
@@ -18,13 +18,6 @@ product_heads = {
     "diseño": "Diseño",
     "unit_price": "P.Unidad",
     "total": "Total"
-}
-product_keys = {
-    "name": ["Suministro y colocación de ", "nombre de pieza..."],
-    "material": ["en ", "material..."],
-    "acabado": ["acabado", "acabado..."],
-    "cristal": ["con ", "cristal o vidrio..."],
-    "medidas": [". Dimenciones", "medidas..."]
 }
 
 
