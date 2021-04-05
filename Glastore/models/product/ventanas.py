@@ -17,20 +17,6 @@ def draw_line(xdata, ydata):
     plt.gca().add_line(line)
 
 
-def draw_arrow(xdata, ydata):
-    x1, x2 = xdata
-    y1, y2 = ydata
-    draw_line(xdata, ydata)
-    arrow_head = plt.Polygon(
-        [[x1+3, y1-3], [x1, y1], [x1+3, y1+3]],
-        fill=False,
-        closed=False,
-        color="blue",
-        lw=2
-    )
-    plt.gca().add_line(arrow_head)
-
-
 class Fija:
 
     def __init__(self, width, height):
@@ -55,15 +41,27 @@ class Corrediza:
 
     def draw_windows(self):
         x = 0
-        for _ in range(self.cantidad):
+        for i in range(self.cantidad):
             self.draw_frame((x, 0))
             x += self.width
-        self.draw_arrow()
+            if i % 2 == 0:
+                self.draw_arrow(x)
 
-    def draw_arrow(self):
-        xdata = (self.width-5, self.width)
-        ydata = (self.height/2, self.height/2)
-        draw_arrow(xdata, ydata)
+    def draw_arrow(self, position):
+        x1 = position - 5
+        x2 = position
+        y = self.height / 2
+        xdata = (x1, x2)
+        ydata = (y, y)
+        draw_line(xdata, ydata)
+        arrow_head = plt.Polygon(
+            [[x1+3, y-3], [x1, y], [x1+3, y+3]],
+            fill=False,
+            closed=False,
+            color="blue",
+            lw=2
+        )
+        plt.gca().add_line(arrow_head)
 
     def draw_frame(self, xy):
         draw_frame(
@@ -86,6 +84,7 @@ class Guillotina:
         for _ in range(self.cantidad):
             self.draw_frame((0, y))
             y += self.width
+        self.draw_arrow(self.height)
 
     def draw_frame(self, xy):
         draw_frame(
@@ -94,10 +93,26 @@ class Guillotina:
             self.height
         )
 
+    def draw_arrow(self, position):
+        y1 = position
+        y2 = position + 5
+        x = self.height / 2
+        ydata = (y1, y2)
+        xdata = (x, x)
+        draw_line(xdata, ydata)
+        arrow_head = plt.Polygon(
+            [[x-3, y2-3], [x, y2], [x+3, y2-3]],
+            fill=False,
+            closed=False,
+            color="blue",
+            lw=2
+        )
+        plt.gca().add_line(arrow_head)
+
 
 #fija = Fija(75, 100)
-corrediza = Corrediza(50, 50, 2)
-#guillotina = Guillotina(50, 50, 2)
+#corrediza = Corrediza(50, 50, 2)
+guillotina = Guillotina(50, 50, 2)
 
 plt.axis('scaled')
 plt.show()
