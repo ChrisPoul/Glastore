@@ -1,3 +1,9 @@
+import base64
+import matplotlib.pyplot as plt
+from io import BytesIO
+from Glastore.models.product.ventanas import (
+    Corrediza, Fija, Guillotina
+)
 from sqlalchemy import (
     Column, Integer, ForeignKey, Float,
     String
@@ -44,6 +50,42 @@ class SoldProduct(db.Model):
         )
 
         return unique_value_keys
+
+    @property
+    def diseño(self):
+        fig = plt.Figure(dpi=150)
+        ax = fig.subplots()
+        ventana = self.get_ventana(ax)
+        ventana.ax.axis('scaled')
+        # Save figure to a temporary buffer.
+        buf = BytesIO()
+        fig.savefig(buf, format="png")
+        # Embed the result in the html output.
+        data = base64.b64encode(buf.getbuffer()).decode("ascii")
+        return 'data:image/png;base64,{}'.format(data)
+
+    def get_medidas(self):
+        try:
+            width, height = self.medidas.split(",")
+            width = float(width)
+            height = float(height)
+        except ValueError:
+            width = 10
+            height = 10
+
+        return (width, height)
+
+    def get_ventana(self, ax):
+        name = self.product.name
+        width, height = self.get_medidas()
+        if "fija" in name:
+            ventana = Fija(width, height, ax=ax)
+        elif "corrediza" in name:
+            ventana = Corrediza(width, height, 2, ax=ax)
+        elif "guillotina" in name:
+            ventana = Guillotina(width, height, 2, ax=ax)
+        
+        return ventana
 
     def update_on_submit(self):
         self.update_medidas_on_submit()

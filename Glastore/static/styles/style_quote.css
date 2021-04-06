@@ -56,6 +56,10 @@ td.unit_price {
     width: 4em;
     text-align: center;
 }
+td.diseño {
+    min-width: fit-content;
+    min-height: fit-content;
+}
 td.total {
     width: 6em;
 }
