@@ -3,7 +3,13 @@ from Glastore.models import db, repeated_value_msg
 from Glastore.models.customer import Customer
 
 
-class AddCustomer(MyTest):
+class CustomerTest(MyTest):
+
+    def setUp(self):
+        MyTest.setUp(self)
+
+
+class AddCustomer(CustomerTest):
 
     def test_add(self):
         customer = make_test_customer("Test second")
@@ -25,7 +31,7 @@ class AddCustomer(MyTest):
         self.assertEqual(error, customer.invalid_email_msg)
 
 
-class AddCustomerView(MyTest):
+class AddCustomerView(CustomerTest):
 
     def test_view(self):
         response = self.client.get(
@@ -46,7 +52,7 @@ class AddCustomerView(MyTest):
         self.assertRedirects(response, '/customer/customers')
 
 
-class UpdateCustomer(MyTest):
+class UpdateCustomer(CustomerTest):
 
     def test_update(self):
         self.customer.name = "Test second"
@@ -73,7 +79,7 @@ class UpdateCustomer(MyTest):
         assert error == self.customer.invalid_email_msg
 
 
-class UpdateCustomerView(MyTest):
+class UpdateCustomerView(CustomerTest):
 
     def test_view(self):
         make_test_customer()
@@ -94,7 +100,7 @@ class UpdateCustomerView(MyTest):
         self.assertEqual(self.customer.name, "Changed name")
 
 
-class DeleteCustomer(MyTest):
+class DeleteCustomer(CustomerTest):
 
     def test_delete(self):
         assert self.customer in db.session
@@ -102,7 +108,7 @@ class DeleteCustomer(MyTest):
         assert self.customer not in db.session
 
 
-class DeleteCustomerView(MyTest):
+class DeleteCustomerView(CustomerTest):
 
     def test_delete(self):
         response = self.client.post(
@@ -112,7 +118,7 @@ class DeleteCustomerView(MyTest):
         assert self.customer not in db.session
 
 
-class GetCustomer(MyTest):
+class GetCustomer(CustomerTest):
 
     def test_get(self):
         assert Customer.get("Test") == self.customer
@@ -130,7 +136,7 @@ class GetCustomer(MyTest):
         assert customer_search == self.customer
 
 
-class GetCustomers(MyTest):
+class GetCustomers(CustomerTest):
 
     def test_get_all(self):
         customer = make_test_customer("Test second")
@@ -138,7 +144,7 @@ class GetCustomers(MyTest):
         assert Customer.get_all() == [self.customer, customer]
 
 
-class CustomersView(MyTest):
+class CustomersView(CustomerTest):
 
     def test_view(self):
         response = self.client.get(

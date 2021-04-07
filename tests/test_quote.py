@@ -5,7 +5,22 @@ from Glastore.models.product import Product
 from datetime import datetime
 
 
-class NewQuote(MyTest):
+class QuoteTest(MyTest):
+
+    def setUp(self):
+        MyTest.setUp(self)
+        self.product = Product(
+            name="Test Product",
+            material="Test Material",
+            acabado="Test Acabado",
+            cristal="Test Cristal",
+            unit_price=10
+        )
+        self.product.add()
+        self.quote = Quote.new(self.customer.id)
+
+
+class NewQuote(QuoteTest):
 
     def test_new(self):
         quote = Quote.new()
@@ -13,7 +28,7 @@ class NewQuote(MyTest):
         self.assertEqual(quote.customer_id, 1)
 
 
-class AddQuote(MyTest):
+class AddQuote(QuoteTest):
 
     def test_add(self):
         quote = Quote.new()
@@ -32,7 +47,7 @@ class AddQuote(MyTest):
         assert quote2 in db.session
 
 
-class UpdateQuote(MyTest):
+class UpdateQuote(QuoteTest):
 
     def test_update(self):
         quote = Quote.new()
@@ -43,7 +58,7 @@ class UpdateQuote(MyTest):
         assert quote.date == date
 
 
-class DeleteQuote(MyTest):
+class DeleteQuote(QuoteTest):
 
     def test_delete(self):
         quote = Quote.new()
@@ -52,7 +67,7 @@ class DeleteQuote(MyTest):
         assert quote not in db.session
 
 
-class QuoteProperties(MyTest):
+class QuoteProperties(QuoteTest):
 
     def test_folio(self):
         quote = Quote.new()
@@ -66,7 +81,7 @@ class QuoteProperties(MyTest):
         self.assertEqual(quote.total, 20)
 
 
-class GetQuote(MyTest):
+class GetQuote(QuoteTest):
 
     def test_get(self):
         quote = Quote.new()
@@ -85,7 +100,7 @@ class GetQuote(MyTest):
         self.assertNotIn(quote3, Quote.get_all(customer_id=1))
 
 
-class EditQuoteView(MyTest):
+class EditQuoteView(QuoteTest):
 
     def test_view(self):
         response = self.client.get(
@@ -128,7 +143,7 @@ class EditQuoteView(MyTest):
         self.assertNotIn(b'value="None"', response.data)
 
 
-class EditQuoteProducts(MyTest):
+class EditQuoteProducts(QuoteTest):
 
     def test_add_product(self):
         self.quote.add_product(self.product)
@@ -148,7 +163,7 @@ class EditQuoteProducts(MyTest):
         self.assertNotEqual(Product.get(2), self.product)
 
 
-class Handle_submit(MyTest):
+class Handle_submit(QuoteTest):
 
     def test_add_existing_product_on_submit(self):
         url = 'quote/edit/1'
@@ -254,7 +269,7 @@ class Handle_submit(MyTest):
         self.assertEqual(product, self.product)
 
 
-class EditQuoteProductsView(MyTest):
+class EditQuoteProductsView(QuoteTest):
 
     def test_add_product_view(self):
         self.quote.add_product(self.product)

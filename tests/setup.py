@@ -1,8 +1,6 @@
 from flask_testing import TestCase
 from Glastore.models import db
 from Glastore import create_app
-from Glastore.models.product import Product
-from Glastore.models.quote import Quote
 from Glastore.models.customer import Customer
 
 
@@ -34,15 +32,6 @@ class MyTest(TestCase):
         self.client = self.app.test_client()
         db.create_all()
         self.customer = make_test_customer()
-        self.product = Product(
-            name="Test Product",
-            material="Test Material",
-            acabado="Test Acabado",
-            cristal="Test Cristal",
-            unit_price=10
-        )
-        self.product.add()
-        self.quote = Quote.new(self.customer.id)
 
     def tearDown(self):
         db.session.remove()

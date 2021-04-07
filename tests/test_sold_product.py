@@ -1,9 +1,27 @@
 from .setup import MyTest
 from Glastore.models import db
-from Glastore.models.quote import SoldProduct
+from Glastore.models.quote import Quote
+from Glastore.models.sold_product import SoldProduct
+from Glastore.models.product import Product
 
 
-class TestSoldProduct(MyTest):
+class SoldProductTest(MyTest):
+
+    def setUp(self):
+        MyTest.setUp(self)
+        self.product = Product(
+            name="Test Product",
+            material="Test Material",
+            acabado="Test Acabado",
+            cristal="Test Cristal",
+            unit_price=10
+        )
+        self.product.add()
+        self.quote = Quote.new(self.customer.id)
+
+
+
+class TestSoldProduct(SoldProductTest):
 
     def test_add(self):
         sold_product = SoldProduct(
@@ -34,7 +52,7 @@ class TestSoldProduct(MyTest):
         self.assertEqual(SoldProduct.get(1), sold_product)
 
 
-class UpdateOnSumbit(MyTest):
+class UpdateOnSumbit(SoldProductTest):
 
     def test_update_product_on_submit(self):
         self.quote.add_product(self.product)

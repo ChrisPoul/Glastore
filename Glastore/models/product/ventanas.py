@@ -17,12 +17,18 @@ def draw_line(xdata, ydata, ax=plt):
     ax.add_line(line)
 
 
-class Fija:
+class Ventana:
 
-    def __init__(self, width, height, ax=plt):
+    def __init__(self, width, height, ax):
         self.width = width
         self.height = height
         self.ax = ax
+
+
+class Fija(Ventana):
+
+    def __init__(self, width, height, ax):
+        Ventana.__init__(self, width, height, ax)
         self.draw_window()
 
     def draw_window(self):
@@ -33,13 +39,11 @@ class Fija:
         )
 
 
-class Corrediza:
+class Corrediza(Ventana):
 
-    def __init__(self, width, height, cantidad, ax=plt):
-        self.width = width
-        self.height = height
+    def __init__(self, width, height, cantidad, ax):
+        Ventana.__init__(self, width, height, ax)
         self.cantidad = cantidad
-        self.ax = ax
         self.draw_windows()
 
     def draw_windows(self):
@@ -80,13 +84,11 @@ class Corrediza:
         )
 
 
-class Guillotina:
+class Guillotina(Ventana):
 
-    def __init__(self, width, height, cantidad, ax=plt):
-        self.width = width
-        self.height = height
+    def __init__(self, width, height, cantidad, ax):
+        Ventana.__init__(self, width, height, ax)
         self.cantidad = cantidad
-        self.ax = ax
         self.draw_windows()
 
     def draw_windows(self):
@@ -106,13 +108,18 @@ class Guillotina:
 
     def draw_arrow(self, position):
         y1 = position
-        y2 = position + 5
-        x = self.height / 2
+        y2 = 1.3 * position
+        x = self.width / 2
         ydata = (y1, y2)
         xdata = (x, x)
         draw_line(xdata, ydata, self.ax)
+        points = [
+            [0.8 * x, 0.8 * y2],
+            [x, y2],
+            [1.2 * x, 0.8 * y2]
+        ]
         arrow_head = plt.Polygon(
-            [[x-3, y2-3], [x, y2], [x+3, y2-3]],
+            points,
             fill=False,
             closed=False,
             color="blue",
@@ -120,3 +127,34 @@ class Guillotina:
         )
         self.ax.add_line(arrow_head)
 
+
+class Abatible(Ventana):
+
+    def __init__(self, width, height, ax):
+        Ventana.__init__(self, width, height, ax)
+        self.draw_window()
+
+    def draw_window(self):
+        draw_frame(
+            width=self.width,
+            height=self.height,
+            ax=self.ax
+        )
+        self.draw_triangle()
+    
+    def draw_triangle(self):
+        ymax = self.height
+        ymin = 0
+        points = [
+            [0, ymin],
+            [self.width/2, ymax],
+            [self.width, ymin]
+        ]
+        triangle = plt.Polygon(
+            points,
+            fill=False,
+            closed=False,
+            color="blue",
+            lw=2
+        )
+        self.ax.add_line(triangle)

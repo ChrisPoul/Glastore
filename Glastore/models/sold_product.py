@@ -2,7 +2,7 @@ import base64
 import matplotlib.pyplot as plt
 from io import BytesIO
 from Glastore.models.product.ventanas import (
-    Corrediza, Fija, Guillotina
+    Corrediza, Fija, Guillotina, Abatible
 )
 from sqlalchemy import (
     Column, Integer, ForeignKey, Float,
@@ -78,12 +78,14 @@ class SoldProduct(db.Model):
     def get_ventana(self, ax):
         name = self.product.name
         width, height = self.get_medidas()
-        if "fija" in name:
-            ventana = Fija(width, height, ax=ax)
-        elif "corrediza" in name:
+        if "corrediza" in name:
             ventana = Corrediza(width, height, 2, ax=ax)
+        elif "abatible" in name:
+            ventana = Abatible(width, height, ax=ax)
         elif "guillotina" in name:
             ventana = Guillotina(width, height, 2, ax=ax)
+        else:
+            ventana = Fija(width, height, ax=ax)
         
         return ventana
 

@@ -3,7 +3,21 @@ from Glastore.models import db
 from Glastore.models.product import Product
 
 
-class ProductsView(MyTest):
+class ProductTest(MyTest):
+
+    def setUp(self):
+        MyTest.setUp(self)
+        self.product = Product(
+            name="Test Product",
+            material="Test Material",
+            acabado="Test Acabado",
+            cristal="Test Cristal",
+            unit_price=10
+        )
+        self.product.add()
+
+
+class ProductsView(ProductTest):
 
     def test_view(self):
         response = self.client.get(
@@ -20,7 +34,7 @@ class ProductsView(MyTest):
         self.assertIn(b'Test 2', response.data)
 
 
-class AddProduct(MyTest):
+class AddProduct(ProductTest):
 
     def test_add(self):
         product = Product(
@@ -52,7 +66,7 @@ class AddProduct(MyTest):
         self.assertEqual(product.unit_price, 10.0)
 
 
-class AddProductView(MyTest):
+class AddProductView(ProductTest):
 
     def test_view(self):
         response = self.client.get(
@@ -74,7 +88,7 @@ class AddProductView(MyTest):
         self.assertRedirects(response, '/product/products')
 
 
-class UpdateProduct(MyTest):
+class UpdateProduct(ProductTest):
 
     def test_update(self):
         self.product.name = "New Test"
@@ -89,7 +103,7 @@ class UpdateProduct(MyTest):
         assert product.name == "Test Product"
 
 
-class UpdateProductView(MyTest):
+class UpdateProductView(ProductTest):
 
     def test_view(self):
         response = self.client.get(
@@ -112,7 +126,7 @@ class UpdateProductView(MyTest):
         assert self.product.name == "Changed Name"
 
 
-class DeleteProduct(MyTest):
+class DeleteProduct(ProductTest):
 
     def test_delete(self):
         self.product.delete()
@@ -126,7 +140,7 @@ class DeleteProduct(MyTest):
         assert self.product not in db.session
 
 
-class GetProduct(MyTest):
+class GetProduct(ProductTest):
 
     def test_get(self):
         assert Product.get(1) == self.product
@@ -135,7 +149,7 @@ class GetProduct(MyTest):
         assert Product.get("Test Product") == self.product
 
 
-class GetProducts(MyTest):
+class GetProducts(ProductTest):
 
     def test_get_all(self):
         product2 = Product.new("Test2")
