@@ -1,4 +1,4 @@
-{% for sold_product in quote.sold_products %}
+{% for product in quote.products %}
 <tr>
     {% for head in product_heads %}
     {% if head == "description" %}
@@ -12,16 +12,16 @@
     {% elif head == "unit_price" %}
     <td class="unit_price">
         {% if not done %}
-        <input name="{{ sold_product.unique_keys[head] }}" id="{{ sold_product.unique_keys[head] }}"
-            value="{{ sold_product.product[head] }}">
+        <input name="{{ product.unique_keys[head] }}" id="{{ product.unique_keys[head] }}"
+            value="{{ product[head] }}">
         {% else %}
-        {{ format_price(sold_product.product[head]) }}
+        {{ format_price(product[head]) }}
         {% endif %}
     </td>
     {% elif head == "cantidad" and not done %}
     <td class="cantidad">
-        <input name="{{ sold_product.unique_keys[head] }}" id="{{ sold_product.unique_keys[head] }}"
-            value="{{ sold_product.cantidad }}">
+        <input name="{{ product.unique_keys[head] }}" id="{{ product.unique_keys[head] }}"
+            value="{{ product.cantidad }}">
     </td>
     {% elif head == "diseño" %}
     <td class="diseño">
@@ -29,11 +29,11 @@
     </td>
     {% elif head == "total" %}
     <td class="total">
-        {{ format_price(sold_product[head]) }}
+        {{ format_price(product[head]) }}
     </td>
     {% else %}
     <td>
-        {{ sold_product[head] }}
+        {{ product[head] }}
     </td>
     {% endif %}
     {% endfor %}

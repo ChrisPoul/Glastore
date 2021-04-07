@@ -10,6 +10,7 @@ class QuoteTest(MyTest):
     def setUp(self):
         MyTest.setUp(self)
         self.product = Product(
+            quote_id=1,
             name="Test Product",
             material="Test Material",
             acabado="Test Acabado",
@@ -75,10 +76,9 @@ class QuoteProperties(QuoteTest):
         self.assertEqual(quote.folio, "G00002")
 
     def test_total(self):
-        quote = Quote.new()
-        quote.add_product(self.product)
-        quote.sold_products[0].total = 20
-        self.assertEqual(quote.total, 20)
+        self.quote.add_product(self.product)
+        self.quote.products[0].total = 20
+        self.assertEqual(self.quote.total, 20)
 
 
 class GetQuote(QuoteTest):
@@ -146,26 +146,29 @@ class EditQuoteView(QuoteTest):
 class EditQuoteProducts(QuoteTest):
 
     def test_add_product(self):
-        self.quote.add_product(self.product)
-        self.assertEqual(self.quote.products, [self.product])
+        quote = Quote.new()
+        quote.add_product(self.product)
+        self.assertEqual(len(quote.products), 1)
 
-    def test_add_existing_product(self):
-        self.assertEqual(len(self.quote.products), 0)
-        self.quote.add_existing_product(self.product)
+    def test_add_product(self):
+        quote = Quote.new()
+        self.assertEqual(len(quote.products), 0)
+        quote.add_product(self.product)
         self.assertEqual(len(self.quote.products), 1)
-        self.quote.add_existing_product(self.product)
-        self.assertEqual(len(self.quote.products), 2)
+        quote.add_product(self.product)
+        self.assertEqual(len(quote.products), 2)
 
-    def test_add_new_duplicate_product(self):
-        self.quote.add_product(self.product)
-        self.quote.add_new_duplicate_product(self.product)
-        self.assertEqual(len(self.quote.products), 2)
+    def test_add_duplicate_product(self):
+        quote = Quote.new()
+        quote.add_product(self.product)
+        quote.add_product(self.product)
+        self.assertEqual(len(quote.products), 2)
         self.assertNotEqual(Product.get(2), self.product)
 
 
 class Handle_submit(QuoteTest):
 
-    def test_add_existing_product_on_submit(self):
+    def test_add_product_on_submit(self):
         url = 'quote/edit/1'
         data = dict(
             name="Test Product"
@@ -174,8 +177,8 @@ class Handle_submit(QuoteTest):
             self.quote.add_product_on_submit()
         self.assertIn(self.product, self.quote.products)
 
-    def test_add_existing_product_twice_on_submit(self):
-        self.quote.add_existing_product(self.product)
+    def test_add_product_twice_on_submit(self):
+        self.quote.add_product(self.product)
         url = 'quote/edit/1'
         data = dict(
             name="Test Product"
@@ -185,7 +188,8 @@ class Handle_submit(QuoteTest):
         self.assertEqual(self.quote.error, None)
 
     def test_add_new_product_on_submit(self):
-        url = 'quote/edit/1'
+        quote = Quote.new()
+        url = 'quote/edit/2'
         data = dict(
             name="A product",
             material="a material",
@@ -193,22 +197,24 @@ class Handle_submit(QuoteTest):
             cristal="a material"
         )
         with self.request_context(url, data):
-            self.quote.add_new_product_on_submit()
-        self.assertEqual(len(self.quote.products), 1)
+            quote.add_new_product_on_submit()
+        self.assertEqual(len(quote.products), 1)
 
     def test_add_empty_new_product_on_submit(self):
-        url = 'quote/edit/1'
+        quote = Quote.new()
+        url = 'quote/edit/2'
         data = dict(
             name="A product",
             material="",
             cristal=""
         )
         with self.request_context(url, data):
-            self.quote.add_new_product_on_submit()
-        self.assertEqual(len(self.quote.products), 0)
+            quote.add_new_product_on_submit()
+        self.assertEqual(len(quote.products), 0)
 
     def test_add_product_with_empty_acabado(self):
-        url = 'quote/edit/1'
+        quote = Quote.new()
+        url = 'quote/edit/2'
         data = dict(
             name="A product",
             material="a material",
@@ -216,8 +222,8 @@ class Handle_submit(QuoteTest):
             cristal="a cristal"
         )
         with self.request_context(url, data):
-            self.quote.add_new_product_on_submit()
-        self.assertEqual(len(self.quote.products), 0)
+            quote.add_new_product_on_submit()
+        self.assertEqual(len(quote.products), 0)
 
     def test_new_product_empty_after_submit(self):
         url = 'quote/edit/1'
@@ -231,19 +237,19 @@ class Handle_submit(QuoteTest):
         self.assertEqual(self.quote.new_product.name, "")
 
     def test_add_duplicate_product_on_submit(self):
-        self.quote.add_product(self.product)
-        url = 'quote/edit/1'
+        quote = Quote.new()
+        quote.add_product(self.product)
+        url = 'quote/edit/2'
         data = dict(
             name="Test Product"
         )
         with self.request_context(url, data):
-            self.quote.add_product_on_submit()
+            quote.add_product_on_submit()
         duplicate_product = Product.get(2)
-        self.assertEqual(self.quote.products, [self.product, duplicate_product])
+        self.assertEqual(len(quote.products), 2)
         self.assertNotEqual(duplicate_product, self.product)
 
-    def test_update_sold_products_on_submit(self):
-        self.quote.add_product(self.product)
+    def test_update_products_on_submit(self):
         url = 'quote/edit/1'
         data = dict(
             material1="New Material",
@@ -252,12 +258,12 @@ class Handle_submit(QuoteTest):
             medidas1="2x2"
         )
         with self.request_context(url, data):
-            self.quote.update_sold_products_on_submit()
-            sold_product = self.quote.sold_products[0]
-        self.assertEqual(sold_product.product.material, "New Material")
-        self.assertEqual(sold_product.product.unit_price, 100.0)
-        self.assertEqual(sold_product.cantidad, 10)
-        self.assertEqual(sold_product.medidas, "2x2")
+            self.quote.update_products_on_submit()
+            product = self.quote.products[0]
+        self.assertEqual(product.material, "New Material")
+        self.assertEqual(product.unit_price, 100.0)
+        self.assertEqual(product.cantidad, 10)
+        self.assertEqual(product.medidas, "2x2")
 
     def test_get_product_on_submit(self):
         url = 'quote/edit/1'
@@ -272,7 +278,6 @@ class Handle_submit(QuoteTest):
 class EditQuoteProductsView(QuoteTest):
 
     def test_add_product_view(self):
-        self.quote.add_product(self.product)
         response = self.client.get(
             'quote/edit/1'
         )
@@ -294,42 +299,18 @@ class EditQuoteProductsView(QuoteTest):
         self.assertIn(b"Test Cristal", response.data)
         self.assertIn(b'<input name="name"', response.data)
 
-    def test_edit_sold_product_from_view(self):
-        self.quote.add_product(self.product)
-        data = dict(
-            material1="New Material"
-        )
-        response = self.client.post(
-            'quote/edit/1',
-            data=data
-        )
-        self.assertIn(b"New Material", response.data)
-
     def test_add_duplicate_product_from_view(self):
+        quote = Quote.new()
         data = dict(
             name="Test Product"
         )
         response = self.client.post(
-            'quote/edit/1',
+            'quote/edit/2',
             data=data
         )
         new_response = self.client.post(
-            'quote/edit/1',
+            'quote/edit/2',
             data=data
         )
         self.assertNotEqual(new_response.data, response.data)
-        self.assertEqual(len(self.quote.products), 2)
-        self.assertEqual(len(Product.get_all()), 2)
-
-    def test_update_repeated_product(self):
-        self.quote.add_product(self.product)
-        data = dict(
-            name="Test Product",
-            material1="New Material"
-        )
-        response = self.client.post(
-            'quote/edit/1',
-            data=data
-        )
-        self.assertIn(b"Test Material", response.data)
-        self.assertIn(b"New Material", response.data)
+        self.assertEqual(len(quote.products), 2)

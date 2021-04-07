@@ -1,6 +1,7 @@
 from .setup import MyTest
 from Glastore.models import db
 from Glastore.models.product import Product
+from Glastore.models.quote import Quote
 
 
 class ProductTest(MyTest):
@@ -8,6 +9,7 @@ class ProductTest(MyTest):
     def setUp(self):
         MyTest.setUp(self)
         self.product = Product(
+            quote_id=1,
             name="Test Product",
             material="Test Material",
             acabado="Test Acabado",
@@ -15,77 +17,43 @@ class ProductTest(MyTest):
             unit_price=10
         )
         self.product.add()
-
-
-class ProductsView(ProductTest):
-
-    def test_view(self):
-        response = self.client.get(
-            '/product/products'
-        )
-        self.assertEqual(response.status_code, 200)
-
-    def test_products(self):
-        Product.new("Test 2")
-        response = self.client.get(
-            '/product/products'
-        )
-        self.assertIn(b'Test', response.data)
-        self.assertIn(b'Test 2', response.data)
+        self.quote = Quote.new(self.customer.id)
 
 
 class AddProduct(ProductTest):
 
     def test_add(self):
         product = Product(
+            quote_id=1,
             name="Test 2"
         )
         error = product.add()
+        self.assertEqual(error, None)
         assert product in db.session
-        assert error is None
 
     def test_repeated_name(self):
         product = Product(
+            quote_id=1,
             name="Test2"
         )
         product.add()
         product2 = Product(
+            quote_id=1,
             name="Test2"
         )
         error = product2.add()
-        assert product2 in db.session
         self.assertEqual(error, None)
+        assert product2 in db.session
 
     def test_price(self):
         product = Product(
+            quote_id=1,
             name="Test 2",
             unit_price=10
         )
         error = product.add()
         self.assertEqual(error, None)
         self.assertEqual(product.unit_price, 10.0)
-
-
-class AddProductView(ProductTest):
-
-    def test_view(self):
-        response = self.client.get(
-            '/product/add'
-        )
-        self.assertIn(b'Agregar Producto', response.data)
-
-    def test_add(self):
-        data = dict(
-            name="Test2",
-            material="test material",
-            acabado="test acabado",
-            cristal="test cristal"
-        )
-        response = self.client.post(
-            '/product/add',
-            data=data
-        )
-        self.assertRedirects(response, '/product/products')
 
 
 class UpdateProduct(ProductTest):
@@ -103,40 +71,10 @@ class UpdateProduct(ProductTest):
         assert product.name == "Test Product"
 
 
-class UpdateProductView(ProductTest):
-
-    def test_view(self):
-        response = self.client.get(
-            '/product/update/1'
-        )
-        self.assertIn(b'Test', response.data)
-
-    def test_update(self):
-        data = dict(
-            name="Changed Name",
-            material="test material",
-            acabado="un acabado",
-            cristal="test cristal"
-        )
-        response = self.client.post(
-            '/product/update/1',
-            data=data
-        )
-        self.assertRedirects(response, '/product/products')
-        assert self.product.name == "Changed Name"
-
-
 class DeleteProduct(ProductTest):
 
     def test_delete(self):
         self.product.delete()
-        assert self.product not in db.session
-
-    def test_view(self):
-        response = self.client.post(
-            '/product/delete/1'
-        )
-        self.assertRedirects(response, '/product/products')
         assert self.product not in db.session
 
 
@@ -165,3 +103,44 @@ class GetProducts(ProductTest):
         self.product.material = "Test material"
         Product.new("Test2")
         assert Product.get_all("Test material") == [self.product]
+
+
+class UpdateOnSumbit(ProductTest):
+
+    def test_update_product_on_submit(self):
+        self.quote.add_product(self.product)
+        data = dict(
+            material1="New Material"
+        )
+        url = 'quote/edit/1'
+        with self.request_context(url, data):
+            self.product.update_on_submit()
+        self.assertEqual(self.product.material, "New Material")
+
+    def test_update_cantidad_on_submit(self):
+        self.quote.add_product(self.product)
+        data = dict(
+            cantidad1=1
+        )
+        url = 'quote/edit/1'
+        with self.request_context(url, data):
+            self.product.update_cantidad_on_submit()
+        self.assertEqual(self.product.cantidad, str(1))
+
+    def test_update_total(self):
+        self.product.cantidad = 1
+        self.product.update_total()
+        self.assertEqual(self.product.total, 10)
+
+    def test_update_on_submit(self):
+        self.quote.add_product(self.product)
+        data = dict(
+            material1="Nuevo Material",
+            cantidad1=1
+        )
+        url = 'quote/edit/1'
+        with self.request_context(url, data):
+            self.product.update_on_submit()
+        self.assertEqual(self.product.material, "Nuevo Material")
+        self.assertEqual(self.product.cantidad, 1)
+        self.assertEqual(self.product.total, 10)

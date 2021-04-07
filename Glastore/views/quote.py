@@ -7,9 +7,8 @@ from flask import (
 )
 from Glastore.models import format_date, format_price
 from Glastore.models.quote import Quote, product_keys
-from Glastore.models.sold_product import SoldProduct
+from Glastore.models.product import Product
 from Glastore.models.customer import Customer
-from Glastore.models.product.ventanas import Corrediza, Guillotina
 
 bp = Blueprint("quote", __name__, url_prefix="/quote")
 customer_heads = {
@@ -79,15 +78,15 @@ def done(quote_id):
     )
 
 
-@bp.route("/rotate_window/<int:sold_product_id>")
-def rotate_window(sold_product_id):
-    sold_product = SoldProduct.get(sold_product_id)
-    if sold_product.orientacion >= 4:
-        sold_product.orientacion = 1
+@bp.route("/rotate_window/<int:product_id>")
+def rotate_window(product_id):
+    product = Product.get(product_id)
+    if product.orientacion >= 4:
+        product.orientacion = 1
     else:
-        sold_product.orientacion += 1
-    sold_product.update()
+        product.orientacion += 1
+    product.update()
     
     return redirect(
-        url_for('quote.edit', quote_id=sold_product.quote_id)
+        url_for('quote.edit', quote_id=product.quote_id)
     )

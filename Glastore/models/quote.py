@@ -8,7 +8,6 @@ from Glastore.models import (
     db, add_to_db, commit_to_db, get_form
 )
 from Glastore.models.product import Product
-from Glastore.models.sold_product import SoldProduct
 
 product_keys = {
     "name": ["Suministro y colocación de ", "nombre de pieza..."],
@@ -32,8 +31,8 @@ class Quote(db.Model):
     date = Column(DateTime, nullable=False, default=datetime.now)
     customer_id = Column(Integer, ForeignKey('customer.id'), nullable=False)
     address = Column(String(100), nullable=True, unique=False)
-    sold_products = db.relationship(
-        'SoldProduct', backref='quote', lazy=True,
+    products = db.relationship(
+        'Product', backref='quote', lazy=True,
         cascade='all, delete-orphan'
     )
     error = None
@@ -86,20 +85,16 @@ class Quote(db.Model):
     @property
     def total(self):
         total = 0
-        for sold_product in self.sold_products:
-            total += sold_product.total
+        for product in self.products:
+            total += product.total
         return total
-
-    @property
-    def products(self):
-        products = [sold_product.product for sold_product in self.sold_products]
-        return products
 
     @property
     def new_product(self):
         if not self.form:
             self.form = self.get_form()
         new_product = Product(
+            quote_id=self.id,
             name=self.form['name'],
             material=self.form['material'],
             acabado=self.form['acabado'],
@@ -110,24 +105,19 @@ class Quote(db.Model):
 
     def handle_submit(self):
         self.add_product_on_submit()
-        self.update_sold_products_on_submit()
+        self.update_products_on_submit()
         self.form = empty_form
 
     def add_product_on_submit(self):
         product = self.get_product_on_submit()
         if product:
-            self.add_existing_product(product)
+            self.add_product(product)
         else:
             self.add_new_product_on_submit()
 
-    def add_existing_product(self, product):
-        if product in set(self.products):
-            self.add_new_duplicate_product(product)
-        else:
-            self.add_product(product)
-
-    def add_new_duplicate_product(self, product):
+    def add_product(self, product):
         new_product = Product(
+            quote_id=self.id,
             name=product.name,
             material=product.material,
             acabado=product.acabado,
@@ -135,20 +125,10 @@ class Quote(db.Model):
             unit_price=product.unit_price
         )
         new_product.add()
-        self.add_product(new_product)
 
     def add_new_product_on_submit(self):
         product = self.new_product
         self.error = product.add()
-        if not self.error:
-            self.add_product(product)
-
-    def add_product(self, product):
-        sold_product = SoldProduct(
-            quote_id=self.id,
-            product_id=product.id
-        )
-        sold_product.add()
 
     def get_product_on_submit(self):
         try:
@@ -161,9 +141,9 @@ class Quote(db.Model):
     def get_form(self):
         return get_form(product_keys)
 
-    def update_sold_products_on_submit(self):
-        for sold_product in self.sold_products:
-            sold_product.update_on_submit()
+    def update_products_on_submit(self):
+        for product in self.products:
+            product.update_on_submit()
 
     @property
     def autocomplete_data(self):
