@@ -1,0 +1,7 @@
+{% if not done %}
+<a href="{{ url_for('quote.rotate_window', sold_product_id=sold_product.id) }}">
+    <img style="width: 80%;" src="{{ sold_product.diseño }}"/>
+</a>
+{% else %}
+<img style="width: 80%;" src="{{ sold_product.diseño }}"/>
+{% endif %}

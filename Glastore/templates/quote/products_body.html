@@ -25,9 +25,7 @@
     </td>
     {% elif head == "diseño" %}
     <td class="diseño">
-        <a href="{{ url_for('quote.rotate_window', sold_product_id=sold_product.id) }}">
-            <img style="width: 80%;" src="{{ sold_product.diseño }}"/>
-        </a>
+        {% include "quote/diseño.html" %}
     </td>
     {% elif head == "total" %}
     <td class="total">

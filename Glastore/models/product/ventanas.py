@@ -1,17 +1,6 @@
 import matplotlib.pyplot as plt
 
 
-def draw_frame(xy=(0, 0), width=10, height=10, lw=3, ax=plt):
-    frame = plt.Rectangle(
-        xy,
-        width,
-        height,
-        fill=False,
-        linewidth=lw
-    )
-    ax.add_patch(frame)
-
-
 def draw_line(xdata, ydata, ax=plt):
     line = plt.Line2D(xdata, ydata, lw=2, color="blue")
     ax.add_line(line)
@@ -50,30 +39,39 @@ class Fija(Ventana):
 
 class Corrediza(Ventana):
 
-    def __init__(self, width, height, cantidad, ax):
-        self.cantidad = cantidad
+    def __init__(self, width, height, orientacion, ax):
+        self.orientacion = orientacion
         Ventana.__init__(self, width, height, ax)
 
     def draw(self):
-        x = 0
-        for i in range(self.cantidad):
-            self.draw_frame((x, 0))
-            x += self.width
+        xposition = 0
+        for i in range(2):
+            self.draw_frame((xposition, 0))
+            xposition += self.width
             if i % 2 != 0:
-                self.draw_arrow(x)
+                self.draw_arrow(xposition)
 
     def draw_arrow(self, position):
-        x1 = 0.8 * position
-        x2 = position
         y = self.height / 2
+        if self.orientacion == 1 or self.orientacion == 3:
+            x1 = 0.8 * position
+            x2 = position
+            xmin = 1.15 * x1
+            xmax = x1
+        else:
+            x1 = 0
+            x2 = 0.35 * self.width
+            xmin = 0.50 * x2
+            xmax = x2
+
+        points = [
+            [xmin, 1.2 * y],
+            [xmax, y],
+            [xmin, 0.8 * y]
+        ]
         xdata = (x1, x2)
         ydata = (y, y)
         draw_line(xdata, ydata, self.ax)
-        points = [
-            [1.15 * x1, 0.8 * y],
-            [x1, y],
-            [1.15 * x1, 1.2 * y]
-        ]
         arrow_head = plt.Polygon(
             points,
             fill=False,
@@ -130,31 +128,12 @@ class Abatible(Ventana):
         self.draw_triangle()
     
     def draw_triangle(self):
-        if self.orientacion == 1:
-            points = [
-                [0, 0],
-                [self.width/2, self.height],
-                [self.width, 0]
-            ]
-        elif self.orientacion == 2:
-            points = [
-                [0, self.height],
-                [self.width/2, 0],
-                [self.width, self.height]
-            ]
-        elif self.orientacion == 3:
-            points = [
-                [0, self.height],
-                [self.width, self.height/2],
-                [0, 0]
-            ]
-        elif self.orientacion == 4:
-            points = [
-                [self.width, self.height],
-                [0, self.height/2],
-                [self.width, 0]
-            ]
-
+        self.set_triangle_points()
+        points = [
+            [self.xmin, self.ymin],
+            [self.xmid, self.ymid],
+            [self.xmax, self.ymax]
+        ]
         triangle = plt.Polygon(
             points,
             fill=False,
@@ -163,3 +142,34 @@ class Abatible(Ventana):
             lw=2
         )
         self.ax.add_line(triangle)
+
+    def set_triangle_points(self):
+        if self.orientacion == 1 or self.orientacion == 2:
+            self.xmin = 0
+            self.xmid = self.width / 2
+            self.xmax = self.width
+            if self.orientacion == 1:
+                self.ymin = 0
+                self.ymid = self.height
+                self.ymax = 0
+            elif self.orientacion == 2:
+                self.ymin = self.height
+                self.ymid = 0
+                self.ymax = self.height
+        elif self.orientacion == 3 or self.orientacion == 4:
+            self.ymin = self.height
+            self.ymid = self.height / 2
+            self.ymax = 0
+            if self.orientacion == 3:
+                self.xmin = 0
+                self.xmid = self.width
+                self.xmax = 0
+            elif self.orientacion == 4:
+                self.xmin = self.width
+                self.xmid = 0
+                self.xmax = self.width
+
+
+if __name__ == "__main__":
+    corrediza = Corrediza(10, 10, 2, plt.gca())
+    plt.show()

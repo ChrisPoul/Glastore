@@ -148,7 +148,7 @@ class SoldProduct(db.Model):
         name = self.product.name
         width, height = self.get_medidas()
         if "corrediza" in name:
-            ventana = Corrediza(width, height, 2, ax=ax)
+            ventana = Corrediza(width, height, self.orientacion, ax=ax)
         elif "abatible" in name:
             ventana = Abatible(width, height, self.orientacion, ax)
         elif "guillotina" in name:
