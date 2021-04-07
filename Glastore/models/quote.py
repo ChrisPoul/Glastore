@@ -8,6 +8,7 @@ from Glastore.models import (
     db, add_to_db, commit_to_db, get_form
 )
 from Glastore.models.product import Product
+from Glastore.models.window import Window
 
 product_keys = {
     "name": ["Suministro y colocación de ", "nombre de pieza..."],

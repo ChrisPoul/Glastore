@@ -9,7 +9,9 @@ from flask import request
 from Glastore.models.ventanas import (
     Corrediza, Fija, Guillotina, Abatible
 )
-from Glastore.models import db, add_to_db, commit_to_db, get_form
+from Glastore.models import (
+    db, add_to_db, commit_to_db, get_form
+)
 
 product_heads = {
     "name": "Nombre",
@@ -32,10 +34,10 @@ class Product(db.Model):
     orientacion = Column(Integer, nullable=False, default=1)
     cantidad = Column(Integer, nullable=False, default=0)
     total = Column(Float, nullable=False, default=0)
-    # windows = db.relationship(
-    #     'Window', backref='product', lazy=True,
-    #     cascade='all, delete-orphan'
-    # )
+    windows = db.relationship(
+        'Window', backref='product', lazy=True,
+        cascade='all, delete-orphan'
+    )
 
     def __repr__(self):
         return self.__dict__
