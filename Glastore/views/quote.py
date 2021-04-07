@@ -7,6 +7,7 @@ from flask import (
 )
 from Glastore.models import format_date, format_price
 from Glastore.models.quote import Quote, product_keys
+from Glastore.models.sold_product import SoldProduct
 from Glastore.models.customer import Customer
 from Glastore.models.product.ventanas import Corrediza, Guillotina
 
@@ -78,21 +79,15 @@ def done(quote_id):
     )
 
 
-@bp.route("/ventana", methods=('GET', 'POST'))
-def ventana():
-    fig = plt.Figure(dpi=150)
-    ax = fig.subplots()
-    corrediza = Guillotina(30, 50, 2, ax=ax)
-    corrediza.ax.axis('scaled')
-
-    # Save figure to a temporary buffer.
-    buf = BytesIO()
-    fig.savefig(buf, format="png")
-    # Embed the result in the html output.
-    data = base64.b64encode(buf.getbuffer()).decode("ascii")
-    diseño = 'data:image/png;base64,{}'.format(data)
-
-    return render_template(
-        'quote/diseño.html',
-        diseño=diseño
+@bp.route("/rotate_window/<int:sold_product_id>")
+def rotate_window(sold_product_id):
+    sold_product = SoldProduct.get(sold_product_id)
+    if sold_product.orientacion >= 4:
+        sold_product.orientacion = 1
+    else:
+        sold_product.orientacion += 1
+    sold_product.update()
+    
+    return redirect(
+        url_for('quote.edit', quote_id=sold_product.quote_id)
     )

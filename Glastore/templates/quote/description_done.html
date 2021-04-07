@@ -1,11 +1,12 @@
-{% for key in product_keys %}
-{% if sold_product.product[key] != "" %}
-{{ product_keys[key][0] }}
-{% endif %}
-{% if key != "medidas" %}
-{{ sold_product.product[key] }}
-{% else %}
-{{ sold_product[key] }}
-{% endif %}
-{% endfor %}
-. Incluye herrajes, selladores, y todo lo necesario para su correcta instalación.
+<p>
+    {% for key in product_keys %}
+    {% if key == "medidas" %}
+    . {{ product_keys[key][0] }}
+    {{ sold_product[key] }}
+    {% else %}
+    {{ product_keys[key][0] }}
+    {{ sold_product.product[key] }}
+    {% endif %}
+    {% endfor %}
+    . Incluye herrajes, selladores, y todo lo necesario para su correcta instalación.
+</p>

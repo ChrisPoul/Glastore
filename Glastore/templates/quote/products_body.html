@@ -3,13 +3,11 @@
     {% for head in product_heads %}
     {% if head == "description" %}
     <td class="description">
-        <p>
-            {% if not done %}
-            {% include "quote/description_edit.html" %}
-            {% else %}
-            {% include "quote/description_done.html" %}
-            {% endif %}
-        </p>
+        {% if not done %}
+        {% include "quote/description_edit.html" %}
+        {% else %}
+        {% include "quote/description_done.html" %}
+        {% endif %}
     </td>
     {% elif head == "unit_price" %}
     <td class="unit_price">
@@ -27,7 +25,9 @@
     </td>
     {% elif head == "diseño" %}
     <td class="diseño">
-        {% include "quote/diseño.html" %}
+        <a href="{{ url_for('quote.rotate_window', sold_product_id=sold_product.id) }}">
+            <img style="width: 80%;" src="{{ sold_product.diseño }}"/>
+        </a>
     </td>
     {% elif head == "total" %}
     <td class="total">

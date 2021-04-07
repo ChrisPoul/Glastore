@@ -15,7 +15,7 @@ product_heads = {
 
 class Product(db.Model):
     id = Column(Integer, primary_key=True)
-    name = Column(String(100), nullable=False, unique=False)
+    name = Column(String(300), nullable=False, unique=False)
     material = Column(String(100), nullable=False, unique=False, default="")
     cristal = Column(String(100), nullable=False, unique=False, default="")
     acabado = Column(String(100), nullable=False, unique=False, default="")

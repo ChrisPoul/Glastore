@@ -1,18 +1,21 @@
-{% for key in product_keys %}
-{{ product_keys[key][0] }}
-{% if sold_product %}
-{% if key == "medidas" %}
-<input name="{{ sold_product.unique_keys[key] }}" id="{{ sold_product.unique_keys[key] }}"
-    placeholder="{{ product_keys[key][1] }}" value="{{ sold_product[key] }}">
-{% else %}
-<input name="{{ sold_product.unique_keys[key] }}" id="{{ sold_product.unique_keys[key] }}"
-    placeholder="{{ product_keys[key][1] }}" value="{{ sold_product.product[key] }}" list="autocomplete-{{ key }}s">
-{% endif %}
-{% else %}
-{% if key != "medidas" %}
-<input name="{{ key }}" id="{{ key }}" placeholder="{{ product_keys[key][1] }}" value="{{ quote.new_product[key] }}"
-    list="autocomplete-{{ key }}s">
-{% endif %}
-{% endif %}
-{% endfor %}
-. Incluye herrajes, selladores, y todo lo necesario para su correcta instalación.
+<p style="text-align: justify;">
+    {% for key in product_keys %}
+    {% if sold_product %}
+    {{ product_keys[key][0] }}<br>
+    {% if key == "medidas" %}
+    <input name="{{ sold_product.unique_keys[key] }}" id="{{ sold_product.unique_keys[key] }}"
+        placeholder="{{ product_keys[key][1] }}" value="{{ sold_product[key] }}">
+    {% else %}
+    <input name="{{ sold_product.unique_keys[key] }}" id="{{ sold_product.unique_keys[key] }}"
+        placeholder="{{ product_keys[key][1] }}" value="{{ sold_product.product[key] }}" list="autocomplete-{{ key }}s">
+    {% endif %}
+    {% else %}
+    {% if key != "medidas" %}
+    {{ product_keys[key][0] }}<br>
+    <input name="{{ key }}" id="{{ key }}" placeholder="{{ product_keys[key][1] }}" value="{{ quote.new_product[key] }}"
+        list="autocomplete-{{ key }}s">
+    {% endif %}
+    {% endif %}
+    <br>
+    {% endfor %}
+</p>

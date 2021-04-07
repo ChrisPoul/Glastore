@@ -15,7 +15,7 @@ product_keys = {
     "material": ["en ", "material..."],
     "acabado": ["acabado ", "acabado..."],
     "cristal": ["con ", "cristal o vidrio..."],
-    "medidas": [". Dimenciones", "medidas..."]
+    "medidas": ["Dimenciones", "medidas..."]
 }
 empty_form = {
     "name": "",

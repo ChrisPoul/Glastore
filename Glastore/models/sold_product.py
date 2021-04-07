@@ -19,6 +19,7 @@ class SoldProduct(db.Model):
     quote_id = Column(Integer, ForeignKey('quote.id'), nullable=False)
     product_id = Column(Integer, ForeignKey('product.id'), nullable=False)
     medidas = Column(String(50), nullable=False, unique=False, default="")
+    orientacion = Column(Integer, nullable=False, unique=False, default=1)
     cantidad = Column(Integer, nullable=False, default=0)
     total = Column(Float, nullable=False, default=0)
 
@@ -28,10 +29,12 @@ class SoldProduct(db.Model):
     def add(self):
         self.cantidad = 0
         error = add_to_db(self)
+
         return error
 
     def update(self):
         error = commit_to_db()
+
         return error
 
     def get(id):
@@ -50,44 +53,6 @@ class SoldProduct(db.Model):
         )
 
         return unique_value_keys
-
-    @property
-    def diseño(self):
-        fig = plt.Figure(dpi=150)
-        ax = fig.subplots()
-        ventana = self.get_ventana(ax)
-        ventana.ax.axis('scaled')
-        # Save figure to a temporary buffer.
-        buf = BytesIO()
-        fig.savefig(buf, format="png")
-        # Embed the result in the html output.
-        data = base64.b64encode(buf.getbuffer()).decode("ascii")
-        return 'data:image/png;base64,{}'.format(data)
-
-    def get_medidas(self):
-        try:
-            width, height = self.medidas.split(",")
-            width = float(width)
-            height = float(height)
-        except ValueError:
-            width = 10
-            height = 10
-
-        return (width, height)
-
-    def get_ventana(self, ax):
-        name = self.product.name
-        width, height = self.get_medidas()
-        if "corrediza" in name:
-            ventana = Corrediza(width, height, 2, ax=ax)
-        elif "abatible" in name:
-            ventana = Abatible(width, height, ax=ax)
-        elif "guillotina" in name:
-            ventana = Guillotina(width, height, 2, ax=ax)
-        else:
-            ventana = Fija(width, height, ax=ax)
-        
-        return ventana
 
     def update_on_submit(self):
         self.update_medidas_on_submit()
@@ -153,3 +118,48 @@ class SoldProduct(db.Model):
             self.product.unit_price = request.form[self.unique_keys["unit_price"]]
         except KeyError:
             pass
+
+    @property
+    def diseño(self):
+        fig = plt.Figure(dpi=150)
+        ax = fig.subplots()
+        ventana = self.get_window(ax)
+        # Save figure to a temporary buffer.
+        buf = BytesIO()
+        fig.savefig(buf, format="png")
+        # Embed the result in the html output.
+        data = base64.b64encode(buf.getbuffer()).decode("ascii")
+        diseño = 'data:image/png;base64,{}'.format(data)
+        
+        return diseño
+
+    def get_medidas(self):
+        try:
+            width, height = self.medidas.split(",")
+            width = float(width)
+            height = float(height)
+        except ValueError:
+            width = 10
+            height = 10
+
+        return (width, height)
+
+    def get_window(self, ax):
+        name = self.product.name
+        width, height = self.get_medidas()
+        if "corrediza" in name:
+            ventana = Corrediza(width, height, 2, ax=ax)
+        elif "abatible" in name:
+            ventana = Abatible(width, height, self.orientacion, ax)
+        elif "guillotina" in name:
+            ventana = Guillotina(width, height, ax=ax)
+        else:
+            ventana = Fija(width, height, ax=ax)
+        
+        return ventana
+
+    def get_window_parts(self):
+        name = self.product.name
+        if " y " in name:
+            name_parts = name.split(" y ")
+
