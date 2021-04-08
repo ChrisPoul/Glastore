@@ -195,8 +195,8 @@ class Product(db.Model):
     @property
     def diseño(self):
         fig = plt.Figure(dpi=150)
-        ax = fig.subplots()
-        self.draw_window(ax)
+        self.ax = fig.subplots()
+        self.draw_window()
         # Save figure to a temporary buffer.
         buffer = BytesIO()
         fig.savefig(buffer, format="png")
@@ -206,16 +206,25 @@ class Product(db.Model):
         
         return diseño
 
-    def draw_window(self, ax):
-        self.make_windows_from_name()
+    def draw_window(self):
+        self.make_new_windows()
         self.update_windows()
-        for window in self.windows:
-            window.draw(ax)
+        xy = (0, 0)
+        xposition = 0
+        for i, window in enumerate(self.windows):
+            if i > 0:
+                xposition += self.windows[i-1].width
+                xy = (xposition, 0)
+            window.draw(xy)
 
-    def make_windows_from_name(self):
-        window_descriptions = self.get_window_descriptions_from_name()
-        for description in window_descriptions:
-            if description not in self.window_descriptions:
+    def make_new_windows(self):
+        new_window_descriptions = self.get_window_descriptions_from_name()
+        for i, description in enumerate(new_window_descriptions):
+            try:
+                name = self.windows[i].name
+            except IndexError:
+                name = "hhshshshshshshskkgjoa"
+            if name not in description:
                 window = Window(
                     product_id=self.id,
                     description=description
@@ -244,4 +253,4 @@ class Product(db.Model):
         for window in self.windows:
             window_descriptions.append(window.description)
         
-        return set(window_descriptions)
+        return window_descriptions

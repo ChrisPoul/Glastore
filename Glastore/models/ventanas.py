@@ -8,7 +8,8 @@ def draw_line(xdata, ydata, ax=plt):
 
 class Ventana:
 
-    def __init__(self, width, height, ax):
+    def __init__(self, xy, width, height, ax):
+        self.xy = xy
         self.width = width
         self.height = height
         self.ax = ax
@@ -30,44 +31,46 @@ class Ventana:
 
 class Fija(Ventana):
 
-    def __init__(self, width, height, ax):
-        Ventana.__init__(self, width, height, ax)
+    def __init__(self, xy, width, height, ax):
+        Ventana.__init__(self, xy, width, height, ax)
 
     def draw(self):
-        self.draw_frame()
+        self.draw_frame(
+            xy=self.xy
+        )
 
 
 class Corrediza(Ventana):
 
-    def __init__(self, width, height, orientacion, ax):
+    def __init__(self, xy, width, height, orientacion, ax):
         self.orientacion = orientacion
-        Ventana.__init__(self, width, height, ax)
+        Ventana.__init__(self, xy, width, height, ax)
 
     def draw(self):
-        xposition = 0
-        for i in range(2):
-            self.draw_frame((xposition, 0))
-            xposition += self.width
-            if i % 2 != 0:
-                self.draw_arrow(xposition)
+        xposition, yposition = self.xy
+        self.draw_frame(
+            xy=(xposition, yposition)
+        )
+        self.draw_arrow(xposition)
 
     def draw_arrow(self, position):
-        y = self.height / 2
+        xposition, yposition = self.xy
+        y = self.height/2 + yposition
         if self.orientacion == 1 or self.orientacion == 3:
-            x1 = 0.8 * position
-            x2 = position
-            xmin = 1.15 * x1
+            x1 = 0.7 * self.width + xposition
+            x2 = self.width + xposition
+            xmin = 1.15 * (0.7 * self.width) + position
             xmax = x1
         else:
-            x1 = 0
-            x2 = 0.35 * self.width
-            xmin = 0.50 * x2
+            x1 = xposition
+            x2 = 0.30 * self.width + x1
+            xmin = 0.70 * (0.30 * self.width) + position
             xmax = x2
 
         points = [
-            [xmin, 1.2 * y],
+            [xmin, 1.1 * y + (0.1 * self.width)],
             [xmax, y],
-            [xmin, 0.8 * y]
+            [xmin, 0.9 * y - (0.1 * self.width)]
         ]
         xdata = (x1, x2)
         ydata = (y, y)
@@ -84,28 +87,34 @@ class Corrediza(Ventana):
 
 class Guillotina(Ventana):
 
-    def __init__(self, width, height, ax):
-        Ventana.__init__(self, width, height, ax)
+    def __init__(self, xy, width, height, ax):
+        Ventana.__init__(self, xy, width, height, ax)
 
     def draw(self):
-        y = 0
+        xposition, yposition = self.xy
         for i in range(2):
-            self.draw_frame((0, y))
+            self.draw_frame((xposition, yposition))
             if i == 0:
-                self.draw_arrow(y)
-            y += self.height
+                self.draw_arrow(yposition)
+            yposition += self.height
 
     def draw_arrow(self, position):
-        y1 = position
-        y2 = 0.3 * self.height
-        x = self.width / 2
+        xposition, yposition = self.xy
+        y1 = position + self.height
+        y2 = 0.6 * self.height + yposition
+        x = self.width / 2 + xposition
         ydata = (y1, y2)
         xdata = (x, x)
         draw_line(xdata, ydata, self.ax)
+        xmin = 0.9 * x
+        xmid = x
+        xmax = 1.1 * x
+        ymin = y2
+        ymax = 1.1 * y2
         points = [
-            [0.8 * x, 0.5 * y2],
-            [x, y2],
-            [1.2 * x, 0.5 * y2]
+            [xmin, ymax],
+            [xmid, ymin],
+            [xmax, ymax]
         ]
         arrow_head = plt.Polygon(
             points,
@@ -119,21 +128,18 @@ class Guillotina(Ventana):
 
 class Abatible(Ventana):
 
-    def __init__(self, width, height, orientacion, ax):
+    def __init__(self, xy, width, height, orientacion, ax):
         self.orientacion = orientacion
-        Ventana.__init__(self, width, height, ax)
+        Ventana.__init__(self, xy, width, height, ax)
 
     def draw(self):
-        self.draw_frame()
+        self.draw_frame(
+            xy=self.xy
+        )
         self.draw_triangle()
     
     def draw_triangle(self):
-        self.set_triangle_points()
-        points = [
-            [self.xmin, self.ymin],
-            [self.xmid, self.ymid],
-            [self.xmax, self.ymax]
-        ]
+        points = self.get_triangle_points()
         triangle = plt.Polygon(
             points,
             fill=False,
@@ -143,33 +149,41 @@ class Abatible(Ventana):
         )
         self.ax.add_line(triangle)
 
-    def set_triangle_points(self):
+    def get_triangle_points(self):
+        xposition, yposition = self.xy
         if self.orientacion == 1 or self.orientacion == 2:
-            self.xmin = 0
-            self.xmid = self.width / 2
-            self.xmax = self.width
+            xmin = xposition
+            xmid = self.width / 2 + xposition
+            xmax = self.width + xposition
             if self.orientacion == 1:
-                self.ymin = 0
-                self.ymid = self.height
-                self.ymax = 0
+                ymin = yposition
+                ymid = self.height + yposition
+                ymax = yposition
             elif self.orientacion == 2:
-                self.ymin = self.height
-                self.ymid = 0
-                self.ymax = self.height
+                ymin = self.height + yposition
+                ymid = yposition
+                ymax = self.height + yposition
         elif self.orientacion == 3 or self.orientacion == 4:
-            self.ymin = self.height
-            self.ymid = self.height / 2
-            self.ymax = 0
+            ymin = self.height + yposition
+            ymid = self.height / 2 + yposition
+            ymax = yposition
             if self.orientacion == 3:
-                self.xmin = 0
-                self.xmid = self.width
-                self.xmax = 0
+                xmin = xposition
+                xmid = self.width + xposition
+                xmax = xposition
             elif self.orientacion == 4:
-                self.xmin = self.width
-                self.xmid = 0
-                self.xmax = self.width
+                xmin = self.width + xposition
+                xmid = xposition
+                xmax = self.width + xposition
+        points = [
+            [xmin, ymin],
+            [xmid, ymid],
+            [xmax, ymax]
+        ]
+
+        return points
 
 
 if __name__ == "__main__":
-    corrediza = Corrediza(10, 10, 2, plt.gca())
+    corrediza = Corrediza((20, 20), 10, 10, 2, plt.gca())
     plt.show()

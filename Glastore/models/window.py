@@ -48,30 +48,29 @@ class Window(db.Model):
         else:
             dimensions = self.product.medidas
 
-        return dimensions
-
-    @property
-    def width(self):
         try:
-            width = self.dimensions.split(",")[0]
+            width = dimensions.split(",")[0]
             width = float(width)
         except ValueError:
             width = 10
-
-        return width
-
-    @property
-    def height(self):
         try:
             try:
-                height = self.dimensions.split(",")[1]
+                height = dimensions.split(",")[1]
             except IndexError:
                 height = 10
             height = float(height)
         except ValueError:
             height = 10
 
-        return height
+        return (width, height)
+
+    @property
+    def width(self):
+        return self.dimensions[0]
+
+    @property
+    def height(self):
+        return self.dimensions[1]
 
     def has_dimensions(self):
         nums = "1234567890"
@@ -84,22 +83,24 @@ class Window(db.Model):
         return has_dimensions
 
     def update_description(self):
-        window_descriptions = self.product.get_window_descriptions_from_name()
-        for description in window_descriptions:
+        new_window_descriptions = self.product.get_window_descriptions_from_name()
+        for description in new_window_descriptions:
             if self.name in description:
-                self.description = description
+                if description != self.description:
+                    self.description = description
         self.update()
 
-    def draw(self, ax):
+    def draw(self, xy):
+        ax = self.product.ax
         name = self.name
         orientacion = self.product.orientacion
         width = self.width
         height = self.height
         if "corrediza" in name:
-            ventana = Corrediza(width, height, orientacion, ax)
+            ventana = Corrediza(xy, width, height, orientacion, ax)
         elif "abatible" in name:
-            ventana = Abatible(width, height, orientacion, ax)
+            ventana = Abatible(xy, width, height, orientacion, ax)
         elif "guillotina" in name:
-            ventana = Guillotina(width, height, ax=ax)
+            ventana = Guillotina(xy, width, height, ax)
         else:
-            ventana = Fija(width, height, ax=ax)
+            ventana = Fija(xy, width, height, ax)
