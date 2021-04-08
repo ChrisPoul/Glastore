@@ -6,9 +6,7 @@ from sqlalchemy import (
     Float, ForeignKey
 )
 from flask import request
-from Glastore.models.ventanas import (
-    Corrediza, Fija, Guillotina, Abatible
-)
+from Glastore.models.window import Window
 from Glastore.models import (
     db, add_to_db, commit_to_db, get_form
 )
@@ -198,43 +196,52 @@ class Product(db.Model):
     def diseño(self):
         fig = plt.Figure(dpi=150)
         ax = fig.subplots()
-        ventana = self.get_window(ax)
+        self.draw_window(ax)
         # Save figure to a temporary buffer.
-        buf = BytesIO()
-        fig.savefig(buf, format="png")
+        buffer = BytesIO()
+        fig.savefig(buffer, format="png")
         # Embed the result in the html output.
-        data = base64.b64encode(buf.getbuffer()).decode("ascii")
+        data = base64.b64encode(buffer.getbuffer()).decode("ascii")
         diseño = 'data:image/png;base64,{}'.format(data)
         
         return diseño
 
-    def get_medidas(self):
-        try:
-            width, height = self.medidas.split(",")
-            width = float(width)
-            height = float(height)
-        except ValueError:
-            width = 10
-            height = 10
+    def draw_window(self, ax):
+        self.make_windows_from_name()
+        self.update_windows()
+        for window in self.windows:
+            window.draw(ax)
 
-        return (width, height)
+    def make_windows_from_name(self):
+        window_descriptions = self.get_window_descriptions_from_name()
+        for description in window_descriptions:
+            if description not in self.window_descriptions:
+                window = Window(
+                    product_id=self.id,
+                    description=description
+                )
+                window.add()
 
-    def get_window(self, ax):
-        name = self.name
-        width, height = self.get_medidas()
-        if "corrediza" in name:
-            ventana = Corrediza(width, height, self.orientacion, ax=ax)
-        elif "abatible" in name:
-            ventana = Abatible(width, height, self.orientacion, ax)
-        elif "guillotina" in name:
-            ventana = Guillotina(width, height, ax=ax)
-        else:
-            ventana = Fija(width, height, ax=ax)
+    def update_windows(self):
+        for window in self.windows:
+            if window.name not in self.name:
+                window.delete()
+            else:
+                window.update_description()
+
+    def get_window_descriptions_from_name(self):
+        separators = [" y ", " con "]
+        window_descriptions = [self.name]
+        for separator in separators:
+            if separator in self.name:
+                window_descriptions = self.name.split(separator)
+                break
+        return window_descriptions
+
+    @property
+    def window_descriptions(self):
+        window_descriptions = []
+        for window in self.windows:
+            window_descriptions.append(window.description)
         
-        return ventana
-
-    def get_window_parts(self):
-        name = self.name
-        if " y " in name:
-            name_parts = name.split(" y ")
-
+        return set(window_descriptions)
