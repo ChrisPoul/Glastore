@@ -6,7 +6,7 @@ from sqlalchemy import (
     Float, ForeignKey
 )
 from flask import request
-from Glastore.models.window import Window
+from Glastore.models.window import Window, window_types
 from Glastore.models import (
     db, add_to_db, commit_to_db, get_form
 )
@@ -203,11 +203,10 @@ class Product(db.Model):
         # Embed the result in the html output.
         data = base64.b64encode(buffer.getbuffer()).decode("ascii")
         diseño = 'data:image/png;base64,{}'.format(data)
-        
+
         return diseño
 
     def draw_window(self):
-        self.make_new_windows()
         self.update_windows()
         xy = (0, 0)
         xposition = 0
@@ -217,65 +216,55 @@ class Product(db.Model):
                 xy = (xposition, 0)
             window.draw(xy)
 
-    def make_new_windows(self):
-        new_window_descriptions = self.get_window_descriptions()
-        for i, description in enumerate(new_window_descriptions):
-            try:
-                name = self.windows[i].name
-            except IndexError:
-                name = "hhshshshshshshskkgjoa"
-            if name not in description:
-                window = Window(
-                    product_id=self.id,
-                    description=description
-                )
-                window.add()
+    def make_new_window(self, description):
+        window = Window(
+            product_id=self.id,
+            description=description
+        )
+        window.add()
+
+        return window
 
     def update_windows(self):
-        for window in self.windows:
+        for i, description in enumerate(self.window_descriptions):
+            try:
+                window = self.windows[i]
+            except IndexError:
+                window = self.make_new_window(description)
             if window.name not in self.name:
                 window.delete()
             else:
-                window.update_description()
+                window.update_description(description)
+        if len(self.windows) == 0:
+            self.make_new_window(description)
 
-
-    def get_window_descriptions(self):
+    @property
+    def window_descriptions(self):
         window_descriptions = []
-        for i, win_index in enumerate(self.window_indexes):
+        win_indexes = self.window_indexes
+        for i, win_index in enumerate(win_indexes):
             if i == len(win_indexes) - 1:
-                description = name[win_index:]
+                description = self.name[win_index:]
             else:
                 next_win_index = win_indexes[i+1]
-                description = name[win_index:next_win_index]
+                description = self.name[win_index:next_win_index]
             window_descriptions.append(description)
 
         return window_descriptions
 
     @property
     def window_indexes(self):
-        window_types = [
-        "fija",
-        "corrediza",
-        "abatible",
-        "guillotina"
-        ]
         window_indexes = []
         for win_type in window_types:
-            win_type_count = name.count(win_type)
+            win_type_count = self.name.count(win_type)
             start = 0
             for _ in range(win_type_count):
-                window_index = name.find(win_type, start)
+                window_index = self.name.find(win_type, start)
                 if window_index != -1:
                     window_indexes.append(window_index)
                     start = window_index + 1
             start = 0
-            
-        return sorted(window_indexes)
+        if len(window_indexes) == 0:
+            window_indexes.append(0)
 
-    @property
-    def window_descriptions(self):
-        window_descriptions = []
-        for window in self.windows:
-            window_descriptions.append(window.description)
-        
-        return window_descriptions
+        return sorted(window_indexes)

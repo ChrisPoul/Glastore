@@ -7,6 +7,14 @@ from Glastore.models.ventanas import (
     Corrediza, Fija, Guillotina, Abatible
 )
 
+window_types = [
+    "fija",
+    "fijo",
+    "corrediza",
+    "abatible",
+    "guillotina"
+]
+
 
 class Window(db.Model):
     id = Column(Integer, primary_key=True)
@@ -82,12 +90,8 @@ class Window(db.Model):
 
         return has_dimensions
 
-    def update_description(self):
-        new_window_descriptions = self.product.get_window_descriptions_from_name()
-        for description in new_window_descriptions:
-            if self.name in description:
-                if description != self.description:
-                    self.description = description
+    def update_description(self, description):
+        self.description = description
         self.update()
 
     def draw(self, xy):
