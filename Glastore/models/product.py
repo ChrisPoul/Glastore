@@ -218,7 +218,7 @@ class Product(db.Model):
             window.draw(xy)
 
     def make_new_windows(self):
-        new_window_descriptions = self.get_window_descriptions_from_name()
+        new_window_descriptions = self.get_window_descriptions()
         for i, description in enumerate(new_window_descriptions):
             try:
                 name = self.windows[i].name
@@ -238,14 +238,39 @@ class Product(db.Model):
             else:
                 window.update_description()
 
-    def get_window_descriptions_from_name(self):
-        separators = [" y ", " con "]
-        window_descriptions = [self.name]
-        for separator in separators:
-            if separator in self.name:
-                window_descriptions = self.name.split(separator)
-                break
+
+    def get_window_descriptions(self):
+        window_descriptions = []
+        for i, win_index in enumerate(self.window_indexes):
+            if i == len(win_indexes) - 1:
+                description = name[win_index:]
+            else:
+                next_win_index = win_indexes[i+1]
+                description = name[win_index:next_win_index]
+            window_descriptions.append(description)
+
         return window_descriptions
+
+    @property
+    def window_indexes(self):
+        window_types = [
+        "fija",
+        "corrediza",
+        "abatible",
+        "guillotina"
+        ]
+        window_indexes = []
+        for win_type in window_types:
+            win_type_count = name.count(win_type)
+            start = 0
+            for _ in range(win_type_count):
+                window_index = name.find(win_type, start)
+                if window_index != -1:
+                    window_indexes.append(window_index)
+                    start = window_index + 1
+            start = 0
+            
+        return sorted(window_indexes)
 
     @property
     def window_descriptions(self):
