@@ -1,5 +1,5 @@
 {% if not done %}
-<a href="{{ url_for('product.rotate_window', product_id=product.id) }}">
+<a href="{{ url_for('product.select_next_window', product_id=product.id) }}">
     <img style="width: 80%;" src="{{ product.diseño }}"/>
 </a>
 {% else %}

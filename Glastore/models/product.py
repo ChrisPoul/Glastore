@@ -29,9 +29,9 @@ class Product(db.Model):
     acabado = Column(String(100), nullable=False, unique=False, default="")
     unit_price = Column(Float, nullable=False, default=0)
     medidas = Column(String(50), nullable=False, unique=False, default="")
-    orientacion = Column(Integer, nullable=False, default=1)
     cantidad = Column(Integer, nullable=False, default=0)
     total = Column(Float, nullable=False, default=0)
+    selected_window = Column(Integer, nullable=True)
     windows = db.relationship(
         'Window', backref='product', lazy=True,
         cascade='all, delete-orphan'
@@ -133,70 +133,39 @@ class Product(db.Model):
 
     def update_on_submit(self):
         previous_name = self.name
-        self.update_name_on_submit()
-        self.update_material_on_submit()
-        self.update_acabado_on_submit()
-        self.update_cristal_on_submit()
-        self.update_unit_price_on_submit()
-        self.update_medidas_on_submit()
-        self.update_cantidad_on_submit()
+        self.update_attributes_on_submit()
         self.update_total()
         self.quote.error = self.update()
         if self.quote.error:
             self.name = previous_name
 
-    def update_medidas_on_submit(self):
-        try:
-            self.medidas = request.form[self.unique_keys["medidas"]]
-        except KeyError:
-            pass
-
-    def update_cantidad_on_submit(self):
-        try:
-            self.cantidad = request.form[self.unique_keys["cantidad"]]
-        except KeyError:
-            pass
+    def update_attributes_on_submit(self):
+        attributes = [
+            "name",
+            "material",
+            "acabado",
+            "cristal",
+            "unit_price",
+            "medidas",
+            "cantidad"
+        ]
+        for attribute in attributes:
+            try:
+                request_value = request.form[self.unique_keys[attribute]]
+                setattr(self, attribute, request_value)
+            except KeyError:
+                pass
 
     def update_total(self):
         cantidad = float(self.cantidad)
         unit_price = float(self.unit_price)
         self.total = cantidad * unit_price
 
-    def update_name_on_submit(self):
-        try:
-            self.name = request.form[self.unique_keys["name"]]
-        except KeyError:
-            pass
-
-    def update_material_on_submit(self):
-        try:
-            self.material = request.form[self.unique_keys["material"]]
-        except KeyError:
-            pass
-
-    def update_acabado_on_submit(self):
-        try:
-            self.acabado = request.form[self.unique_keys["acabado"]]
-        except KeyError:
-            pass
-
-    def update_cristal_on_submit(self):
-        try:
-            self.cristal = request.form[self.unique_keys["cristal"]]
-        except KeyError:
-            pass
-
-    def update_unit_price_on_submit(self):
-        try:
-            self.unit_price = request.form[self.unique_keys["unit_price"]]
-        except KeyError:
-            pass
-
     @property
     def diseño(self):
-        fig = plt.Figure(dpi=150)
+        fig = plt.Figure(dpi=180, figsize=(4.5, 4.5))
         self.ax = fig.subplots()
-        self.draw_window()
+        self.draw_final_window()
         # Save figure to a temporary buffer.
         buffer = BytesIO()
         fig.savefig(buffer, format="png")
@@ -206,7 +175,7 @@ class Product(db.Model):
 
         return diseño
 
-    def draw_window(self):
+    def draw_final_window(self):
         self.update_windows()
         windows = self.windows
         xy_positions = self.get_xy_postions()

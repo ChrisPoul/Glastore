@@ -117,30 +117,17 @@ class UpdateOnSumbit(ProductTest):
             self.product.update_on_submit()
         self.assertEqual(self.product.material, "New Material")
 
-    def test_update_cantidad_on_submit(self):
+    def test_update_attributes_on_submit(self):
         self.quote.add_product(self.product)
         data = dict(
             cantidad1=1
         )
         url = 'quote/edit/1'
         with self.request_context(url, data):
-            self.product.update_cantidad_on_submit()
+            self.product.update_attributes_on_submit()
         self.assertEqual(self.product.cantidad, str(1))
 
     def test_update_total(self):
         self.product.cantidad = 1
         self.product.update_total()
-        self.assertEqual(self.product.total, 10)
-
-    def test_update_on_submit(self):
-        self.quote.add_product(self.product)
-        data = dict(
-            material1="Nuevo Material",
-            cantidad1=1
-        )
-        url = 'quote/edit/1'
-        with self.request_context(url, data):
-            self.product.update_on_submit()
-        self.assertEqual(self.product.material, "Nuevo Material")
-        self.assertEqual(self.product.cantidad, 1)
         self.assertEqual(self.product.total, 10)

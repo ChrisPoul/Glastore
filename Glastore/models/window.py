@@ -23,6 +23,7 @@ class Window(db.Model):
     id = Column(Integer, primary_key=True)
     product_id = Column(Integer, ForeignKey('product.id'), nullable=False)
     description = Column(String(100), nullable=False, unique=False, default="fija")
+    orientacion = Column(Integer, nullable=False, default=1)
 
     def add(self):
         add_to_db(self)
@@ -33,6 +34,9 @@ class Window(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+
+    def get(window_id):
+        return Window.query.get(window_id)
 
     @property
     def name(self):
@@ -118,7 +122,7 @@ class Window(db.Model):
     def draw(self, xy):
         ax = self.product.ax
         name = self.name
-        orientacion = self.product.orientacion
+        orientacion = self.orientacion
         width = self.width
         height = self.height
         if "corrediza" in name:

@@ -3,6 +3,7 @@ from flask import request
 from flask.cli import with_appcontext
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import Column
 
 db = SQLAlchemy()
 repeated_value_msg = "Introdujo un valor que ya está en uso"
@@ -38,6 +39,15 @@ def add_to_db(item):
     error = commit_to_db()
 
     return error
+
+
+def add_column(engine, table_name, column):
+    column_name = column.compile(dialect=engine.dialect)
+    column_type = column.type.compile(engine.dialect)
+    engine.execute('ALTER TABLE %s ADD COLUMN %s %s' % (table_name, column_name, column_type))
+
+# column = Column('orientacion', String(100), nullable=True, default=1)
+# add_column(d.engine, "window", column)
 
 
 def get_form(heads):
