@@ -3,7 +3,7 @@ from sqlalchemy import (
     Float, ForeignKey
 )
 from Glastore.models import db, add_to_db, commit_to_db
-from Glastore.models.ventanas import (
+from Glastore.models.basic_windows import (
     Corrediza, Fija, Guillotina, Abatible
 )
 

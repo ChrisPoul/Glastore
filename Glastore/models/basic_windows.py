@@ -6,7 +6,7 @@ def draw_line(xdata, ydata, ax=plt):
     ax.add_line(line)
 
 
-class Ventana:
+class BasicWindow:
 
     def __init__(self, xy, width, height, ax):
         self.xy = xy
@@ -29,10 +29,10 @@ class Ventana:
         self.ax.add_patch(frame)
 
 
-class Fija(Ventana):
+class Fija(BasicWindow):
 
     def __init__(self, xy, width, height, ax):
-        Ventana.__init__(self, xy, width, height, ax)
+        BasicWindow.__init__(self, xy, width, height, ax)
 
     def draw(self):
         self.draw_frame(
@@ -40,11 +40,11 @@ class Fija(Ventana):
         )
 
 
-class Corrediza(Ventana):
+class Corrediza(BasicWindow):
 
     def __init__(self, xy, width, height, orientacion, ax):
         self.orientacion = orientacion
-        Ventana.__init__(self, xy, width, height, ax)
+        BasicWindow.__init__(self, xy, width, height, ax)
 
     def draw(self):
         xposition, yposition = self.xy
@@ -85,10 +85,10 @@ class Corrediza(Ventana):
         self.ax.add_line(arrow_head)
 
 
-class Guillotina(Ventana):
+class Guillotina(BasicWindow):
 
     def __init__(self, xy, width, height, ax):
-        Ventana.__init__(self, xy, width, height, ax)
+        BasicWindow.__init__(self, xy, width, height, ax)
 
     def draw(self):
         xposition, yposition = self.xy
@@ -126,11 +126,11 @@ class Guillotina(Ventana):
         self.ax.add_line(arrow_head)
 
 
-class Abatible(Ventana):
+class Abatible(BasicWindow):
 
     def __init__(self, xy, width, height, orientacion, ax):
         self.orientacion = orientacion
-        Ventana.__init__(self, xy, width, height, ax)
+        BasicWindow.__init__(self, xy, width, height, ax)
 
     def draw(self):
         self.draw_frame(
