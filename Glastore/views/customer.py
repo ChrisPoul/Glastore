@@ -19,6 +19,15 @@ def customers():
     )
 
 
+@bp.route('/profile/<int:customer_id>')
+def profile(customer_id):
+    customer = Customer.get(customer_id)
+
+    return render_template(
+        'customer/profile.html', customer=customer
+    )
+
+
 @bp.route('/add', methods=('GET', 'POST'))
 def add():
     form = get_form(customer_heads)

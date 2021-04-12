@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block header %}
+<h1>{% block title %}{{ customer.name }}{% endblock %}</h1>
+<a href="{{ url_for('customer.update', customer_id=customer.id) }}">
+    <h1>Editar Cliente</h1>
+</a>
+{% endblock %}
+
+{% block content %}
+{% for quote in customer.quotes %}
+<a href="{{ url_for('quote.edit', quote_id=quote.id) }}">
+    {{ quote.id }}
+</a>
+<br>
+{% endfor %}
+{% endblock %}
