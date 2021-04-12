@@ -18,7 +18,7 @@ class Ventana:
         self.ax.axis('scaled')
 
     
-    def draw_frame(self, xy=(0, 0), lw=3):
+    def draw_frame(self, xy=(0, 0), lw=6):
         frame = plt.Rectangle(
             xy,
             self.width,
