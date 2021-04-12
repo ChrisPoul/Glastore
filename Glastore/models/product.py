@@ -177,14 +177,13 @@ class Product(db.Model):
 
     def draw_final_window(self):
         self.update_windows()
-        windows = self.windows
-        xy_positions = self.get_xy_postions()
-        for i in xy_positions:
-            for xy in xy_positions[i]:
-                windows[i].draw(xy)
+        for window, window_placement in zip(self.windows, self.window_placements):
+            for xy in window_placement:
+                window.draw(xy)
 
-    def get_xy_postions(self):
-        xy_positions = {}
+    @property
+    def window_placements(self):
+        xy_positions = []
         self.xposition = 0
         self.yposition = 0
         for window in self.windows:
@@ -196,7 +195,7 @@ class Product(db.Model):
                 self.deside_window_position(window)
             xys = self.decide_repetitions(window)
 
-            xy_positions[i] = xys
+            xy_positions.append(xys)
 
         return xy_positions
 
@@ -218,17 +217,7 @@ class Product(db.Model):
     def decide_repetitions(self, window):
         xys = []
         if "dos" in window.description:
-            if "laterales" in window.description:
-                xy = (self.xposition, self.yposition)
-                xys.append(xy)
-                xy = (0, self.yposition)
-                xys.append(xy)
-            else:
-                for i in range(1, 2+1):
-                    xy = (self.xposition, self.yposition)
-                    xys.append(xy)
-                    if i % 2 != 0:
-                        self.xposition += window.width
+            xys = self.handle_two_repetitions(window, xys)
         elif "tres" in window.description:
             for i in range(1, 3+1):
                 xy = (self.xposition, self.yposition)
@@ -239,6 +228,21 @@ class Product(db.Model):
             xy = (self.xposition, self.yposition)
             xys.append(xy)
         
+        return xys
+
+    def handle_two_repetitions(self, window, xys):
+        if "laterales" in window.description:
+            xy = (self.xposition, self.yposition)
+            xys.append(xy)
+            xy = (0, self.yposition)
+            xys.append(xy)
+        else:
+            for i in range(1, 2+1):
+                xy = (self.xposition, self.yposition)
+                xys.append(xy)
+                if i % 2 != 0:
+                    self.xposition += window.width
+
         return xys
 
     def make_new_window(self, description):

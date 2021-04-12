@@ -13,7 +13,7 @@
     {% if key != "medidas" %}
     {{ product_keys[key][0] }}<br>
     <input name="{{ key }}" id="{{ key }}" placeholder="{{ product_keys[key][1] }}" value="{{ quote.new_product[key] }}"
-        list="autocomplete-{{ key }}s">
+        list="autocomplete-{{ key }}s" autofocus>
     {% endif %}
     {% endif %}
     <br>
