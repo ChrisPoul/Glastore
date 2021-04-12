@@ -8,6 +8,8 @@ from Glastore.models.ventanas import (
 )
 
 window_types = [
+    "dos",
+    "antepecho",
     "fija",
     "fijo",
     "corrediza",
@@ -48,29 +50,47 @@ class Window(db.Model):
     @property
     def dimensions(self):
         if self.has_dimensions():
-            nums = "1234567890"
-            for i, char in enumerate(self.description):
-                if char in nums:
-                    break
-            dimensions = self.description[i:]
+            dimensions = self.get_dimensions()
         else:
             dimensions = self.product.medidas
 
-        try:
-            width = dimensions.split(",")[0]
-            width = float(width)
-        except ValueError:
-            width = 10
-        try:
-            try:
-                height = dimensions.split(",")[1]
-            except IndexError:
-                height = 10
-            height = float(height)
-        except ValueError:
-            height = 10
+        width, height = self.get_width_and_height(dimensions)
 
         return (width, height)
+
+    def get_dimensions(self):
+        nums = "1234567890"
+        num_indexes = []
+        for i, char in enumerate(self.description):
+            if char in nums:
+                num_indexes.append(i)
+        first_num_index = num_indexes[0]
+        last_num_index = num_indexes[-1] + 1
+        dimensions = self.description[first_num_index:last_num_index]
+
+        return dimensions
+
+    def get_width_and_height(self, dimensions):
+        separators = ["x", ",", "*"]
+        width = 10
+        height = 10
+        for separator in separators:
+            if separator in dimensions:
+                try:
+                    width = dimensions.split(separator)[0]
+                    width = float(width)
+                except ValueError:
+                    width = 10
+                try:
+                    try:
+                        height = dimensions.split(separator)[1]
+                    except IndexError:
+                        height = 10
+                    height = float(height)
+                except ValueError:
+                    height = 10
+
+        return width, height
 
     @property
     def width(self):

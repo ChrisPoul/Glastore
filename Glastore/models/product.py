@@ -208,13 +208,64 @@ class Product(db.Model):
 
     def draw_window(self):
         self.update_windows()
-        xy = (0, 0)
-        xposition = 0
+        windows = self.windows
+        xy_positions = self.get_xy_postions()
+        for i in xy_positions:
+            for xy in xy_positions[i]:
+                windows[i].draw(xy)
+
+    def get_xy_postions(self):
+        xy_positions = {}
+        self.xposition = 0
+        self.yposition = 0
+        for window in self.windows:
+            if "laterales" in window.description:
+                self.xposition += window.width
+
         for i, window in enumerate(self.windows):
             if i > 0:
-                xposition += self.windows[i-1].width
-                xy = (xposition, 0)
-            window.draw(xy)
+                self.deside_window_position(window)
+            xys = self.decide_repetitions(window)
+
+            xy_positions[i] = xys
+
+        return xy_positions
+
+    def deside_window_position(self, window):
+        i = self.windows.index(window)
+        if "superior" in window.description:
+            self.yposition = self.windows[0].height
+            if "dos" in self.windows[0].description:
+                self.xposition = 0
+        elif "antepecho" in window.description:
+            self.yposition = self.windows[0].height
+            self.xposition = 0
+        elif "inferior" in window.description:
+            self.yposition = -window.height
+        else:
+            self.yposition = 0
+            self.xposition += self.windows[i-1].width
+
+    def decide_repetitions(self, window):
+        xys = []
+        if "dos" in window.description:
+            if "laterales" in window.description:
+                xy = (self.xposition, self.yposition)
+                xys.append(xy)
+                xy = (0, self.yposition)
+                xys.append(xy)
+            else:
+                xy = (self.xposition, self.yposition)
+                xys.append(xy)
+                self.xposition += window.width
+                xy = (self.xposition, self.yposition)
+                xys.append(xy)
+
+        else:
+            xy = (self.xposition, self.yposition)
+            xys.append(xy)
+        
+        return xys
 
     def make_new_window(self, description):
         window = Window(
@@ -226,15 +277,26 @@ class Product(db.Model):
         return window
 
     def update_windows(self):
+        self.update_existing_windows()
+        self.add_new_windows()
+
+    def update_existing_windows(self):
+        for i, window in enumerate(self.windows):
+            try:
+                description = self.window_descriptions[i]
+            except IndexError:
+                window.delete()
+                continue
+            if window.description != description:
+                window.update_description(description)
+
+    def add_new_windows(self):
         for i, description in enumerate(self.window_descriptions):
             try:
                 window = self.windows[i]
             except IndexError:
                 window = self.make_new_window(description)
-            if window.name not in self.name:
-                window.delete()
-            else:
-                window.update_description(description)
+
         if len(self.windows) == 0:
             self.make_new_window(description)
 
@@ -248,7 +310,23 @@ class Product(db.Model):
             else:
                 next_win_index = win_indexes[i+1]
                 description = self.name[win_index:next_win_index]
-            window_descriptions.append(description)
+            if "dos" in description or "antepecho" in description:
+                try:
+                    next_win_index = win_indexes[i+2]
+                    description = self.name[win_index:next_win_index]
+                except IndexError:
+                    description = self.name[win_index:]
+            try:
+                if "dos" not in window_descriptions[i-1] and "antepecho" not in window_descriptions[i-1]:
+                    window_descriptions.append(description)
+                else:
+                    window_descriptions.append("Ignore me")
+            except IndexError:
+                window_descriptions.append(description)
+
+        for description in window_descriptions:
+            if description == "Ignore me":
+                window_descriptions.remove(description)
 
         return window_descriptions
 
