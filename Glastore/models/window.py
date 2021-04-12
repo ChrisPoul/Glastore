@@ -9,6 +9,7 @@ from Glastore.models.ventanas import (
 
 window_types = [
     "dos",
+    "tres",
     "antepecho",
     "fija",
     "fijo",

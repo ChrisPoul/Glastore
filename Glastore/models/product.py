@@ -255,12 +255,17 @@ class Product(db.Model):
                 xy = (0, self.yposition)
                 xys.append(xy)
             else:
+                for i in range(1, 2+1):
+                    xy = (self.xposition, self.yposition)
+                    xys.append(xy)
+                    if i % 2 != 0:
+                        self.xposition += window.width
+        elif "tres" in window.description:
+            for i in range(1, 3+1):
                 xy = (self.xposition, self.yposition)
                 xys.append(xy)
-                self.xposition += window.width
-                xy = (self.xposition, self.yposition)
-                xys.append(xy)
-
+                if i % 3 != 0:
+                    self.xposition += window.width
         else:
             xy = (self.xposition, self.yposition)
             xys.append(xy)
@@ -310,14 +315,9 @@ class Product(db.Model):
             else:
                 next_win_index = win_indexes[i+1]
                 description = self.name[win_index:next_win_index]
-            if "dos" in description or "antepecho" in description:
-                try:
-                    next_win_index = win_indexes[i+2]
-                    description = self.name[win_index:next_win_index]
-                except IndexError:
-                    description = self.name[win_index:]
+            description = self.decide_description_extent(win_index, description)
             try:
-                if "dos" not in window_descriptions[i-1] and "antepecho" not in window_descriptions[i-1]:
+                if "dos" not in window_descriptions[i-1] and "antepecho" not in window_descriptions[i-1] and "tres" not in window_descriptions[i-1]:
                     window_descriptions.append(description)
                 else:
                     window_descriptions.append("Ignore me")
@@ -329,6 +329,18 @@ class Product(db.Model):
                 window_descriptions.remove(description)
 
         return window_descriptions
+
+    def decide_description_extent(self, win_index, description):
+        win_indexes = self.window_indexes
+        i = win_indexes.index(win_index)
+        if "dos" in description or "antepecho" in description or "tres" in description:
+            try:
+                next_win_index = win_indexes[i+2]
+                description = self.name[win_index:next_win_index]
+            except IndexError:
+                description = self.name[win_index:]
+        
+        return description
 
     @property
     def window_indexes(self):
