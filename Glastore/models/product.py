@@ -6,7 +6,8 @@ from sqlalchemy import (
     Float, ForeignKey
 )
 from flask import request
-from Glastore.models.window import Window, WindowPositioner, DescriptionExtractor
+from Glastore.models.window import Window
+from Glastore.models.window.methods import WindowPositioner, DescriptionExtractor
 from Glastore.models import (
     db, add_to_db, commit_to_db, get_form
 )
