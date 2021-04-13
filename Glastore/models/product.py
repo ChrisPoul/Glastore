@@ -163,61 +163,87 @@ class Product(db.Model):
 
     @property
     def diseño(self):
-        fig = plt.Figure(dpi=180, figsize=(4.5, 4.5))
-        self.ax = fig.subplots()
-        self.draw_final_window()
-        # Save figure to a temporary buffer.
-        buffer = BytesIO()
-        fig.savefig(buffer, format="png")
-        # Embed the result in the html output.
-        data = base64.b64encode(buffer.getbuffer()).decode("ascii")
-        diseño = 'data:image/png;base64,{}'.format(data)
+        window_fig = plt.Figure(dpi=180, figsize=(4.5, 4.5))
+        self.draw_final_window(window_fig)
+        self.save_fig_to_temporary_buffer(window_fig)
+        diseño = self.embed_in_html()
 
         return diseño
 
-    def draw_final_window(self):
+    def draw_final_window(self, window_fig):
+        self.ax = window_fig.subplots()
         self.update_windows()
-        for window, window_placement in zip(self.windows, self.window_placements):
+        for window, window_placement in zip(self.windows, self.window_positions):
             for xy in window_placement:
                 window.draw(xy)
 
+    def save_fig_to_temporary_buffer(self, fig):
+        self.buffer = BytesIO()
+        fig.savefig(self.buffer, format="png")
+
+    def embed_in_html(self):
+        # Embed the result in the html output.
+        data_in_base64 = base64.b64encode(self.buffer.getbuffer())
+        data = data_in_base64.decode("ascii")
+        data_uri = 'data:image/png;base64,{}'.format(data)
+        
+        return data_uri
+
     @property
-    def window_placements(self):
-        window_xy_positions = []
+    def window_positions(self):
         self.xposition = 0
         self.yposition = 0
+        self.handle_laterales()
+        window_positions = self.get_window_positions()
+
+        return window_positions
+
+    def handle_laterales(self):
         for window in self.windows:
             if "laterales" in window.description:
                 self.xposition += window.width
 
+    def get_window_positions(self):
+        window_xy_positions = []
         for i, window in enumerate(self.windows):
             if i > 0:
                 self.deside_window_position(window)
-            self.decide_window_repetitions(window)
-
-            window_xy_positions.append(self.window_repetitions)
+            window_repetitions = self.get_window_repetitions(window)
+            window_xy_positions.append(window_repetitions)
 
         return window_xy_positions
 
     def deside_window_position(self, window):
-        i = self.windows.index(window)
         if "superior" in window.description:
-            self.yposition = self.windows[0].height
-            if "dos" in self.windows[0].description:
-                self.xposition = 0
+            self.position_window_top()
         elif "antepecho" in window.description:
-            self.yposition = self.windows[0].height
-            self.xposition = 0
+            self.position_antepecho()
         elif "inferior" in window.description:
-            self.yposition = -window.height
+            self.position_window_bottom(window)
         else:
-            self.yposition = 0
-            self.xposition += self.windows[i-1].width
+            self.position_window_right(window)
 
-    def decide_window_repetitions(self, window):
+    def position_window_right(self, window):
+        prev_window_index = self.windows.index(window) - 1
+        self.yposition = 0
+        self.xposition += self.windows[prev_window_index].width
+
+    def position_window_top(self):
+        self.yposition = self.windows[0].height
+        if "dos" in self.windows[0].description:
+            self.xposition = 0
+
+    def position_antepecho(self):
+        self.yposition = self.windows[0].height
+        self.xposition = 0
+
+    def position_window_bottom(self):
+        self.yposition = -window.height
+
+    def get_window_repetitions(self, window):
         self.window_repetitions = []
         if "dos" in window.description:
-            self.repeat_window_twice(window)
+            self.handle_window_twice(window)
         elif "tres" in window.description:
             for i in range(1, 3+1):
                 xy = (self.xposition, self.yposition)
@@ -225,21 +251,32 @@ class Product(db.Model):
                 if i % 3 != 0:
                     self.xposition += window.width
         else:
-            xy = (self.xposition, self.yposition)
-            self.window_repetitions.append(xy)
+            self.position_window_once()
 
-    def repeat_window_twice(self, window):
+        return self.window_repetitions
+
+    def handle_window_twice(self, window):
         if "laterales" in window.description:
+            self.position_laterales()
+        else:
+            self.position_window_twice(window)
+
+    def position_window_once(self):
+        xy = (self.xposition, self.yposition)
+        self.window_repetitions.append(xy)
+
+    def position_window_twice(self, window):
+        for i in range(1, 2+1):
             xy = (self.xposition, self.yposition)
             self.window_repetitions.append(xy)
-            xy = (0, self.yposition)
-            self.window_repetitions.append(xy)
-        else:
-            for i in range(1, 2+1):
-                xy = (self.xposition, self.yposition)
-                self.window_repetitions.append(xy)
-                if i % 2 != 0:
-                    self.xposition += window.width
+            if i % 2 != 0:
+                self.xposition += window.width
+
+    def position_laterales(self):
+        xy = (self.xposition, self.yposition)
+        self.window_repetitions.append(xy)
+        xy = (0, self.yposition)
+        self.window_repetitions.append(xy)
 
     def make_new_window(self, description):
         window = Window(
@@ -255,14 +292,18 @@ class Product(db.Model):
         self.add_new_windows()
 
     def update_existing_windows(self):
-        for i, window in enumerate(self.windows):
-            try:
-                description = self.window_descriptions[i]
-            except IndexError:
-                window.delete()
-                continue
-            if window.description != description:
-                window.update_description(description)
+        for window in self.windows:
+            self.update_existing_window(window)
+
+    def update_existing_window(self, window):
+        win_index = self.windows.index(window)
+        try:
+            description = self.window_descriptions[win_index]
+        except IndexError:
+            window.delete()
+            return
+        if window.description != description:
+            window.update_description(description)
 
     def add_new_windows(self):
         for i, description in enumerate(self.window_descriptions):
@@ -289,44 +330,46 @@ class DescriptionExtractor:
 
     def get_window_descriptions(self):
         self.window_descriptions = {}
-        description_starts = self.get_start_of_descriptions()
-        for description_index, description_start in enumerate(description_starts):
-            window_description = self.get_window_description(description_start)
-            prev_description = self.get_previous_description(description_index)
-            if not self.is_relative_window(prev_description):
-                self.window_descriptions[description_index] = window_description
-        window_descriptions = [self.window_descriptions[i] for i in self.window_descriptions]
+        for description_start in self.start_of_descriptions:
+            self.current_description_start = description_start
+            self.save_description()
+        window_descriptions = self.get_window_descriptions_list()
 
         return window_descriptions
 
-    def get_window_description(self, description_start):
-        incomplete_description = self.get_incomplete_description(description_start)
-        window_description = self.decide_description_extent(incomplete_description, description_start)
+    def get_window_descriptions_list(self):
+        return [self.window_descriptions[i] for i in self.window_descriptions]
 
-        return window_description
+    def save_description(self):
+        self.current_description_index = self.start_of_descriptions.index(self.current_description_start)
+        window_description = self.get_window_description()
+        prev_description = self.get_previous_description()
+        if not self.is_relative_window(prev_description):
+            self.window_descriptions[self.current_description_index] = window_description
 
-    def get_incomplete_description(self, description_start):
-        description_starts = self.get_start_of_descriptions()
-        description_index = description_starts.index(description_start)
-        if description_index == len(description_starts) - 1:
-            window_description = self.full_description[description_start:]
+    def get_window_description(self):
+        self.make_basic_description()
+        self.handle_window_repetitions()
+
+        return self.window_description
+
+    def make_basic_description(self):
+        if self.current_description_index == len(self.start_of_descriptions) - 1:
+            self.window_description = self.full_description[self.current_description_start:]
         else:
-            next_description_start = description_starts[description_index+1]
-            window_description = self.full_description[description_start:next_description_start]
-
-        return window_description
+            next_description_start = self.start_of_descriptions[self.current_description_index+1]
+            self.window_description = self.full_description[self.current_description_start:next_description_start]
     
-    def decide_description_extent(self, window_description, description_start):
-        description_starts = self.get_start_of_descriptions()
-        i = description_starts.index(description_start)
-        if self.is_relative_window(window_description):
-            try:
-                next_description_start = description_starts[i+2]
-                window_description = self.full_description[description_start:next_description_start]
-            except IndexError:
-                window_description = self.full_description[description_start:]
-        
-        return window_description
+    def handle_window_repetitions(self):
+        if self.is_relative_window(self.window_description):
+            self.extend_window_description()
+
+    def extend_window_description(self):
+        try:
+            next_description_start = self.start_of_descriptions[self.current_description_index+2]
+            self.window_description = self.full_description[self.current_description_start:next_description_start]
+        except IndexError:
+            self.window_description = self.full_description[self.current_description_start:]
 
     def is_relative_window(self, description):
         relative_descriptors = [
@@ -334,23 +377,22 @@ class DescriptionExtractor:
             "antepecho",
             "tres"
         ]
-        relative_window_check = False
         for descriptor in relative_descriptors:
             if descriptor in description:
-                relative_window_check = True
-                break
-        return relative_window_check
+                return True
+        return False
 
-    def get_previous_description(self, description_index):
+    def get_previous_description(self):
         try:
-            prev_description_index = description_index - 1
+            prev_description_index = self.current_description_index - 1
             prev_description = self.window_descriptions[prev_description_index]
         except KeyError:
             prev_description = ""
 
         return prev_description
 
-    def get_start_of_descriptions(self):
+    @property
+    def start_of_descriptions(self):
         window_identifiers = [
             "dos",
             "tres",
@@ -374,6 +416,12 @@ class DescriptionExtractor:
         start = 0
         for _ in range(win_type_count):
             description_start_index = self.full_description.find(win_identifier, start)
-            if description_start_index != -1:
-                self.description_start_indexes.append(description_start_index)
-                start = description_start_index + 1
+            start = self.add_description_start(description_start_index)
+    
+    def add_description_start(self, description_start_index):
+        start = 0
+        if description_start_index != -1:
+            self.description_start_indexes.append(description_start_index)
+            start = description_start_index + 1
+        
+        return start
