@@ -6,7 +6,7 @@ from sqlalchemy import (
     Float, ForeignKey
 )
 from flask import request
-from Glastore.models.window import Window, window_types
+from Glastore.models.window import Window
 from Glastore.models import (
     db, add_to_db, commit_to_db, get_form
 )
@@ -183,7 +183,7 @@ class Product(db.Model):
 
     @property
     def window_placements(self):
-        xy_positions = []
+        window_xy_positions = []
         self.xposition = 0
         self.yposition = 0
         for window in self.windows:
@@ -193,11 +193,11 @@ class Product(db.Model):
         for i, window in enumerate(self.windows):
             if i > 0:
                 self.deside_window_position(window)
-            xys = self.decide_repetitions(window)
+            self.decide_window_repetitions(window)
 
-            xy_positions.append(xys)
+            window_xy_positions.append(self.window_repetitions)
 
-        return xy_positions
+        return window_xy_positions
 
     def deside_window_position(self, window):
         i = self.windows.index(window)
@@ -214,36 +214,32 @@ class Product(db.Model):
             self.yposition = 0
             self.xposition += self.windows[i-1].width
 
-    def decide_repetitions(self, window):
-        xys = []
+    def decide_window_repetitions(self, window):
+        self.window_repetitions = []
         if "dos" in window.description:
-            xys = self.handle_two_repetitions(window, xys)
+            self.repeat_window_twice(window)
         elif "tres" in window.description:
             for i in range(1, 3+1):
                 xy = (self.xposition, self.yposition)
-                xys.append(xy)
+                self.window_repetitions.append(xy)
                 if i % 3 != 0:
                     self.xposition += window.width
         else:
             xy = (self.xposition, self.yposition)
-            xys.append(xy)
-        
-        return xys
+            self.window_repetitions.append(xy)
 
-    def handle_two_repetitions(self, window, xys):
+    def repeat_window_twice(self, window):
         if "laterales" in window.description:
             xy = (self.xposition, self.yposition)
-            xys.append(xy)
+            self.window_repetitions.append(xy)
             xy = (0, self.yposition)
-            xys.append(xy)
+            self.window_repetitions.append(xy)
         else:
             for i in range(1, 2+1):
                 xy = (self.xposition, self.yposition)
-                xys.append(xy)
+                self.window_repetitions.append(xy)
                 if i % 2 != 0:
                     self.xposition += window.width
-
-        return xys
 
     def make_new_window(self, description):
         window = Window(
@@ -280,54 +276,104 @@ class Product(db.Model):
 
     @property
     def window_descriptions(self):
-        window_descriptions = []
-        win_indexes = self.window_indexes
-        for i, win_index in enumerate(win_indexes):
-            if i == len(win_indexes) - 1:
-                description = self.name[win_index:]
-            else:
-                next_win_index = win_indexes[i+1]
-                description = self.name[win_index:next_win_index]
-            description = self.decide_description_extent(win_index, description)
-            try:
-                if "dos" not in window_descriptions[i-1] and "antepecho" not in window_descriptions[i-1] and "tres" not in window_descriptions[i-1]:
-                    window_descriptions.append(description)
-                else:
-                    window_descriptions.append("Ignore me")
-            except IndexError:
-                window_descriptions.append(description)
-
-        for description in window_descriptions:
-            if description == "Ignore me":
-                window_descriptions.remove(description)
+        description_extractor = DescriptionExtractor(self.name)
+        window_descriptions = description_extractor.get_window_descriptions()
 
         return window_descriptions
 
-    def decide_description_extent(self, win_index, description):
-        win_indexes = self.window_indexes
-        i = win_indexes.index(win_index)
-        if "dos" in description or "antepecho" in description or "tres" in description:
+
+class DescriptionExtractor:
+
+    def __init__(self, description):
+        self.full_description = description
+
+    def get_window_descriptions(self):
+        self.window_descriptions = {}
+        description_starts = self.get_start_of_descriptions()
+        for description_index, description_start in enumerate(description_starts):
+            window_description = self.get_window_description(description_start)
+            prev_description = self.get_previous_description(description_index)
+            if not self.is_relative_window(prev_description):
+                self.window_descriptions[description_index] = window_description
+        window_descriptions = [self.window_descriptions[i] for i in self.window_descriptions]
+
+        return window_descriptions
+
+    def get_window_description(self, description_start):
+        incomplete_description = self.get_incomplete_description(description_start)
+        window_description = self.decide_description_extent(incomplete_description, description_start)
+
+        return window_description
+
+    def get_incomplete_description(self, description_start):
+        description_starts = self.get_start_of_descriptions()
+        description_index = description_starts.index(description_start)
+        if description_index == len(description_starts) - 1:
+            window_description = self.full_description[description_start:]
+        else:
+            next_description_start = description_starts[description_index+1]
+            window_description = self.full_description[description_start:next_description_start]
+
+        return window_description
+    
+    def decide_description_extent(self, window_description, description_start):
+        description_starts = self.get_start_of_descriptions()
+        i = description_starts.index(description_start)
+        if self.is_relative_window(window_description):
             try:
-                next_win_index = win_indexes[i+2]
-                description = self.name[win_index:next_win_index]
+                next_description_start = description_starts[i+2]
+                window_description = self.full_description[description_start:next_description_start]
             except IndexError:
-                description = self.name[win_index:]
+                window_description = self.full_description[description_start:]
         
-        return description
+        return window_description
 
-    @property
-    def window_indexes(self):
-        window_indexes = []
-        for win_type in window_types:
-            win_type_count = self.name.count(win_type)
-            start = 0
-            for _ in range(win_type_count):
-                window_index = self.name.find(win_type, start)
-                if window_index != -1:
-                    window_indexes.append(window_index)
-                    start = window_index + 1
-            start = 0
-        if len(window_indexes) == 0:
-            window_indexes.append(0)
+    def is_relative_window(self, description):
+        relative_descriptors = [
+            "dos",
+            "antepecho",
+            "tres"
+        ]
+        relative_window_check = False
+        for descriptor in relative_descriptors:
+            if descriptor in description:
+                relative_window_check = True
+                break
+        return relative_window_check
 
-        return sorted(window_indexes)
+    def get_previous_description(self, description_index):
+        try:
+            prev_description_index = description_index - 1
+            prev_description = self.window_descriptions[prev_description_index]
+        except KeyError:
+            prev_description = ""
+
+        return prev_description
+
+    def get_start_of_descriptions(self):
+        window_identifiers = [
+            "dos",
+            "tres",
+            "antepecho",
+            "fija",
+            "fijo",
+            "corrediza",
+            "abatible",
+            "guillotina"
+        ]
+        self.description_start_indexes = []
+        for win_identifier in window_identifiers:
+            self.get_start_of_description(win_identifier)
+        if len(self.description_start_indexes) == 0:
+            self.description_start_indexes.append(0)
+
+        return sorted(self.description_start_indexes)
+
+    def get_start_of_description(self, win_identifier):
+        win_type_count = self.full_description.count(win_identifier)
+        start = 0
+        for _ in range(win_type_count):
+            description_start_index = self.full_description.find(win_identifier, start)
+            if description_start_index != -1:
+                self.description_start_indexes.append(description_start_index)
+                start = description_start_index + 1

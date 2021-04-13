@@ -7,17 +7,6 @@ from Glastore.models.basic_windows import (
     Corrediza, Fija, Guillotina, Abatible
 )
 
-window_types = [
-    "dos",
-    "tres",
-    "antepecho",
-    "fija",
-    "fijo",
-    "corrediza",
-    "abatible",
-    "guillotina"
-]
-
 
 class Window(db.Model):
     id = Column(Integer, primary_key=True)
@@ -95,7 +84,7 @@ class Window(db.Model):
                 except ValueError:
                     height = 10
 
-        return width, height
+        return (width, height)
 
     @property
     def width(self):
