@@ -40,7 +40,6 @@ class Window(db.Model):
 
         return name
 
-
     @property
     def dimensions(self):
         if self.has_dimensions():

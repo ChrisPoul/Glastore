@@ -106,7 +106,8 @@ class DescriptionExtractor:
         return [self.window_descriptions[i] for i in self.window_descriptions]
 
     def save_description(self):
-        self.current_description_index = self.start_of_descriptions.index(self.current_description_start)
+        self.current_description_index = self.start_of_descriptions.index(
+            self.current_description_start)
         window_description = self.get_window_description()
         prev_description = self.get_previous_description()
         if not self.is_relative_window(prev_description):
@@ -123,8 +124,9 @@ class DescriptionExtractor:
             self.window_description = self.full_description[self.current_description_start:]
         else:
             next_description_start = self.start_of_descriptions[self.current_description_index+1]
-            self.window_description = self.full_description[self.current_description_start:next_description_start]
-    
+            self.window_description = self.full_description[
+                self.current_description_start:next_description_start]
+
     def handle_window_repetitions(self):
         if self.is_relative_window(self.window_description):
             self.extend_window_description()
@@ -132,7 +134,8 @@ class DescriptionExtractor:
     def extend_window_description(self):
         try:
             next_description_start = self.start_of_descriptions[self.current_description_index+2]
-            self.window_description = self.full_description[self.current_description_start:next_description_start]
+            self.window_description = self.full_description[
+                self.current_description_start:next_description_start]
         except IndexError:
             self.window_description = self.full_description[self.current_description_start:]
 
@@ -180,13 +183,14 @@ class DescriptionExtractor:
         win_type_count = self.full_description.count(win_identifier)
         start = 0
         for _ in range(win_type_count):
-            description_start_index = self.full_description.find(win_identifier, start)
+            description_start_index = self.full_description.find(
+                win_identifier, start)
             start = self.add_description_start(description_start_index)
-    
+
     def add_description_start(self, description_start_index):
         start = 0
         if description_start_index != -1:
             self.description_start_indexes.append(description_start_index)
             start = description_start_index + 1
-        
+
         return start
