@@ -43,15 +43,23 @@ class Window(db.Model):
     @property
     def dimensions(self):
         if self.has_dimensions():
-            dimensions = self.get_dimensions()
+            dimensions_str = self.extract_dimensions_string()
         else:
-            dimensions = self.product.medidas
+            dimensions_str = self.product.medidas
 
-        width, height = self.get_width_and_height(dimensions)
+        width, height = self.get_width_and_height(dimensions_str)
 
         return (width, height)
 
-    def get_dimensions(self):
+    def has_dimensions(self):
+        nums = "1234567890"
+        for num in nums:
+            if num in self.description:
+                return True
+
+        return False
+
+    def extract_dimensions_string(self):
         nums = "1234567890"
         num_indexes = []
         for i, char in enumerate(self.description):
@@ -64,42 +72,44 @@ class Window(db.Model):
         return dimensions
 
     def get_width_and_height(self, dimensions):
-        separators = ["x", ",", "*"]
+        separators = ["x", "X", ",", "*"]
         width = 10
         height = 10
         for separator in separators:
             if separator in dimensions:
-                try:
-                    width = dimensions.split(separator)[0]
-                    width = float(width)
-                except ValueError:
-                    width = 10
-                try:
-                    try:
-                        height = dimensions.split(separator)[1]
-                    except IndexError:
-                        height = 10
-                    height = float(height)
-                except ValueError:
-                    height = 10
+                width =self.get_width(dimensions, separator)
+                height = self.get_height(dimensions, separator)
 
         return (width, height)
+
+    def get_width(self, dimensions, separator):
+        try:
+            width = dimensions.split(separator)[0]
+            width = float(width)
+        except ValueError:
+            width = 10
+
+        return width
 
     @property
     def width(self):
         return self.dimensions[0]
 
+    def get_height(self, dimensions, separator):
+        try:
+            try:
+                height = dimensions.split(separator)[1]
+            except IndexError:
+                height = 10
+            height = float(height)
+        except ValueError:
+            height = 10
+
+        return height
+
     @property
     def height(self):
         return self.dimensions[1]
-
-    def has_dimensions(self):
-        nums = "1234567890"
-        for num in nums:
-            if num in self.description:
-                return True
-
-        return False
 
     def update_description(self, description):
         self.description = description
@@ -107,15 +117,11 @@ class Window(db.Model):
 
     def draw(self, xy):
         ax = self.product.ax
-        name = self.name
-        orientacion = self.orientacion
-        width = self.width
-        height = self.height
-        if "corrediza" in name:
-            ventana = Corrediza(xy, width, height, orientacion, ax)
-        elif "abatible" in name:
-            ventana = Abatible(xy, width, height, orientacion, ax)
-        elif "guillotina" in name:
-            ventana = Guillotina(xy, width, height, ax)
+        if "corrediza" in self.name:
+            ventana = Corrediza(xy, self.width, self.height, self.orientacion, ax)
+        elif "abatible" in self.name:
+            ventana = Abatible(xy, self.width, self.height, self.orientacion, ax)
+        elif "guillotina" in self.name:
+            ventana = Guillotina(xy, self.width, self.height, ax)
         else:
-            ventana = Fija(xy, width, height, ax)
+            ventana = Fija(xy, self.width, self.height, ax)
