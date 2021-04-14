@@ -1,4 +1,4 @@
-from .setup import MyTest
+from .setup import MyTest, make_test_customer
 from Glastore.models import db
 from Glastore.models.product import Product
 from Glastore.models.quote import Quote
@@ -8,6 +8,7 @@ class ProductTest(MyTest):
 
     def setUp(self):
         MyTest.setUp(self)
+        self.customer = make_test_customer()
         self.product = Product(
             quote_id=1,
             name="Test Product",

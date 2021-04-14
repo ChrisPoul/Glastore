@@ -7,7 +7,8 @@ from sqlalchemy import (
 )
 from flask import request
 from Glastore.models.window import Window
-from Glastore.models.window.methods import WindowPositioner, DescriptionExtractor
+from Glastore.models.window.position import WindowPositioner
+from Glastore.models.window.description import WindowDescriptionExtractor
 from Glastore.models import (
     db, add_to_db, commit_to_db, get_form
 )
@@ -235,6 +236,6 @@ class Product(db.Model):
 
     @property
     def window_descriptions(self):
-        window_descriptions = DescriptionExtractor(self.name).get_window_descriptions()
+        window_descriptions = WindowDescriptionExtractor(self.name).get_window_descriptions()
 
         return window_descriptions

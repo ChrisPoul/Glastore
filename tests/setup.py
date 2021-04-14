@@ -31,7 +31,6 @@ class MyTest(TestCase):
     def setUp(self):
         self.client = self.app.test_client()
         db.create_all()
-        self.customer = make_test_customer()
 
     def tearDown(self):
         db.session.remove()

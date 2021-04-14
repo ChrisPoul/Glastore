@@ -7,6 +7,7 @@ class CustomerTest(MyTest):
 
     def setUp(self):
         MyTest.setUp(self)
+        self.customer = make_test_customer()
 
 
 class AddCustomer(CustomerTest):
