@@ -117,49 +117,68 @@ class TestEachMethod(WindowPositionerTest):
         self.assertEqual(positioner.xposition, 0)
         self.assertEqual(positioner.yposition, window.height)
 
-    def test_add_window_ocurrances(self):
+    def test_add_current_window_positions(self):
         window = make_test_window("fijo de 5x15")
         puertas = make_test_window("dos puertas abatibles de 10x15")
         positioner = WindowPositioner([window, puertas])
-        single_window = positioner.get_window_ocurrances(window)
+        positioner.window_xy_positions = []
+        positioner.add_current_window_positions(window)
+        self.assertEqual(positioner.window_xy_positions, [[(0, 0)]])
         positioner.decide_window_position(puertas)
-        double_window = positioner.get_window_ocurrances(puertas)
-        self.assertEqual(single_window, [(0, 0)])
-        self.assertEqual(double_window, [(5, 0), (15, 0)])
+        positioner.add_current_window_positions(puertas)
+        self.assertEqual(positioner.window_xy_positions, [[(0, 0)], [(5, 0), (15, 0)]])
+
+    def test_get_current_window_positions(self):
+        window = make_test_window("fijo de 5x15")
+        positioner = WindowPositioner([window])
+        current_window_positions = positioner.get_current_window_positions(window)
+        self.assertEqual(current_window_positions, [(0, 0)])
+
+    def test_get_current_window_two_positions(self):
+        puertas = make_test_window("dos puertas abatibles de 10x15")
+        positioner = WindowPositioner([puertas])
+        current_window_positions = positioner.get_current_window_positions(puertas)
+        self.assertEqual(current_window_positions, [(0, 0), (10, 0)])
+
+    def test_get_current_window_three_positions(self):
+        puertas = make_test_window("tres puertas abatibles de 10x15")
+        positioner = WindowPositioner([puertas])
+        current_window_positions = positioner.get_current_window_positions(puertas)
+        self.assertEqual(current_window_positions, [(0, 0), (10, 0), (20, 0)])
 
     def test_position_window_once(self):
         window = make_test_window("dos fijo de 5x15")
         positioner = WindowPositioner([window])
-        positioner.window_ocurrances = []
+        positioner.current_window_positions = []
         positioner.position_window_once()
-        positioner.window_ocurrances = [(0, 0)]
+        positioner.current_window_positions = [(0, 0)]
 
     def test_handle_window_twice(self):
         puertas = make_test_window("dos puertas abatibles de 10x15")
         laterales = make_test_window("dos fijos laterales de 5x15")
         positioner = WindowPositioner([puertas, laterales])
         positioner.handle_laterales()
-        positioner.window_ocurrances = []
+        positioner.current_window_positions = []
         positioner.handle_window_twice(puertas)
-        self.assertEqual(positioner.window_ocurrances, [(5, 0), (15, 0)])
-        positioner.window_ocurrances = []
+        self.assertEqual(positioner.current_window_positions, [(5, 0), (15, 0)])
+        positioner.current_window_positions = []
         positioner.handle_window_twice(laterales)
-        self.assertEqual(positioner.window_ocurrances, [(15, 0), (0, 0)])
+        self.assertEqual(positioner.current_window_positions, [(15, 0), (0, 0)])
 
     def test_position_window_twice(self):
         puertas = make_test_window("puertas abatibles de 10x15")
         positioner = WindowPositioner([puertas])
-        positioner.window_ocurrances = []
+        positioner.current_window_positions = []
         positioner.position_window_twice(puertas)
-        self.assertEqual(positioner.window_ocurrances, [(0, 0), (10, 0)])
+        self.assertEqual(positioner.current_window_positions, [(0, 0), (10, 0)])
 
     def test_position_laterales(self):
         window = make_test_window("puerta abatible de 10x15 con")
         laterales = make_test_window("dos fijos laterales de 5x15")
         positioner = WindowPositioner([window, laterales])
         positioner.handle_laterales()
-        positioner.window_ocurrances = []
+        positioner.current_window_positions = []
         positioner.decide_window_position(laterales)
         positioner.position_laterales()
-        self.assertEqual(positioner.window_ocurrances, [(15, 0), (0, 0)])
+        self.assertEqual(positioner.current_window_positions, [(15, 0), (0, 0)])
 
