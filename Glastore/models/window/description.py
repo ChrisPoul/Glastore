@@ -26,7 +26,7 @@ class WindowDescriptionExtractor:
 
     def get_current_window_description(self):
         self.current_description = self.make_basic_window_description()
-        self.handle_window_repetitions()
+        self.handle_extended_window_descriptions()
 
         return self.current_description
 
@@ -44,7 +44,7 @@ class WindowDescriptionExtractor:
     def is_last_window(self):
         return self.current_description_index == len(self.start_of_descriptions) - 1
 
-    def handle_window_repetitions(self):
+    def handle_extended_window_descriptions(self):
         if is_extended_description(self.current_description):
             self.extend_window_description()
 
