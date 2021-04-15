@@ -68,6 +68,14 @@ class WindowDescriptionExtractor:
 
     @property
     def start_of_descriptions(self):
+        description_start_indexes = self.get_description_start_indexes()
+        if len(description_start_indexes) == 0:
+            description_start_indexes.append(0)
+
+        return sorted(description_start_indexes)
+
+    def get_description_start_indexes(self):
+        self.description_start_indexes = []
         window_identifiers = [
             "dos",
             "tres",
@@ -78,32 +86,36 @@ class WindowDescriptionExtractor:
             "abatible",
             "guillotina"
         ]
-        self.description_start_indexes = []
         for win_identifier in window_identifiers:
-            self.get_start_of_description(win_identifier)
-        if self.is_first_description_start_index():
-            self.description_start_indexes.append(0)
+            description_starts = self.get_description_starts(win_identifier)
+            self.add_description_starts(description_starts)
 
-        return sorted(self.description_start_indexes)
+        return self.description_start_indexes
 
-    def is_first_description_start_index(self):
-        return len(self.description_start_indexes) == 0
-
-    def get_start_of_description(self, win_identifier):
+    def get_description_starts(self, win_identifier):
         win_type_count = self.full_description.count(win_identifier)
-        start = 0
+        self.start_of_search = 0
+        self.description_starts = []
         for _ in range(win_type_count):
-            description_start = self.full_description.find(
-                win_identifier, start)
-            start = self.add_description_start(description_start)
+            description_start = self.get_description_start(win_identifier)
+            self.add_description_start(description_start)
+
+        return self.description_starts
+
+    def add_description_starts(self, description_starts):
+        for description_start in description_starts:
+            self.description_start_indexes.append(description_start)
+
+    def get_description_start(self, win_identifier):
+        description_start = self.full_description.find(
+            win_identifier, self.start_of_search
+        )
+        return description_start
 
     def add_description_start(self, description_start):
-        start = 0
         if description_start != -1:
-            self.description_start_indexes.append(description_start)
-            start = description_start + 1
-
-        return start
+            self.description_starts.append(description_start)
+            self.start_of_search = description_start + 1
 
 
 def is_extended_description(description):
