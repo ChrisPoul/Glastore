@@ -7,19 +7,22 @@ class WindowPositioner:
         self.windows = windows
 
     def get_window_positions(self):
-        self.window_xy_positions = []
+        self.window_positions = []
         self.handle_laterales()
-        for i, window in enumerate(self.windows):
-            if i > 0:
-                self.decide_window_position(window)
-            self.add_current_window_positions(window)
+        self.add_window_positions()
 
-        return self.window_xy_positions
+        return self.window_positions
 
     def handle_laterales(self):
         for window in self.windows:
             if "laterales" in window.description:
                 self.xposition += window.width
+
+    def add_window_positions(self):
+        for i, window in enumerate(self.windows):
+            if i > 0:
+                self.decide_window_position(window)
+            self.add_current_window_positions(window)
 
     def decide_window_position(self, window):
         if "superior" in window.description:
@@ -50,7 +53,7 @@ class WindowPositioner:
 
     def add_current_window_positions(self, window):
         current_window_positions = self.get_current_window_positions(window)
-        self.window_xy_positions.append(current_window_positions)
+        self.window_positions.append(current_window_positions)
 
     def get_current_window_positions(self, window):
         self.current_window_positions = []
