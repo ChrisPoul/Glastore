@@ -5,7 +5,7 @@ body {
 }
 header {
     width: 100%;
-    height: 5em;
+    height: fit-content;
     display: grid;
     grid-template-columns: 1fr 1fr;
     color: #333;
