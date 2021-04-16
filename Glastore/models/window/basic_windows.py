@@ -8,19 +8,20 @@ def draw_line(xdata, ydata, ax=plt):
 
 class BasicWindow:
 
-    def __init__(self, xy, width, height, ax):
+    def __init__(self, ax, xy, width, height, selected=False):
+        self.ax = ax
         self.xy = xy
         self.width = width
         self.height = height
-        self.ax = ax
+        self.selected = selected
         self.ax.axis('off')
         self.draw()
         self.ax.axis('scaled')
 
     
-    def draw_frame(self, xy=(0, 0), lw=6):
+    def draw_frame(self, lw=6):
         frame = plt.Rectangle(
-            xy,
+            self.xy,
             self.width,
             self.height,
             fill=False,
@@ -28,30 +29,40 @@ class BasicWindow:
         )
         self.ax.add_patch(frame)
 
+    def draw_selected_frame(self, lw=5):
+        if self.selected:
+            frame = plt.Rectangle(
+                self.xy,
+                self.width * 0.99,
+                self.height * 0.99,
+                fill=False,
+                linewidth=lw,
+                color="blue"
+            )
+            self.ax.add_patch(frame)
+
 
 class Fija(BasicWindow):
 
-    def __init__(self, xy, width, height, ax):
-        BasicWindow.__init__(self, xy, width, height, ax)
+    def __init__(self, ax, xy, width, height, selected=False):
+        BasicWindow.__init__(self, ax, xy, width, height, selected)
 
     def draw(self):
-        self.draw_frame(
-            xy=self.xy
-        )
+        self.draw_frame()
+        self.draw_selected_frame()
 
 
 class Corrediza(BasicWindow):
 
-    def __init__(self, xy, width, height, orientacion, ax):
+    def __init__(self, ax, xy, width, height, orientacion, selected=False):
         self.orientacion = orientacion
-        BasicWindow.__init__(self, xy, width, height, ax)
+        BasicWindow.__init__(self, ax, xy, width, height, selected)
 
     def draw(self):
-        xposition, yposition = self.xy
-        self.draw_frame(
-            xy=(xposition, yposition)
-        )
+        xposition, _ = self.xy
+        self.draw_frame()
         self.draw_arrow(xposition)
+        self.draw_selected_frame()
 
     def draw_arrow(self, position):
         xposition, yposition = self.xy
@@ -87,16 +98,18 @@ class Corrediza(BasicWindow):
 
 class Guillotina(BasicWindow):
 
-    def __init__(self, xy, width, height, ax):
-        BasicWindow.__init__(self, xy, width, height, ax)
+    def __init__(self, ax, xy, width, height, selected=False):
+        BasicWindow.__init__(self, ax, xy, width, height, selected)
 
     def draw(self):
-        xposition, yposition = self.xy
+        xposition, _ = self.xy
         for i in range(2):
-            self.draw_frame((xposition, yposition))
+            self.draw_frame()
             if i == 0:
                 self.draw_arrow(yposition)
             yposition += self.height
+
+        self.draw_selected_frame()
 
     def draw_arrow(self, position):
         xposition, yposition = self.xy
@@ -128,15 +141,14 @@ class Guillotina(BasicWindow):
 
 class Abatible(BasicWindow):
 
-    def __init__(self, xy, width, height, orientacion, ax):
+    def __init__(self, ax, xy, width, height, orientacion, selected=False):
         self.orientacion = orientacion
-        BasicWindow.__init__(self, xy, width, height, ax)
+        BasicWindow.__init__(self, ax, xy, width, height, selected)
 
     def draw(self):
-        self.draw_frame(
-            xy=self.xy
-        )
+        self.draw_frame()
         self.draw_triangle()
+        self.draw_selected_frame()
     
     def draw_triangle(self):
         points = self.get_triangle_points()
@@ -185,5 +197,5 @@ class Abatible(BasicWindow):
 
 
 if __name__ == "__main__":
-    corrediza = Corrediza((20, 20), 10, 10, 2, plt.gca())
+    corrediza = Corrediza(plt.gca(), (20, 20), 10, 10, 2)
     plt.show()

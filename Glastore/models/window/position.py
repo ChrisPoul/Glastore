@@ -17,12 +17,13 @@ class WindowPositioner:
         for window in self.windows:
             if "laterales" in window.description:
                 self.xposition += window.width
+                break
 
     def add_window_positions(self):
         for i, window in enumerate(self.windows):
             if i > 0:
                 self.decide_window_position(window)
-            self.add_current_window_positions(window)
+            self.add_current_window_position(window)
 
     def decide_window_position(self, window):
         if "superior" in window.description:
@@ -51,47 +52,28 @@ class WindowPositioner:
     def position_window_bottom(self, window):
         self.yposition = -window.height
 
-    def add_current_window_positions(self, window):
-        current_window_positions = self.get_current_window_positions(window)
-        self.window_positions.append(current_window_positions)
+    def add_current_window_position(self, window):
+        current_window_position = self.get_current_window_position(window)
+        self.window_positions.append(current_window_position)
 
-    def get_current_window_positions(self, window):
-        self.current_window_positions = []
+    def get_current_window_position(self, window):
+        self.current_window_position = (0, 0)
         if "dos" in window.description:
             self.handle_window_twice(window)
-        elif "tres" in window.description:
-            self.position_three_times(window)
         else:
             self.position_window_once()
 
-        return self.current_window_positions
+        return self.current_window_position
 
     def position_window_once(self):
-        xy = (self.xposition, self.yposition)
-        self.current_window_positions.append(xy)
+        self.current_window_position = (self.xposition, self.yposition)
 
     def handle_window_twice(self, window):
         if "laterales" in window.description:
-            self.position_laterales()
+            self.position_lateral(window)
         else:
-            self.position_window_twice(window)
+            self.position_window_once()
 
-    def position_laterales(self):
-        xy = (self.xposition, self.yposition)
-        self.current_window_positions.append(xy)
-        xy = (0, self.yposition)
-        self.current_window_positions.append(xy)
-
-    def position_window_twice(self, window):
-        for i in range(1, 2+1):
-            xy = (self.xposition, self.yposition)
-            self.current_window_positions.append(xy)
-            if i % 2 != 0:
-                self.xposition += window.width
-
-    def position_three_times(self, window):
-        for i in range(1, 3+1):
-            xy = (self.xposition, self.yposition)
-            self.current_window_positions.append(xy)
-            if i % 3 != 0:
-                self.xposition += window.width
+    def position_lateral(self, window):
+        self.current_window_position = (0, self.yposition)
+        self.xposition -= window.width

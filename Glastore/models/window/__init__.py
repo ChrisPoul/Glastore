@@ -1,6 +1,6 @@
 from sqlalchemy import (
     Column, Integer, String,
-    Float, ForeignKey
+    Float, ForeignKey, Boolean
 )
 from Glastore.models import db, add_to_db, commit_to_db
 from Glastore.models.window.basic_windows import (
@@ -11,8 +11,10 @@ from Glastore.models.window.basic_windows import (
 class Window(db.Model):
     id = Column(Integer, primary_key=True)
     product_id = Column(Integer, ForeignKey('product.id'), nullable=False)
-    description = Column(String(100), nullable=False, unique=False, default="fija")
+    description = Column(String(100), nullable=False,
+                         unique=False, default="fija")
     orientacion = Column(Integer, nullable=False, default=1)
+    selected = Column(Boolean, nullable=False, default=False)
 
     def add(self):
         add_to_db(self)
@@ -77,7 +79,7 @@ class Window(db.Model):
         height = 10
         for separator in separators:
             if separator in dimensions:
-                width =self.get_width(dimensions, separator)
+                width = self.get_width(dimensions, separator)
                 height = self.get_height(dimensions, separator)
 
         return (width, height)
@@ -118,10 +120,36 @@ class Window(db.Model):
     def draw(self, xy):
         ax = self.product.ax
         if "corrediza" in self.name:
-            ventana = Corrediza(xy, self.width, self.height, self.orientacion, ax)
+            ventana = Corrediza(
+                ax=ax,
+                xy=xy,
+                width=self.width,
+                height=self.height,
+                orientacion=self.orientacion,
+                selected=self.selected
+            )
         elif "abatible" in self.name:
-            ventana = Abatible(xy, self.width, self.height, 3, ax)
+            ventana = Abatible(
+                ax=ax,
+                xy=xy,
+                width=self.width,
+                height=self.height,
+                orientacion=self.orientacion,
+                selected=self.selected
+            )
         elif "guillotina" in self.name:
-            ventana = Guillotina(xy, self.width, self.height, ax)
+            ventana = Guillotina(
+                ax=ax,
+                xy=xy,
+                width=self.width,
+                height=self.height,
+                selected=self.selected
+            )
         else:
-            ventana = Fija(xy, self.width, self.height, ax)
+            ventana = Fija(
+                ax=ax,
+                xy=xy,
+                width=self.width,
+                height=self.height,
+                selected=self.selected
+            )

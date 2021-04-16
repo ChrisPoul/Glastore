@@ -32,7 +32,7 @@ class TestGetWindowDescriptions(MyTest):
         )
         window_descriptions = extractor.get_window_descriptions()
         self.assertEqual(
-            window_descriptions, ["dos ventanas fijas de 10x10"]
+            window_descriptions, ["dos ventanas fijas de 10x10", "fijas de 10x10"]
         )
 
 
@@ -203,7 +203,8 @@ class TestSaveWindowDescription(MyTest):
         extractor.save_window_description("abatibles de 10x10")
         self.assertEqual(
             extractor.window_descriptions, {
-                0: "dos ventanas abatibles de 10x10"
+                0: "dos ventanas abatibles de 10x10",
+                1: "abatibles de 10x10"
             }
         )
 

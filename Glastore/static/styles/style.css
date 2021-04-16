@@ -10,7 +10,7 @@ header {
     grid-template-columns: 1fr 1fr;
     color: #333;
     background: lightgray;
-    padding-top: 2em;
+    margin-top: 2.3rem;
 }
 .flash {
     margin: 1em 0;
@@ -29,7 +29,8 @@ nav {
     background: white;
 }
 header h1 {
-    padding: 7px;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
 }
 header a {
     text-decoration: none;

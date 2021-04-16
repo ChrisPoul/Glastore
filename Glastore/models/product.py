@@ -33,7 +33,7 @@ class Product(db.Model):
     medidas = Column(String(50), nullable=False, unique=False, default="")
     cantidad = Column(Integer, nullable=False, default=0)
     total = Column(Float, nullable=False, default=0)
-    selected_window = Column(Integer, nullable=True)
+    selected_window = Column(Integer, nullable=False, default=0)
     windows = db.relationship(
         'Window', backref='product', lazy=True,
         cascade='all, delete-orphan'
@@ -175,9 +175,8 @@ class Product(db.Model):
     def draw_final_window(self, window_fig):
         self.ax = window_fig.subplots()
         self.update_windows()
-        for window, window_placement in zip(self.windows, self.window_positions):
-            for xy in window_placement:
-                window.draw(xy)
+        for window, xy in zip(self.windows, self.window_positions):
+            window.draw(xy)
 
     def save_fig_to_temporary_buffer(self, fig):
         self.buffer = BytesIO()

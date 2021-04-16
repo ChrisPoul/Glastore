@@ -34,9 +34,7 @@ class WindowDescriptionExtractor:
         return window_description
 
     def save_window_description(self, window_description):
-        prev_description = self.get_previous_window_description()
-        if is_extended_description(prev_description) is False:
-            self.window_descriptions[self.current_description_index] = window_description
+        self.window_descriptions[self.current_description_index] = window_description
 
     def get_previous_window_description(self):
         prev_description_index = self.current_description_index - 1
