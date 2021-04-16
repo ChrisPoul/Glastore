@@ -16,6 +16,7 @@ def select_next_window(product_id):
     )
 
 
+@bp.route('/rotate_window/<int:window_id>')
 def rotate_window(window_id):
     window = Window.get(window_id)
     if window.orientacion >= 4:
