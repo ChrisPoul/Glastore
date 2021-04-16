@@ -1,6 +1,7 @@
 from .setup import MyTest
 from Glastore.models.window.description import (
-    WindowDescriptionExtractor, WindowIdentifierIndexExtractor, is_extended_description
+    WindowDescriptionExtractor, WindowIdentifierIndexExtractor,
+    is_extended_description, turn_dict_to_list
 )
 
 
@@ -271,3 +272,14 @@ class TestIsExtendedDescription(MyTest):
 
     def test_antepecho(self):
         self.assertEqual(is_extended_description("antepecho fijo"), True)
+
+
+class TestTurnDictToList(MyTest):
+
+    def test_some_dict(self):
+        some_dict = {
+            1: "value1",
+            2: "value2",
+            3: "value3"
+        }
+        self.assertEqual(turn_dict_to_list(some_dict), ["value1", "value2", "value3"])

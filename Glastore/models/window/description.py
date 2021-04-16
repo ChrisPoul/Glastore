@@ -100,36 +100,36 @@ class WindowIdentifierIndexExtractor:
 
     def get_all_identifier_indexes(self):
         self.all_identifier_indexes = []
-        for win_identifier in self.window_identifiers:
-            win_identifier_indexes = self.get_win_identifier_indexes(win_identifier)
-            self.add_win_identifier_indexes(win_identifier_indexes)
+        for identifier in self.window_identifiers:
+            identifier_indexes = self.get_identifier_indexes(identifier)
+            self.add_identifier_indexes(identifier_indexes)
 
         return self.all_identifier_indexes
 
-    def get_win_identifier_indexes(self, win_identifier):
-        win_type_count = self.full_description.count(win_identifier)
+    def add_identifier_indexes(self, identifier_indexes):
+        for identifier_index in identifier_indexes:
+            self.all_identifier_indexes.append(identifier_index)
+
+    def get_identifier_indexes(self, identifier):
+        win_type_count = self.full_description.count(identifier)
         self.start_of_search = 0
-        self.win_identifier_indexes = []
+        self.identifier_indexes = []
         for _ in range(win_type_count):
-            description_start = self.get_description_start(win_identifier)
-            self.add_description_start(description_start)
+            identifier_index = self.get_identifier_index(identifier)
+            self.add_identifier_index(identifier_index)
 
-        return self.win_identifier_indexes
+        return self.identifier_indexes
 
-    def add_win_identifier_indexes(self, win_identifier_indexes):
-        for description_start in win_identifier_indexes:
-            self.all_identifier_indexes.append(description_start)
-
-    def get_description_start(self, win_identifier):
-        description_start = self.full_description.find(
-            win_identifier, self.start_of_search
+    def get_identifier_index(self, identifier):
+        identifier_index = self.full_description.find(
+            identifier, self.start_of_search
         )
-        return description_start
+        return identifier_index
 
-    def add_description_start(self, description_start):
-        if description_start != -1:
-            self.win_identifier_indexes.append(description_start)
-            self.start_of_search = description_start + 1
+    def add_identifier_index(self, identifier_index):
+        if identifier_index != -1:
+            self.identifier_indexes.append(identifier_index)
+            self.start_of_search = identifier_index + 1
 
 
 def is_extended_description(description):
