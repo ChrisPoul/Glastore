@@ -11,8 +11,9 @@ from Glastore.models.window.basic_windows import (
 class Window(db.Model):
     id = Column(Integer, primary_key=True)
     product_id = Column(Integer, ForeignKey('product.id'), nullable=False)
-    description = Column(String(100), nullable=False,
-                         unique=False, default="fija")
+    description = Column(
+        String(100), nullable=False, unique=False, default="fija"
+    )
     orientacion = Column(Integer, nullable=False, default=1)
     selected = Column(Boolean, nullable=False, default=False)
 
@@ -153,3 +154,8 @@ class Window(db.Model):
                 height=self.height,
                 selected=self.selected
             )
+
+        self.ventana = ventana
+
+    def draw_selected_window(self):
+        self.ventana.draw_selected_frame()

@@ -177,6 +177,14 @@ class Product(db.Model):
         self.update_windows()
         for window, xy in zip(self.windows, self.window_positions):
             window.draw(xy)
+        self.draw_selected_window()
+
+    def draw_selected_window(self):
+        selected_window = None
+        for window in self.windows:
+            if window.selected is True:
+                selected_window = window
+        selected_window.draw_selected_window()
 
     def save_fig_to_temporary_buffer(self, fig):
         self.buffer = BytesIO()

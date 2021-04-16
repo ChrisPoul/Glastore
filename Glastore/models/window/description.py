@@ -62,8 +62,8 @@ class WindowDescriptionExtractor:
 
     def extend_window_description(self):
         try:
-            extended_window_index = self.current_description_index + 2
-            next_description_start = self.start_of_descriptions[extended_window_index]
+            extended_description_index = self.current_description_index + 2
+            next_description_start = self.start_of_descriptions[extended_description_index]
             self.current_description = self.full_description[
                 self.current_description_start:next_description_start]
         except IndexError:

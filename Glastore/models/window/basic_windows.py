@@ -30,16 +30,15 @@ class BasicWindow:
         self.ax.add_patch(frame)
 
     def draw_selected_frame(self, lw=5):
-        if self.selected:
-            frame = plt.Rectangle(
-                self.xy,
-                self.width * 0.99,
-                self.height * 0.99,
-                fill=False,
-                linewidth=lw,
-                color="blue"
-            )
-            self.ax.add_patch(frame)
+        frame = plt.Rectangle(
+            self.xy,
+            self.width * 0.99,
+            self.height * 0.99,
+            fill=False,
+            linewidth=lw,
+            color="blue"
+        )
+        self.ax.add_patch(frame)
 
 
 class Fija(BasicWindow):
@@ -49,7 +48,6 @@ class Fija(BasicWindow):
 
     def draw(self):
         self.draw_frame()
-        self.draw_selected_frame()
 
 
 class Corrediza(BasicWindow):
@@ -62,7 +60,6 @@ class Corrediza(BasicWindow):
         xposition, _ = self.xy
         self.draw_frame()
         self.draw_arrow(xposition)
-        self.draw_selected_frame()
 
     def draw_arrow(self, position):
         xposition, yposition = self.xy
@@ -109,8 +106,6 @@ class Guillotina(BasicWindow):
                 self.draw_arrow(yposition)
             yposition += self.height
 
-        self.draw_selected_frame()
-
     def draw_arrow(self, position):
         xposition, yposition = self.xy
         y1 = position + self.height
@@ -148,7 +143,6 @@ class Abatible(BasicWindow):
     def draw(self):
         self.draw_frame()
         self.draw_triangle()
-        self.draw_selected_frame()
     
     def draw_triangle(self):
         points = self.get_triangle_points()
