@@ -120,7 +120,7 @@ class Window(db.Model):
         if "corrediza" in self.name:
             ventana = Corrediza(xy, self.width, self.height, self.orientacion, ax)
         elif "abatible" in self.name:
-            ventana = Abatible(xy, self.width, self.height, self.orientacion, ax)
+            ventana = Abatible(xy, self.width, self.height, 3, ax)
         elif "guillotina" in self.name:
             ventana = Guillotina(xy, self.width, self.height, ax)
         else:
