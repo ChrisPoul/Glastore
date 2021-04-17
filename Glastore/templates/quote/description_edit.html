@@ -7,13 +7,14 @@
         placeholder="{{ product_keys[key][1] }}" value="{{ product[key] }}">
     {% else %}
     <input name="{{ product.unique_keys[key] }}" id="{{ product.unique_keys[key] }}"
-        placeholder="{{ product_keys[key][1] }}" value="{{ product[key] }}" list="autocomplete-{{ key }}s">
+        placeholder="{{ product_keys[key][1] }}" value="{{ product[key] }}" list="autocomplete-{{ key }}s"
+        {% if quote.focused_product_id == product.id and key == "acabado" %}autofocus{%endif %}>
     {% endif %}
     {% else %}
     {% if key != "medidas" %}
     {{ product_keys[key][0] }}<br>
     <input name="{{ key }}" id="{{ key }}" placeholder="{{ product_keys[key][1] }}" value="{{ quote.new_product[key] }}"
-        list="autocomplete-{{ key }}s" autofocus>
+        list="autocomplete-{{ key }}s" {% if quote.focused_product_id == 0 %}autofocus{% endif %}>
     {% endif %}
     {% endif %}
     <br>

@@ -247,3 +247,25 @@ class Product(db.Model):
         window_descriptions = WindowDescriptionExtractor(self.name).get_window_descriptions()
 
         return window_descriptions
+
+    def select_next_window(self):
+        prev_window = self.windows[self.selected_window]
+        prev_window.selected = False
+        prev_window.update()
+        if self.selected_window != len(self.windows) - 1:
+            self.selected_window += 1
+        else:
+            self.selected_window = 0
+        window = self.windows[self.selected_window]
+        window.selected = True
+        self.quote.focused_product_id = self.id
+        self.update()
+
+    def rotate_window(self):
+        window = self.windows[self.selected_window]
+        if window.orientacion >= 4:
+            window.orientacion = 1
+        else:
+            window.orientacion += 1
+        self.quote.focused_product_id = self.id
+        self.update()

@@ -36,6 +36,7 @@ class Quote(db.Model):
         'Product', backref='quote', lazy=True,
         cascade='all, delete-orphan'
     )
+    focused_product_id = Column(Integer, nullable=False, default=0)
     done = False
     error = None
     form = None
@@ -130,7 +131,12 @@ class Quote(db.Model):
 
     def add_new_product_on_submit(self):
         product = self.new_product
-        self.error = product.add()
+        error = product.add()
+        if error:
+            self.focused_product_id = 0
+            self.error = error
+        else:
+            self.focused_product_id = product.id
 
     def get_product_on_submit(self):
         try:
