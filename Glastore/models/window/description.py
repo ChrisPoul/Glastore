@@ -1,4 +1,15 @@
 
+window_identifiers = [
+    "dos",
+    "tres",
+    "antepecho",
+    "fija",
+    "fijo",
+    "corrediza",
+    "abatible",
+    "guillotina"
+]
+
 
 class WindowDescriptionExtractor:
 
@@ -29,14 +40,16 @@ class WindowDescriptionExtractor:
         if self.is_last_description():
             window_description = self.full_description[self.current_description_start:]
         else:
-            window_description = self.make_not_last_window()
+            window_description = self.make_not_last_window_description()
 
         return window_description
 
     def save_window_description(self, window_description):
-        self.window_descriptions[self.current_description_index] = window_description
+        if self.is_part_of_prev_window_description() is False:
+            self.window_descriptions[self.current_description_index] = window_description
 
-    def get_previous_window_description(self):
+    @property
+    def previous_window_description(self):
         prev_description_index = self.current_description_index - 1
         try:
             prev_description = self.window_descriptions[prev_description_index]
@@ -45,15 +58,24 @@ class WindowDescriptionExtractor:
 
         return prev_description
 
+    def is_part_of_prev_window_description(self):
+        prev_description = self.previous_window_description
+        if "antepecho" in prev_description:
+            for win_identifier in window_identifiers:
+                if win_identifier in prev_description and win_identifier != "antepecho":
+                    return True
+
+        return False
+
     def is_last_description(self):
         return self.current_description_index == len(self.start_of_descriptions) - 1
 
-    def make_not_last_window(self):
+    def make_not_last_window_description(self):
         next_description_start_index = self.current_description_index + 1
         next_description_start = self.start_of_descriptions[next_description_start_index]
         window_description = self.full_description[
             self.current_description_start:next_description_start]
-        
+
         return window_description
 
     def handle_extended_window_descriptions(self):
@@ -74,20 +96,26 @@ class WindowDescriptionExtractor:
         return WindowIdentifierIndexExtractor(self.full_description).get_window_identifier_indexes()
 
 
+def is_extended_description(description):
+    extended_descriptors = [
+        "dos",
+        "antepecho",
+        "tres"
+    ]
+    for descriptor in extended_descriptors:
+        if descriptor in description:
+            return True
+    return False
+
+
+def turn_dict_to_list(some_dict):
+    return [some_dict[key] for key in some_dict]
+
+
 class WindowIdentifierIndexExtractor:
 
     def __init__(self, description):
         self.full_description = description
-        self.window_identifiers = [
-            "dos",
-            "tres",
-            "antepecho",
-            "fija",
-            "fijo",
-            "corrediza",
-            "abatible",
-            "guillotina"
-        ]
 
     def get_window_identifier_indexes(self):
         identifier_indexes = self.get_all_identifier_indexes()
@@ -98,7 +126,7 @@ class WindowIdentifierIndexExtractor:
 
     def get_all_identifier_indexes(self):
         self.all_identifier_indexes = []
-        for identifier in self.window_identifiers:
+        for identifier in window_identifiers:
             identifier_indexes = self.get_identifier_indexes(identifier)
             self.add_identifier_indexes(identifier_indexes)
 
@@ -128,19 +156,3 @@ class WindowIdentifierIndexExtractor:
         if identifier_index != -1:
             self.identifier_indexes.append(identifier_index)
             self.start_of_search = identifier_index + 1
-
-
-def is_extended_description(description):
-    extended_descriptors = [
-        "dos",
-        "antepecho",
-        "tres"
-    ]
-    for descriptor in extended_descriptors:
-        if descriptor in description:
-            return True
-    return False
-
-
-def turn_dict_to_list(some_dict):
-    return [some_dict[key] for key in some_dict]

@@ -185,14 +185,14 @@ class Product(db.Model):
         for window in self.windows:
             if window.selected is True:
                 selected_window = window
-        selected_window.draw_selected_window()
+        if selected_window:
+            selected_window.draw_selected_window()
 
     def save_fig_to_temporary_buffer(self, fig):
         self.buffer = BytesIO()
         fig.savefig(self.buffer, format="png")
 
     def embed_in_html(self):
-        # Embed the result in the html output.
         data_in_base64 = base64.b64encode(self.buffer.getbuffer())
         data = data_in_base64.decode("ascii")
         data_uri = 'data:image/png;base64,{}'.format(data)
@@ -240,7 +240,7 @@ class Product(db.Model):
                 window = self.make_new_window(description)
 
         if len(self.windows) == 0:
-            self.make_new_window(description)
+            self.make_new_window(self.name)
 
     @property
     def window_descriptions(self):
