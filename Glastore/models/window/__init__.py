@@ -143,16 +143,14 @@ class Window(db.Model):
                 ax=ax,
                 xy=xy,
                 width=self.width,
-                height=self.height,
-                selected=self.selected
+                height=self.height
             )
         else:
             ventana = Fija(
                 ax=ax,
                 xy=xy,
                 width=self.width,
-                height=self.height,
-                selected=self.selected
+                height=self.height
             )
 
         self.ventana = ventana

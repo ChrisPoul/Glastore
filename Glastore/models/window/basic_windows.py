@@ -8,12 +8,11 @@ def draw_line(xdata, ydata, ax=plt):
 
 class BasicWindow:
 
-    def __init__(self, ax, xy, width, height, selected=False):
+    def __init__(self, ax, xy, width, height):
         self.ax = ax
         self.xy = xy
         self.width = width
         self.height = height
-        self.selected = selected
         self.ax.axis('off')
         self.draw()
         self.ax.axis('scaled')
@@ -43,8 +42,8 @@ class BasicWindow:
 
 class Fija(BasicWindow):
 
-    def __init__(self, ax, xy, width, height, selected=False):
-        BasicWindow.__init__(self, ax, xy, width, height, selected)
+    def __init__(self, ax, xy, width, height):
+        BasicWindow.__init__(self, ax, xy, width, height)
 
     def draw(self):
         self.draw_frame()
@@ -54,11 +53,12 @@ class Corrediza(BasicWindow):
 
     def __init__(self, ax, xy, width, height, orientacion, selected=False):
         self.orientacion = orientacion
-        BasicWindow.__init__(self, ax, xy, width, height, selected)
+        self.selected = selected
+        BasicWindow.__init__(self, ax, xy, width, height)
 
     def draw(self):
-        xposition, _ = self.xy
         self.draw_frame()
+        xposition, _ = self.xy
         self.draw_arrow(xposition)
 
     def draw_arrow(self, position):
@@ -95,8 +95,8 @@ class Corrediza(BasicWindow):
 
 class Guillotina(BasicWindow):
 
-    def __init__(self, ax, xy, width, height, selected=False):
-        BasicWindow.__init__(self, ax, xy, width, height, selected)
+    def __init__(self, ax, xy, width, height):
+        BasicWindow.__init__(self, ax, xy, width, height)
 
     def draw(self):
         xposition, _ = self.xy
@@ -138,7 +138,8 @@ class Abatible(BasicWindow):
 
     def __init__(self, ax, xy, width, height, orientacion, selected=False):
         self.orientacion = orientacion
-        BasicWindow.__init__(self, ax, xy, width, height, selected)
+        self.selected = selected
+        BasicWindow.__init__(self, ax, xy, width, height)
 
     def draw(self):
         self.draw_frame()
@@ -156,40 +157,63 @@ class Abatible(BasicWindow):
         self.ax.add_line(triangle)
 
     def get_triangle_points(self):
-        xposition, yposition = self.xy
         if self.orientacion == 1 or self.orientacion == 2:
-            xmin = xposition
-            xmid = self.width / 2 + xposition
-            xmax = self.width + xposition
-            if self.orientacion == 1:
-                ymin = yposition
-                ymid = self.height + yposition
-                ymax = yposition
-            elif self.orientacion == 2:
-                ymin = self.height + yposition
-                ymid = yposition
-                ymax = self.height + yposition
+            self.set_vertical_orientation()
         elif self.orientacion == 3 or self.orientacion == 4:
-            ymin = self.height + yposition
-            ymid = self.height / 2 + yposition
-            ymax = yposition
-            if self.orientacion == 3:
-                xmin = xposition
-                xmid = self.width + xposition
-                xmax = xposition
-            elif self.orientacion == 4:
-                xmin = self.width + xposition
-                xmid = xposition
-                xmax = self.width + xposition
+            self.set_horizontal_orientation()
         points = [
-            [xmin, ymin],
-            [xmid, ymid],
-            [xmax, ymax]
+            [self.xmin, self.ymin],
+            [self.xmid, self.ymid],
+            [self.xmax, self.ymax]
         ]
 
         return points
 
+    def set_vertical_orientation(self):
+        xposition, yposition = self.xy
+        self.xmin = xposition
+        self.xmid = self.width / 2 + xposition
+        self.xmax = self.width + xposition
+        if self.orientacion == 1:
+            self.set_facing_up()
+        elif self.orientacion == 2:
+            self.set_facing_down()
+
+    def set_facing_up(self):
+        xposition, yposition = self.xy
+        self.ymin = yposition
+        self.ymid = self.height + yposition
+        self.ymax = yposition
+    
+    def set_facing_down(self):
+        xposition, yposition = self.xy
+        self.ymin = self.height + yposition
+        self.ymid = yposition
+        self.ymax = self.height + yposition
+
+    def set_horizontal_orientation(self):
+        xposition, yposition = self.xy
+        self.ymin = self.height + yposition
+        self.ymid = self.height / 2 + yposition
+        self.ymax = yposition
+        if self.orientacion == 3:
+            self.set_facing_right()
+        elif self.orientacion == 4:
+            self.set_facing_left()
+
+    def set_facing_right(self):
+        xposition, yposition = self.xy
+        self.xmin = xposition
+        self.xmid = self.width + xposition
+        self.xmax = xposition
+
+    def set_facing_left(self):
+        xposition, yposition = self.xy
+        self.xmin = self.width + xposition
+        self.xmid = xposition
+        self.xmax = self.width + xposition
+
 
 if __name__ == "__main__":
-    corrediza = Corrediza(plt.gca(), (20, 20), 10, 10, 2)
+    corrediza = Abatible(plt.gca(), (20, 20), 10, 10, 4)
     plt.show()
