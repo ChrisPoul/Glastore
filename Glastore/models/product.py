@@ -177,7 +177,8 @@ class Product(db.Model):
         self.update_windows()
         for window, xy in zip(self.windows, self.window_positions):
             window.draw(xy)
-        self.draw_selected_window()
+        if self.quote.done is not True:
+            self.draw_selected_window()
 
     def draw_selected_window(self):
         selected_window = None

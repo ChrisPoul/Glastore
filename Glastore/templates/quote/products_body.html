@@ -3,7 +3,7 @@
     {% for head in product_heads %}
     {% if head == "description" %}
     <td class="description">
-        {% if not done %}
+        {% if not quote.done %}
         {% include "quote/description_edit.html" %}
         {% else %}
         {% include "quote/description_done.html" %}
@@ -11,14 +11,14 @@
     </td>
     {% elif head == "unit_price" %}
     <td class="unit_price">
-        {% if not done %}
+        {% if not quote.done %}
         <input name="{{ product.unique_keys[head] }}" id="{{ product.unique_keys[head] }}"
             value="{{ product[head] }}">
         {% else %}
         {{ format_price(product[head]) }}
         {% endif %}
     </td>
-    {% elif head == "cantidad" and not done %}
+    {% elif head == "cantidad" and not quote.done %}
     <td class="cantidad">
         <input name="{{ product.unique_keys[head] }}" id="{{ product.unique_keys[head] }}"
             value="{{ product.cantidad }}">
@@ -39,7 +39,7 @@
     {% endfor %}
 </tr>
 {% endfor %}
-{% if not done %}
+{% if not quote.done %}
 <tr>
     {% for head in product_heads %}
     {% if head == "description" %}

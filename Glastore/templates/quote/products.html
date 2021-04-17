@@ -1,4 +1,4 @@
-{% if not done %}
+{% if not quote.done %}
 {% for key in quote.autocomplete_data %}
 <datalist id="autocomplete-{{ key }}">
     {% for data in quote.autocomplete_data[key] %}

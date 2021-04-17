@@ -36,6 +36,7 @@ class Quote(db.Model):
         'Product', backref='quote', lazy=True,
         cascade='all, delete-orphan'
     )
+    done = False
     error = None
     form = None
 
