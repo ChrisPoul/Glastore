@@ -27,11 +27,12 @@ def rotate_window(product_id):
     )
 
 
-@bp.route('/delete/<int:product_id>', methods=('POST',))
+@bp.route('/delete/<int:product_id>')
 def delete(product_id):
     product = Product.get(product_id)
+    quote_id = product.quote.id
     product.delete()
 
     return redirect(
-        url_for('product.products')
+        url_for('quote.edit', quote_id=quote_id)
     )

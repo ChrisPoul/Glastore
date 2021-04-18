@@ -6,7 +6,9 @@
 <a href="{{ url_for('product.select_next_window', product_id=product.id) }}">
     select next
 </a>
-<img style="width: 80%;" src="{{ product.diseño }}"/>
+<a href="{{ url_for('product.delete', product_id=product.id) }}">
+    <img style="width: 80%;" src="{{ product.diseño }}"/>
+</a>
 {% else %}
 <img style="width: 80%;" src="{{ product.diseño }}"/>
 {% endif %}
