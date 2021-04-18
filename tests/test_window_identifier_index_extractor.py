@@ -129,14 +129,14 @@ class TestAddIdentifierIndex(MyTest):
         extractor = WindowIdentifierIndexExtractor(
             "ventana fija de 10x10"
         )
-        extractor.identifier_indexes = []
+        extractor.current_identifier_indexes = []
         extractor.add_identifier_index(1)
-        self.assertEqual(extractor.identifier_indexes, [1])
+        self.assertEqual(extractor.current_identifier_indexes, [1])
 
     def test_add_invalid_index(self):
         extractor = WindowIdentifierIndexExtractor(
             "ventana fija de 10x10"
         )
-        extractor.identifier_indexes = []
+        extractor.current_identifier_indexes = []
         extractor.add_identifier_index(-1)
-        self.assertEqual(extractor.identifier_indexes, [])
+        self.assertEqual(extractor.current_identifier_indexes, [])
