@@ -8,7 +8,7 @@ class TestGetWindowIdentifierIndexes(MyTest):
         extractor = WindowIdentifierIndexExtractor(
             "ventana fija de 10x10"
         )
-        self.assertEqual(extractor.get_window_identifier_indexes(), [8])
+        self.assertEqual(extractor.get_window_identifier_indexes(), [0])
 
     def test_dos_abatibles(self):
         extractor = WindowIdentifierIndexExtractor(

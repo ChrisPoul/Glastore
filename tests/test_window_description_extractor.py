@@ -13,7 +13,7 @@ class TestGetWindowDescriptions(MyTest):
         )
         window_descriptions = extractor.get_window_descriptions()
         self.assertEqual(
-            window_descriptions, ["fija de 10x10"]
+            window_descriptions, ["ventana fija de 10x10"]
         )
     
     def test_two_window_descriptions(self):
@@ -22,7 +22,7 @@ class TestGetWindowDescriptions(MyTest):
         )
         window_descriptions = extractor.get_window_descriptions()
         self.assertEqual(window_descriptions, [
-            "fija de 10x10 con ",
+            "ventana fija de 10x10 con ",
             "abatible superior de 1.002x4.233"
         ])
 
@@ -226,7 +226,7 @@ class TestIsLastDescription(MyTest):
         self.assertEqual(extractor.is_last_description(), False)
 
 
-class TestGetPreviousWindowDescription(MyTest):
+class TestPreviousWindowDescription(MyTest):
 
     def test_previous_window_description(self):
         extractor = WindowDescriptionExtractor(
@@ -234,8 +234,7 @@ class TestGetPreviousWindowDescription(MyTest):
         )
         extractor.window_descriptions = {0: "dos ventanas "}
         extractor.current_description_index = 1
-        prev_description = extractor.get_previous_window_description()
-        self.assertEqual(prev_description, "dos ventanas ")
+        self.assertEqual(extractor.previous_window_description, "dos ventanas ")
 
     def test_not_previous_window_description(self):
         extractor = WindowDescriptionExtractor(
@@ -243,8 +242,7 @@ class TestGetPreviousWindowDescription(MyTest):
         )
         extractor.window_descriptions = {}
         extractor.current_description_index = 1
-        prev_description = extractor.get_previous_window_description()
-        self.assertEqual(prev_description, "")
+        self.assertEqual(extractor.previous_window_description, "")
 
 
 class TestExtendWindowDescription(MyTest):
