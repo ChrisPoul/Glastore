@@ -47,12 +47,14 @@ class Window(db.Model):
     def dimensions(self):
         if self.has_dimensions():
             dimensions_str = self.extract_dimensions_string()
+            div = 1
         else:
             dimensions_str = self.product.medidas
+            div = len(self.product.windows)
 
         width, height = self.get_width_and_height(dimensions_str)
 
-        return (width, height)
+        return (width/div, height)
 
     def has_dimensions(self):
         nums = "1234567890"

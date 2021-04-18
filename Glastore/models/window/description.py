@@ -58,12 +58,15 @@ class WindowDescriptionExtractor:
     def is_extended_description(self, description):
         extended_descriptors = [
             "dos",
-            "antepecho",
             "tres"
         ]
         for descriptor in extended_descriptors:
             if descriptor in description:
+                print(description)
                 return True
+        if description == "antepecho ":
+            return True
+                
         return False
 
     def extend_window_description(self):
@@ -92,7 +95,7 @@ class WindowDescriptionExtractor:
         prev_description = self.previous_window_description
         if "antepecho" in prev_description:
             for win_identifier in window_identifiers:
-                if win_identifier in prev_description and win_identifier != "antepecho":
+                if f"antepecho {win_identifier}" in prev_description:
                     return True
         return False
 
