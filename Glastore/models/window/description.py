@@ -121,8 +121,10 @@ class WindowIdentifierIndexExtractor:
         identifier_indexes = self.get_all_identifier_indexes()
         if len(identifier_indexes) == 0:
             identifier_indexes.append(0)
+        identifier_indexes = sorted(identifier_indexes)
+        identifier_indexes[0] = 0
 
-        return sorted(identifier_indexes)
+        return identifier_indexes
 
     def get_all_identifier_indexes(self):
         self.all_identifier_indexes = []

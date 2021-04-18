@@ -165,7 +165,7 @@ class Product(db.Model):
 
     @property
     def diseño(self):
-        window_fig = plt.Figure(dpi=180, figsize=(4.5, 4.5))
+        window_fig = plt.Figure(dpi=150, figsize=(4.5, 4.5))
         self.draw_final_window(window_fig)
         self.save_fig_to_temporary_buffer(window_fig)
         diseño = self.embed_in_html()
