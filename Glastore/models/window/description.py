@@ -62,7 +62,6 @@ class WindowDescriptionExtractor:
         ]
         for descriptor in extended_descriptors:
             if descriptor in description:
-                print(description)
                 return True
         if description == "antepecho ":
             return True

@@ -1,7 +1,7 @@
 from .setup import MyTest
 from Glastore.models.window.description import (
     WindowDescriptionExtractor, WindowIdentifierIndexExtractor,
-    is_extended_description, turn_dict_to_list
+    turn_dict_to_list
 )
 
 
@@ -264,14 +264,20 @@ class TestExtendWindowDescription(MyTest):
 class TestIsExtendedDescription(MyTest):
 
     def test_fija(self):
-        self.assertEqual(is_extended_description("fija de 10x10"), False)
+        extractor = WindowDescriptionExtractor("ventana fija de 10x10")
+        self.assertEqual(extractor.is_extended_description("fija de 10x10"), False)
 
     def test_dos(self):
-        self.assertEqual(is_extended_description("dos ventanas fijas"), True)
+        extractor = WindowDescriptionExtractor("ventana fija de 10x10")
+        self.assertEqual(extractor.is_extended_description("dos ventanas fijas"), True)
 
     def test_antepecho(self):
-        self.assertEqual(is_extended_description("antepecho fijo"), True)
+        extractor = WindowDescriptionExtractor("ventana fija de 10x10")
+        self.assertEqual(extractor.is_extended_description("antepecho "), True)
 
+    def test_antepecho_fijo(self):
+        extractor = WindowDescriptionExtractor("ventana fija de 10x10")
+        self.assertEqual(extractor.is_extended_description("antepecho fijo"), False)
 
 class TestTurnDictToList(MyTest):
 
