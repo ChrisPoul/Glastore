@@ -22,6 +22,7 @@ def customers():
 
 
 @bp.route('/profile/<int:customer_id>')
+@login_required
 def profile(customer_id):
     customer = Customer.get(customer_id)
 
@@ -31,6 +32,7 @@ def profile(customer_id):
 
 
 @bp.route('/add', methods=('GET', 'POST'))
+@login_required
 def add():
     form = get_form(customer_heads)
 
@@ -58,6 +60,7 @@ def add():
 
 
 @bp.route('/update/<int:customer_id>', methods=('GET', 'POST'))
+@login_required
 def update(customer_id):
     customer = Customer.get(customer_id)
 
@@ -79,6 +82,7 @@ def update(customer_id):
 
 
 @bp.route('/delete/<int:customer_id>', methods=('POST',))
+@login_required
 def delete(customer_id):
     customer = Customer.get(customer_id)
     customer.delete()

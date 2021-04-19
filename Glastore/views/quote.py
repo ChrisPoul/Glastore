@@ -9,6 +9,7 @@ from Glastore.models import format_date, format_price
 from Glastore.models.quote import Quote, product_keys
 from Glastore.models.product import Product
 from Glastore.models.customer import Customer
+from Glastore.views.auth import login_required
 
 bp = Blueprint("quote", __name__, url_prefix="/quote")
 customer_heads = {
@@ -26,6 +27,7 @@ product_heads = {
 
 
 @bp.route('/add', methods=('GET', 'POST'))
+@login_required
 def add():
     autocomplete = [customer.name for customer in Customer.get_all()]
     if request.method == "POST":
@@ -44,6 +46,7 @@ def add():
 
 
 @bp.route("/edit/<int:quote_id>", methods=('GET', 'POST'))
+@login_required
 def edit(quote_id):
     quote = Quote.get(quote_id)
     if request.method == "POST":
