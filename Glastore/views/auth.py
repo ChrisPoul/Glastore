@@ -43,5 +43,7 @@ def login():
             )
     
     return render_template(
-        'auth/login.html'
+        'auth/login.html',
+        heads=user_heads
     )
+
