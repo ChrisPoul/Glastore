@@ -27,6 +27,9 @@ def create_app(test_config=None):
     from .views import home
     app.register_blueprint(home.bp)
 
+    from .views import auth
+    app.register_blueprint(auth.bp)
+
     from .views import customer
     app.register_blueprint(customer.bp)
 
