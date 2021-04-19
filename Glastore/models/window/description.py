@@ -27,14 +27,26 @@ class WindowDescriptionExtractor:
         return window_descriptions
 
     def add_window_description(self):
-        window_description = self.get_current_window_description()
-        self.save_window_description(window_description)
+        if self.current_description_is_part_of_antepecho() is False:
+            self.save_current_window_description()
 
-    def save_window_description(self, window_description):
-        if self.is_part_of_prev_window_description() is False:
-            self.window_descriptions[self.current_description_index] = window_description
+    def save_current_window_description(self):
+        self.window_descriptions[self.current_description_index] = self.current_window_description
 
-    def get_current_window_description(self):
+    def current_description_is_part_of_antepecho(self):
+        prev_description = self.previous_window_description
+        if "antepecho" in prev_description:
+            return self.is_composed_antepecho(prev_description)
+        return False
+
+    def is_composed_antepecho(self, description):
+        for win_identifier in window_identifiers:
+            if f"antepecho {win_identifier}" in description:
+                return True
+        return False
+
+    @property
+    def current_window_description(self):
         self.current_description = self.get_basic_window_description()
         self.handle_extended_window_description()
 
@@ -42,14 +54,25 @@ class WindowDescriptionExtractor:
 
     def get_basic_window_description(self):
         if self.is_last_description():
-            window_description = self.make_last_window_description()
+            window_description = self.make_last_description()
         else:
-            window_description = self.make_not_last_window_description()
+            window_description = self.make_not_last_description()
 
         return window_description
 
     def is_last_description(self):
         return self.current_description_index == len(self.start_of_descriptions) - 1
+
+    def make_last_description(self):
+        return self.full_description[self.current_description_start:]
+
+    def make_not_last_description(self):
+        next_description_start_index = self.current_description_index + 1
+        next_description_start = self.start_of_descriptions[next_description_start_index]
+        window_description = self.full_description[
+            self.current_description_start:next_description_start]
+
+        return window_description
 
     def handle_extended_window_description(self):
         if self.is_extended_description(self.current_description):
@@ -65,7 +88,7 @@ class WindowDescriptionExtractor:
                 return True
         if description == "antepecho ":
             return True
-                
+
         return False
 
     def extend_window_description(self):
@@ -78,25 +101,6 @@ class WindowDescriptionExtractor:
             ]
         except IndexError:
             self.current_description = self.full_description[self.current_description_start:]
-
-    def make_last_window_description(self):
-        return self.full_description[self.current_description_start:]
-
-    def make_not_last_window_description(self):
-        next_description_start_index = self.current_description_index + 1
-        next_description_start = self.start_of_descriptions[next_description_start_index]
-        window_description = self.full_description[
-            self.current_description_start:next_description_start]
-
-        return window_description
-
-    def is_part_of_prev_window_description(self):
-        prev_description = self.previous_window_description
-        if "antepecho" in prev_description:
-            for win_identifier in window_identifiers:
-                if f"antepecho {win_identifier}" in prev_description:
-                    return True
-        return False
 
     @property
     def previous_window_description(self):
