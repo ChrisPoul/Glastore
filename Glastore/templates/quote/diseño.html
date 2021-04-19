@@ -1,11 +1,12 @@
 {% if not quote.done %}
-<a href="{{ url_for('product.rotate_window', product_id=product.id) }}">
-    rotate
-</a>
-<br>
-<a href="{{ url_for('product.select_next_window', product_id=product.id) }}">
-    select next
-</a>
+<div class="manipulate-window">
+    <a href="{{ url_for('product.rotate_window', product_id=product.id) }}">
+        <input type="button" value="Rotar">
+    </a>
+    <a href="{{ url_for('product.select_next_window', product_id=product.id) }}">
+        <input type="button" value="Siguiente">
+    </a>
+</div>
 <a href="{{ url_for('product.remove', product_id=product.id) }}">
     <img style="width: 80%;" src="{{ product.diseño }}"/>
 </a>

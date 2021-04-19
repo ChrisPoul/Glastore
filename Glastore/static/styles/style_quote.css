@@ -72,3 +72,6 @@ td.bd-left-0 {
 td.bd-right-0 {
     border-right: none;
 }
+a {
+    text-decoration: none;
+}
