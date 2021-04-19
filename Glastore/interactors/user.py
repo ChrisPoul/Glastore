@@ -1,3 +1,4 @@
+import functools
 from flask import session, g, request
 from Glastore.models.user import User
 
@@ -42,8 +43,14 @@ class UserInteractor:
 
         return error
 
+    def logout(self):
+        session.clear()
+
     def load_loged_in_user(self):
-        user_id = session["user_id"]
+        try:
+            user_id = session["user_id"]
+        except KeyError:
+            user_id = None
 
         if user_id is None:
             g.user = None

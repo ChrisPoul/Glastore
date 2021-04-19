@@ -4,11 +4,13 @@ from flask import (
 )
 from Glastore.models import get_form
 from Glastore.models.customer import Customer, customer_heads
+from Glastore.views.auth import login_required
 
 bp = Blueprint('customer', __name__, url_prefix='/customer')
 
 
 @bp.route('/customers')
+@login_required
 def customers():
     customers = Customer.get_all()
 
@@ -39,7 +41,7 @@ def add():
             email=form['email'],
             address=form['address']
         )
-        error = customer.add()
+        customer.add()
 
         if not error:
             return redirect(

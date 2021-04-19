@@ -13,8 +13,12 @@
         <li><a href="{{ url_for('home.home') }}">Home</a></li>
         <li><a href="{{ url_for('customer.customers') }}">Clientes</a></li>
         <li><a href="{{ url_for('quote.add') }}">Cotización</a></li>
+        {% if g.user %}
+        <li style="float: right;"><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
+        {% else %}
         <li style="float: right;"><a href="{{ url_for('auth.register') }}">Register</a></li>
         <li style="float: right;"><a href="{{ url_for('auth.login') }}">Login</a></li>
+        {% endif %}
     </ul>
 </nav>
 <header>
