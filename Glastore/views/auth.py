@@ -15,7 +15,7 @@ user_heads = {
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == 'POST':
-        interactor = UserInteractor(request)
+        interactor = UserInteractor()
         error = interactor.register()
 
         if not error:
@@ -34,7 +34,7 @@ def register():
 @bp.route("/login", methods=('POST', 'GET'))
 def login():
     if request.method == "POST":
-        interactor = UserInteractor(request)
+        interactor = UserInteractor()
         error = interactor.login()
 
         if not error:
@@ -47,3 +47,8 @@ def login():
         heads=user_heads
     )
 
+
+@bp.before_app_request
+def load_loged_in_user():
+    interactor = UserInteractor()
+    interactor.load_loged_in_user()

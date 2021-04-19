@@ -1,15 +1,12 @@
-from flask import session
+from flask import session, g, request
 from Glastore.models.user import User
 
 
 class UserInteractor:
 
-    def __init__(self, request):
-        self.request = request
-
     def register(self):
-        username = self.request.form['username']
-        password = self.request.form['password']
+        username = request.form['username']
+        password = request.form['password']
         error = None
 
         if not username:
@@ -29,8 +26,8 @@ class UserInteractor:
         return error
 
     def login(self):
-        username = self.request.form['username']
-        password = self.request.form['password']
+        username = request.form['username']
+        password = request.form['password']
         error = None
 
         user = User.search(username)
@@ -44,3 +41,11 @@ class UserInteractor:
             session['user_id'] = user.id
 
         return error
+
+    def load_loged_in_user(self):
+        user_id = session["user_id"]
+
+        if user_id is None:
+            g.user = None
+        else:
+            g.user = User.get(user_id)
