@@ -5,7 +5,7 @@ window_identifiers = [
     "antepecho",
     "fija",
     "fijo",
-    "corrediza",
+    "corrediz",
     "abatible",
     "guillotina"
 ]

@@ -122,7 +122,7 @@ class Window(db.Model):
 
     def draw(self, xy):
         ax = self.product.ax
-        if "corrediza" in self.name:
+        if "corrediz" in self.name:
             ventana = Corrediza(
                 ax=ax,
                 xy=xy,
