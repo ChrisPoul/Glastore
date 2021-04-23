@@ -44,7 +44,7 @@ def add():
             email=form['email'],
             address=form['address']
         )
-        customer.add()
+        error = customer.request.add()
 
         if not error:
             return redirect(

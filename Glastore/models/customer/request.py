@@ -7,6 +7,15 @@ class CustomerRequest:
     def __init__(self, customer):
         self.customer = customer
     
+    def add(self):
+        error = None
+        try:
+            self.customer.add()
+        except ValueError:
+            error = "Eso ya está en uso"
+
+        return error
+
     def update(self):
         form = get_form(customer_heads)
         self.customer.name = form['name']
