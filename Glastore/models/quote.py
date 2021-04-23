@@ -93,6 +93,21 @@ class Quote(db.Model):
         return total
 
     @property
+    def request(self):
+        return QuoteRequest(self)
+
+    def add_product(self, product):
+        new_product = Product(
+            quote_id=self.id,
+            name=product.name,
+            material=product.material,
+            acabado=product.acabado,
+            cristal=product.cristal,
+            unit_price=product.unit_price
+        )
+        new_product.add()
+
+    @property
     def new_product(self):
         if not self.form:
             self.form = self.get_form()
@@ -106,39 +121,42 @@ class Quote(db.Model):
         )
         return new_product
 
-    def handle_submit(self):
-        self.add_product_on_submit()
-        self.update_products_on_submit()
-        self.form = empty_form
+    def get_form(self):
+        return get_form(product_keys)
 
-    def add_product_on_submit(self):
-        product = self.get_product_on_submit()
+    @property
+    def autocomplete_data(self):
+        return get_autocomplete_data()
+
+    
+class QuoteRequest:
+
+    def __init__(self, quote):
+        self.quote = quote
+        self.products = quote.products
+
+    def handle(self):
+        self.add_product()
+        self.update_products()
+        self.quote.form = empty_form
+
+    def add_product(self):
+        product = self.get_product()
         if product:
-            self.add_product(product)
+            self.quote.add_product(product)
         else:
-            self.add_new_product_on_submit()
+            self.add_new_product()
 
-    def add_product(self, product):
-        new_product = Product(
-            quote_id=self.id,
-            name=product.name,
-            material=product.material,
-            acabado=product.acabado,
-            cristal=product.cristal,
-            unit_price=product.unit_price
-        )
-        new_product.add()
-
-    def add_new_product_on_submit(self):
-        product = self.new_product
+    def add_new_product(self):
+        product = self.quote.new_product
         error = product.add()
         if error:
-            self.focused_product_id = 0
-            self.error = error
+            self.quote.focused_product_id = 0
+            self.quote.error = error
         else:
-            self.focused_product_id = product.id
+            self.quote.focused_product_id = product.id
 
-    def get_product_on_submit(self):
+    def get_product(self):
         try:
             product = Product.get(request.form['name'])
         except KeyError:
@@ -146,16 +164,9 @@ class Quote(db.Model):
 
         return product
 
-    def get_form(self):
-        return get_form(product_keys)
-
-    def update_products_on_submit(self):
+    def update_products(self):
         for product in self.products:
             product.update_on_submit()
-
-    @property
-    def autocomplete_data(self):
-        return get_autocomplete_data()
 
 
 def get_autocomplete_data():

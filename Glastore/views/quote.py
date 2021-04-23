@@ -50,7 +50,7 @@ def add():
 def edit(quote_id):
     quote = Quote.get(quote_id)
     if request.method == "POST":
-        quote.handle_submit()
+        quote.request.handle()
         if quote.error:
             flash(quote.error)
 

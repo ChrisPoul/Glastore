@@ -124,15 +124,15 @@ class EditQuoteProducts(QuoteTest):
         self.assertNotEqual(Product.get(2), self.product)
 
 
-class Handle_submit(QuoteTest):
+class HandleSubmit(QuoteTest):
 
-    def test_add_product_on_submit(self):
+    def test_add_product(self):
         url = 'quote/edit/1'
         data = dict(
             name="Test Product"
         )
         with self.request_context(url, data):
-            self.quote.add_product_on_submit()
+            self.quote.request.add_product()
         self.assertIn(self.product, self.quote.products)
 
     def test_add_product_twice_on_submit(self):
@@ -142,10 +142,10 @@ class Handle_submit(QuoteTest):
             name="Test Product"
         )
         with self.request_context(url, data):
-            self.quote.handle_submit()
+            self.quote.request.handle()
         self.assertEqual(self.quote.error, None)
 
-    def test_add_new_product_on_submit(self):
+    def test_add_new_product(self):
         quote = Quote.new()
         url = 'quote/edit/2'
         data = dict(
@@ -155,7 +155,7 @@ class Handle_submit(QuoteTest):
             cristal="a material"
         )
         with self.request_context(url, data):
-            quote.add_new_product_on_submit()
+            quote.request.add_new_product()
         self.assertEqual(len(quote.products), 1)
 
     def test_add_empty_new_product_on_submit(self):
@@ -167,7 +167,7 @@ class Handle_submit(QuoteTest):
             cristal=""
         )
         with self.request_context(url, data):
-            quote.add_new_product_on_submit()
+            quote.request.add_new_product()
         self.assertEqual(len(quote.products), 0)
 
     def test_add_product_with_empty_acabado(self):
@@ -180,7 +180,7 @@ class Handle_submit(QuoteTest):
             cristal="a cristal"
         )
         with self.request_context(url, data):
-            quote.add_new_product_on_submit()
+            quote.request.add_new_product()
         self.assertEqual(len(quote.products), 0)
 
     def test_new_product_empty_after_submit(self):
@@ -191,7 +191,7 @@ class Handle_submit(QuoteTest):
             cristal=""
         )
         with self.request_context(url, data):
-            self.quote.handle_submit()
+            self.quote.request.handle()
         self.assertEqual(self.quote.new_product.name, "")
 
     def test_add_duplicate_product_on_submit(self):
@@ -202,12 +202,12 @@ class Handle_submit(QuoteTest):
             name="Test Product"
         )
         with self.request_context(url, data):
-            quote.add_product_on_submit()
+            quote.request.add_product()
         duplicate_product = Product.get(2)
         self.assertEqual(len(quote.products), 2)
         self.assertNotEqual(duplicate_product, self.product)
 
-    def test_update_products_on_submit(self):
+    def test_update_products(self):
         url = 'quote/edit/1'
         data = dict(
             material1="New Material",
@@ -216,19 +216,19 @@ class Handle_submit(QuoteTest):
             medidas1="2x2"
         )
         with self.request_context(url, data):
-            self.quote.update_products_on_submit()
+            self.quote.request.update_products()
             product = self.quote.products[0]
         self.assertEqual(product.material, "New Material")
         self.assertEqual(product.unit_price, 100.0)
         self.assertEqual(product.cantidad, 10)
         self.assertEqual(product.medidas, "2x2")
 
-    def test_get_product_on_submit(self):
+    def test_get_product(self):
         url = 'quote/edit/1'
         data = dict(
             name="Test Product"
         )
         with self.request_context(url, data):
-            product = self.quote.get_product_on_submit()
+            product = self.quote.request.get_product()
         self.assertEqual(product, self.product)
 
