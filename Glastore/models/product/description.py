@@ -11,14 +11,14 @@ window_identifiers = [
 ]
 
 
-class FinalWindowDescription:
+class SubWindowDescription:
 
     def __init__(self, description):
         self.full_description = description
 
     def get_sub_window_descriptions(self):
         self.window_descriptions = {}
-        for i, description_start in enumerate(self.start_of_descriptions):
+        for i, description_start in enumerate(self.description_indexes):
             self.current_description_start = description_start
             self.current_description_index = i
             self.add_window_description()
@@ -61,14 +61,14 @@ class FinalWindowDescription:
         return window_description
 
     def is_last_description(self):
-        return self.current_description_index == len(self.start_of_descriptions) - 1
+        return self.current_description_index == len(self.description_indexes) - 1
 
     def make_last_description(self):
         return self.full_description[self.current_description_start:]
 
     def make_not_last_description(self):
         next_description_start_index = self.current_description_index + 1
-        next_description_start = self.start_of_descriptions[next_description_start_index]
+        next_description_start = self.description_indexes[next_description_start_index]
         window_description = self.full_description[
             self.current_description_start:next_description_start]
 
@@ -94,7 +94,7 @@ class FinalWindowDescription:
     def extend_window_description(self):
         try:
             extended_description_index = self.current_description_index + 2
-            next_description_start = self.start_of_descriptions[extended_description_index]
+            next_description_start = self.description_indexes[extended_description_index]
             current_description_start = self.current_description_start
             self.current_description = self.full_description[
                 current_description_start:next_description_start
@@ -113,16 +113,18 @@ class FinalWindowDescription:
         return prev_description
 
     @property
-    def start_of_descriptions(self):
-        return WindowIdentifierIndexExtractor(self.full_description).get_window_identifier_indexes()
+    def description_indexes(self):
+        sub_win_description_index = SubWindowDescriptionIndex(self.full_description)
+
+        return sub_win_description_index.get_window_description_indexes()
 
 
-class WindowIdentifierIndexExtractor:
+class SubWindowDescriptionIndex:
 
     def __init__(self, description):
         self.full_description = description
 
-    def get_window_identifier_indexes(self):
+    def get_window_description_indexes(self):
         identifier_indexes = self.get_all_identifier_indexes()
         if len(identifier_indexes) == 0:
             identifier_indexes.append(0)

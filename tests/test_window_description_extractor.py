@@ -1,14 +1,13 @@
 from .setup import MyTest
 from Glastore.models.product.description import (
-    FinalWindowDescription, WindowIdentifierIndexExtractor,
-    turn_dict_to_list
+    SubWindowDescription, turn_dict_to_list
 )
 
 
 class TestGetWindowDescriptions(MyTest):
 
     def test_one_window_description(self):
-        extractor = FinalWindowDescription(
+        extractor = SubWindowDescription(
             "ventana fija de 10x10"
         )
         window_descriptions = extractor.get_sub_window_descriptions()
@@ -17,7 +16,7 @@ class TestGetWindowDescriptions(MyTest):
         )
     
     def test_two_window_descriptions(self):
-        extractor = FinalWindowDescription(
+        extractor = SubWindowDescription(
             "ventana fija de 10x10 con abatible superior de 1.002x4.233"
         )
         window_descriptions = extractor.get_sub_window_descriptions()
@@ -27,7 +26,7 @@ class TestGetWindowDescriptions(MyTest):
         ])
 
     def test_extended_window_description(self):
-        extractor = FinalWindowDescription(
+        extractor = SubWindowDescription(
             "dos ventanas fijas de 10x10"
         )
         window_descriptions = extractor.get_sub_window_descriptions()
@@ -39,7 +38,7 @@ class TestGetWindowDescriptions(MyTest):
 class TestAddWindowDescription(MyTest):
 
     def test_fija(self):
-        extractor = FinalWindowDescription("ventana fija de 10x10")
+        extractor = SubWindowDescription("ventana fija de 10x10")
         extractor.window_descriptions = {}
         extractor.current_description_start = 8
         extractor.current_description_index = 0
@@ -49,7 +48,7 @@ class TestAddWindowDescription(MyTest):
         )
 
     def test_dos_fijas(self):
-        extractor = FinalWindowDescription("ventana dos fijas de 10x10")
+        extractor = SubWindowDescription("ventana dos fijas de 10x10")
         extractor.window_descriptions = {}
         extractor.current_description_start = 8
         extractor.current_description_index = 0
@@ -59,7 +58,7 @@ class TestAddWindowDescription(MyTest):
         )
 
     def test_antepecho(self):
-        extractor = FinalWindowDescription("ventana antepecho de 10x10")
+        extractor = SubWindowDescription("ventana antepecho de 10x10")
         extractor.window_descriptions = {}
         extractor.current_description_start = 8
         extractor.current_description_index = 0
@@ -69,7 +68,7 @@ class TestAddWindowDescription(MyTest):
         )
 
     def test_antepecho_fijo(self):
-        extractor = FinalWindowDescription("ventana antepecho fijo de 10x10")
+        extractor = SubWindowDescription("ventana antepecho fijo de 10x10")
         extractor.window_descriptions = {}
         extractor.current_description_start = 8
         extractor.current_description_index = 0
@@ -79,7 +78,7 @@ class TestAddWindowDescription(MyTest):
         )
 
     def test_antepecho_y_fijo(self):
-        extractor = FinalWindowDescription("ventana antepecho y fijo de 10x10")
+        extractor = SubWindowDescription("ventana antepecho y fijo de 10x10")
         extractor.window_descriptions = {}
         extractor.current_description_start = 8
         extractor.current_description_index = 0
@@ -99,31 +98,31 @@ class TestAddWindowDescription(MyTest):
 class TestCurrentWindowDescription(MyTest):
 
     def test_fija(self):
-        extractor = FinalWindowDescription("ventana fija de 10x10")
+        extractor = SubWindowDescription("ventana fija de 10x10")
         extractor.current_description_start = 8
         extractor.current_description_index = 0
         self.assertEqual(extractor.current_window_description, "fija de 10x10")
 
     def test_dos_fijas(self):
-        extractor = FinalWindowDescription("ventana dos fijas de 10x10")
+        extractor = SubWindowDescription("ventana dos fijas de 10x10")
         extractor.current_description_start = 8
         extractor.current_description_index = 0
         self.assertEqual(extractor.current_window_description, "dos fijas de 10x10")
 
     def test_antepecho(self):
-        extractor = FinalWindowDescription("ventana antepecho de 10x10")
+        extractor = SubWindowDescription("ventana antepecho de 10x10")
         extractor.current_description_start = 8
         extractor.current_description_index = 0
         self.assertEqual(extractor.current_window_description, "antepecho de 10x10")
 
     def test_antepecho_fijo(self):
-        extractor = FinalWindowDescription("ventana antepecho fijo de 10x10")
+        extractor = SubWindowDescription("ventana antepecho fijo de 10x10")
         extractor.current_description_start = 8
         extractor.current_description_index = 0
         self.assertEqual(extractor.current_window_description, "antepecho fijo de 10x10")
 
     def test_antepecho_y_fijo(self):
-        extractor = FinalWindowDescription("ventana antepecho y fijo de 10x10")
+        extractor = SubWindowDescription("ventana antepecho y fijo de 10x10")
         extractor.current_description_start = 8
         extractor.current_description_index = 0
         self.assertEqual(extractor.current_window_description, "antepecho y ")
@@ -135,14 +134,14 @@ class TestCurrentWindowDescription(MyTest):
 class TestGetBasicWindowDescription(MyTest):
 
     def test_fija(self):
-        extractor = FinalWindowDescription("ventana fija de 10x10")
+        extractor = SubWindowDescription("ventana fija de 10x10")
         extractor.current_description_start = 8
         extractor.current_description_index = 0
         basic_description = extractor.get_basic_window_description()
         self.assertEqual(basic_description, "fija de 10x10")
 
     def test_dos_fijas(self):
-        extractor = FinalWindowDescription("ventana dos fijas de 10x10")
+        extractor = SubWindowDescription("ventana dos fijas de 10x10")
         extractor.current_description_start = 8
         extractor.current_description_index = 0
         basic_description = extractor.get_basic_window_description()
@@ -153,14 +152,14 @@ class TestGetBasicWindowDescription(MyTest):
         self.assertEqual(basic_description, "fijas de 10x10")
 
     def test_antepecho(self):
-        extractor = FinalWindowDescription("ventana antepecho de 10x10")
+        extractor = SubWindowDescription("ventana antepecho de 10x10")
         extractor.current_description_start = 8
         extractor.current_description_index = 0
         basic_description = extractor.get_basic_window_description()
         self.assertEqual(basic_description, "antepecho de 10x10")
 
     def test_antepecho_fijo(self):
-        extractor = FinalWindowDescription("ventana antepecho fijo de 10x10")
+        extractor = SubWindowDescription("ventana antepecho fijo de 10x10")
         extractor.current_description_start = 8
         extractor.current_description_index = 0
         basic_description = extractor.get_basic_window_description()
@@ -171,7 +170,7 @@ class TestGetBasicWindowDescription(MyTest):
         self.assertEqual(basic_description, "fijo de 10x10")
 
     def test_antepecho_y_fijo(self):
-        extractor = FinalWindowDescription("ventana antepecho y fijo de 10x10")
+        extractor = SubWindowDescription("ventana antepecho y fijo de 10x10")
         extractor.current_description_start = 8
         extractor.current_description_index = 0
         basic_description = extractor.get_basic_window_description()
@@ -185,7 +184,7 @@ class TestGetBasicWindowDescription(MyTest):
 class TestHandleExtendedWindowDescription(MyTest):
 
     def test_dos_fijas(self):
-        extractor = FinalWindowDescription("ventana dos fijas de 10x10")
+        extractor = SubWindowDescription("ventana dos fijas de 10x10")
         extractor.current_description_start = 0
         extractor.current_description_index = 0
         extractor.current_description = extractor.get_basic_window_description()
@@ -194,7 +193,7 @@ class TestHandleExtendedWindowDescription(MyTest):
         self.assertEqual(extractor.current_description, "ventana dos fijas de 10x10")
 
     def test_antepecho_fijo(self):
-        extractor = FinalWindowDescription("ventana abatible antepecho fijo de 10x10")
+        extractor = SubWindowDescription("ventana abatible antepecho fijo de 10x10")
         extractor.current_description_start = 17
         extractor.current_description_index = 1
         extractor.current_description = extractor.get_basic_window_description()
@@ -206,26 +205,26 @@ class TestHandleExtendedWindowDescription(MyTest):
 class TestIsExtendedDescription(MyTest):
 
     def test_fija(self):
-        extractor = FinalWindowDescription("ventana fija de 10x10")
+        extractor = SubWindowDescription("ventana fija de 10x10")
         self.assertEqual(extractor.is_extended_description("fija de 10x10"), False)
 
     def test_dos(self):
-        extractor = FinalWindowDescription("ventana fija de 10x10")
+        extractor = SubWindowDescription("ventana fija de 10x10")
         self.assertEqual(extractor.is_extended_description("dos ventanas fijas"), True)
 
     def test_antepecho(self):
-        extractor = FinalWindowDescription("ventana fija de 10x10")
+        extractor = SubWindowDescription("ventana fija de 10x10")
         self.assertEqual(extractor.is_extended_description("antepecho "), True)
 
     def test_antepecho_fijo(self):
-        extractor = FinalWindowDescription("ventana fija de 10x10")
+        extractor = SubWindowDescription("ventana fija de 10x10")
         self.assertEqual(extractor.is_extended_description("antepecho fijo"), False)
 
 
 class TestSaveWindowDescription(MyTest):
 
     def test_one_window_description(self):
-        extractor = FinalWindowDescription(
+        extractor = SubWindowDescription(
             "abatible de 10x10"
         )
         extractor.window_descriptions = {}
@@ -237,7 +236,7 @@ class TestSaveWindowDescription(MyTest):
         )
 
     def test_two_window_descriptions(self):
-        extractor = FinalWindowDescription(
+        extractor = SubWindowDescription(
             "corrediza de 2x2 con antepecho"
         )
         extractor.window_descriptions = {}
@@ -253,7 +252,7 @@ class TestSaveWindowDescription(MyTest):
         )
 
     def test_two_part_window_description(self):
-        extractor = FinalWindowDescription(
+        extractor = SubWindowDescription(
             "dos ventanas abatibles de 10x10"
         )
         extractor.window_descriptions = {}
@@ -280,14 +279,14 @@ class TestCurrentDescriptionIsPartOfAntepecho(MyTest):
 class TestIsLastDescription(MyTest):
 
     def test_last_window(self):
-        extractor = FinalWindowDescription(
+        extractor = SubWindowDescription(
             "dos ventanas abatibles de 10x10"
         )
         extractor.current_description_index = 1
         self.assertEqual(extractor.is_last_description(), True)
 
     def test_not_last_window(self):
-        extractor = FinalWindowDescription(
+        extractor = SubWindowDescription(
             "dos ventanas abatibles de 10x10"
         )
         extractor.current_description_index = 0
@@ -297,7 +296,7 @@ class TestIsLastDescription(MyTest):
 class TestPreviousWindowDescription(MyTest):
 
     def test_previous_window_description(self):
-        extractor = FinalWindowDescription(
+        extractor = SubWindowDescription(
             "dos ventanas abatibles de 10x10"
         )
         extractor.window_descriptions = {0: "dos ventanas "}
@@ -305,7 +304,7 @@ class TestPreviousWindowDescription(MyTest):
         self.assertEqual(extractor.previous_window_description, "dos ventanas ")
 
     def test_not_previous_window_description(self):
-        extractor = FinalWindowDescription(
+        extractor = SubWindowDescription(
             "dos ventanas abatibles de 10x10"
         )
         extractor.window_descriptions = {}
@@ -316,7 +315,7 @@ class TestPreviousWindowDescription(MyTest):
 class TestExtendWindowDescription(MyTest):
 
     def test_extend_window_description(self):
-        extractor = FinalWindowDescription(
+        extractor = SubWindowDescription(
             "ventana abatible con fijas de 10x10"
         )
         extractor.current_description_start = 8

@@ -7,8 +7,8 @@ from sqlalchemy import (
 )
 from flask import request
 from Glastore.models.window import Window
-from Glastore.models.window.position import WindowPositioner
-from .description import FinalWindowDescription
+from .position import WindowPositioner
+from .description import SubWindowDescription
 from Glastore.models import (
     db, add_to_db, commit_to_db, get_form
 )
@@ -322,7 +322,7 @@ class SubWindows:
 
     @property
     def window_descriptions(self):
-        final_window_description = FinalWindowDescription(self.product_name)
+        final_window_description = SubWindowDescription(self.product_name)
         sub_window_descriptions = final_window_description.get_sub_window_descriptions()
 
         return sub_window_descriptions
