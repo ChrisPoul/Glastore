@@ -120,8 +120,7 @@ class Window(db.Model):
         self.description = description
         self.update()
 
-    def draw(self, xy):
-        ax = self.product.ax
+    def draw(self, ax, xy):
         if "corrediz" in self.name:
             ventana = Corrediza(
                 ax=ax,
@@ -157,5 +156,5 @@ class Window(db.Model):
 
         self.ventana = ventana
 
-    def draw_selected_window(self):
+    def draw_selected(self):
         self.ventana.draw_selected_frame()

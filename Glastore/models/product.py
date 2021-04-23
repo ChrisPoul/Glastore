@@ -165,88 +165,13 @@ class Product(db.Model):
 
     @property
     def diseño(self):
-        window_fig = plt.Figure(dpi=150, figsize=(4.5, 4.5))
-        self.draw_final_window(window_fig)
-        self.save_fig_to_temporary_buffer(window_fig)
-        diseño = self.embed_in_html()
-
-        return diseño
-
-    def draw_final_window(self, window_fig):
-        self.ax = window_fig.subplots()
         self.update_windows()
-        for window, xy in zip(self.windows, self.window_positions):
-            window.draw(xy)
-        if self.quote.done is not True:
-            self.draw_selected_window()
+        diseño = Diseño(self)
 
-    def draw_selected_window(self):
-        selected_window = None
-        for window in self.windows:
-            if window.selected is True:
-                selected_window = window
-        if selected_window:
-            selected_window.draw_selected_window()
-
-    def save_fig_to_temporary_buffer(self, fig):
-        self.buffer = BytesIO()
-        fig.savefig(self.buffer, format="png")
-
-    def embed_in_html(self):
-        data_in_base64 = base64.b64encode(self.buffer.getbuffer())
-        data = data_in_base64.decode("ascii")
-        data_uri = 'data:image/png;base64,{}'.format(data)
-        
-        return data_uri
-
-    @property
-    def window_positions(self):
-        window_positions = WindowPositioner(self.windows).get_window_positions()
-
-        return window_positions
-
-    def make_new_window(self, description):
-        window = Window(
-            product_id=self.id,
-            description=description
-        )
-        window.add()
-
-        return window
+        return diseño.get_diseño()
 
     def update_windows(self):
-        self.update_existing_windows()
-        self.add_new_windows()
-
-    def update_existing_windows(self):
-        for window in self.windows:
-            self.update_existing_window(window)
-
-    def update_existing_window(self, window):
-        win_index = self.windows.index(window)
-        try:
-            description = self.window_descriptions[win_index]
-        except IndexError:
-            window.delete()
-            return
-        if window.description != description:
-            window.update_description(description)
-
-    def add_new_windows(self):
-        for i, description in enumerate(self.window_descriptions):
-            try:
-                window = self.windows[i]
-            except IndexError:
-                window = self.make_new_window(description)
-
-        if len(self.windows) == 0:
-            self.make_new_window(self.name)
-
-    @property
-    def window_descriptions(self):
-        window_descriptions = WindowDescriptionExtractor(self.name).get_window_descriptions()
-
-        return window_descriptions
+        UpdateWindows(self)
 
     def select_next_window(self):
         self.unselect_prev_window()
@@ -287,3 +212,105 @@ class Product(db.Model):
             window.orientacion += 1
         self.quote.focused_product_id = self.id
         self.update()
+
+
+class FinalWindow:
+
+    def __init__(self, product):
+        self.windows = product.windows
+        self.quote = product.quote
+    
+    def draw(self, axis):
+        for window, xy in zip(self.windows, self.window_positions):
+            window.draw(axis, xy)
+        self.draw_selected_window()
+
+    def draw_selected_window(self):
+        selected_window = None
+        for window in self.windows:
+            if window.selected is True:
+                selected_window = window
+        if selected_window:
+            selected_window.draw_selected()
+
+    @property
+    def window_positions(self):
+        window_positions = WindowPositioner(self.windows).get_window_positions()
+
+        return window_positions
+
+
+class Diseño:
+
+    def __init__(self, product):
+        self.product = product
+    
+    def get_diseño(self):
+        final_window = FinalWindow(self.product)
+        window_fig = plt.Figure(dpi=150, figsize=(4.5, 4.5))
+        axis = window_fig.subplots()
+        final_window.draw(axis)
+        self.save_fig_to_temporary_buffer(window_fig)
+        diseño = self.embed_in_html()
+
+        return diseño
+
+    def save_fig_to_temporary_buffer(self, fig):
+        self.buffer = BytesIO()
+        fig.savefig(self.buffer, format="png")
+
+    def embed_in_html(self):
+        data_in_base64 = base64.b64encode(self.buffer.getbuffer())
+        data = data_in_base64.decode("ascii")
+        data_uri = 'data:image/png;base64,{}'.format(data)
+        
+        return data_uri
+
+
+class UpdateWindows:
+
+    def __init__(self, product):
+        self.id = product.id
+        self.windows = product.windows
+        self.name = product.name
+        self.update_existing_windows()
+        self.add_new_windows()
+
+    def update_existing_windows(self):
+        for window in self.windows:
+            self.update_existing_window(window)
+
+    def update_existing_window(self, window):
+        win_index = self.windows.index(window)
+        try:
+            description = self.window_descriptions[win_index]
+        except IndexError:
+            window.delete()
+            return
+        if window.description != description:
+            window.update_description(description)
+
+    def add_new_windows(self):
+        for i, description in enumerate(self.window_descriptions):
+            try:
+                window = self.windows[i]
+            except IndexError:
+                window = self.make_new_window(description)
+
+        if len(self.windows) == 0:
+            self.make_new_window(self.name)
+
+    def make_new_window(self, description):
+        window = Window(
+            product_id=self.id,
+            description=description
+        )
+        window.add()
+
+        return window
+
+    @property
+    def window_descriptions(self):
+        window_descriptions = WindowDescriptionExtractor(self.name).get_window_descriptions()
+
+        return window_descriptions
