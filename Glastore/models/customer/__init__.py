@@ -1,7 +1,7 @@
 from sqlalchemy import (
     Column, Integer, String
 )
-from Glastore.models import db, add_to_db, commit_to_db, get_form
+from Glastore.models import db, add_to_db, commit_to_db
 
 customer_heads = {
     "name": "Nombre del Cliente",
@@ -76,9 +76,7 @@ class Customer(db.Model):
     def get_all():
         return Customer.query.all()
 
-    def update_on_submit(self):
-        form = get_form(customer_heads)
-        self.name = form['name']
-        self.email = form['email']
-        self.address = form['address']
-        self.error = self.update()
+    @property
+    def request(self):
+        from .request import CustomerRequest
+        return CustomerRequest(self)

@@ -66,14 +66,14 @@ def update(customer_id):
     customer = Customer.get(customer_id)
 
     if request.method == "POST":
-        customer.update_on_submit()
+        error = customer.request.update()
 
-        if not customer.error:
+        if not error:
             return redirect(
                 url_for('customer.customers')
             )
 
-        flash(customer.error)
+        flash(error)
 
     return render_template(
         'customer/update.html',
