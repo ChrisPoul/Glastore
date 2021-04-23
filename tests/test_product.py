@@ -115,7 +115,7 @@ class UpdateOnSumbit(ProductTest):
         )
         url = 'quote/edit/1'
         with self.request_context(url, data):
-            self.product.update_on_submit()
+            self.product.request.update()
         self.assertEqual(self.product.material, "New Material")
 
     def test_update_attributes_on_submit(self):
@@ -125,7 +125,7 @@ class UpdateOnSumbit(ProductTest):
         )
         url = 'quote/edit/1'
         with self.request_context(url, data):
-            self.product.update_attributes_on_submit()
+            self.product.request.update_attributes()
         self.assertEqual(self.product.cantidad, str(1))
 
     def test_update_total(self):

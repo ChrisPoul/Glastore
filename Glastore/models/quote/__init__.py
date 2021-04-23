@@ -3,12 +3,12 @@ from sqlalchemy import (
     Column, Integer, DateTime,
     ForeignKey, String
 )
-from flask import request
 from Glastore.models import (
     db, add_to_db, commit_to_db, get_form
 )
 from Glastore.models.product import Product
 from Glastore.models.window import Window
+from .request import QuoteRequest
 
 product_keys = {
     "name": ["Suministro y colocación de ", "nombre de pieza..."],
@@ -16,14 +16,6 @@ product_keys = {
     "acabado": ["acabado ", "acabado..."],
     "cristal": ["con ", "cristal o vidrio..."],
     "medidas": ["Dimenciones", "medidas..."]
-}
-empty_form = {
-    "name": "",
-    "material": "",
-    "acabado": "",
-    "cristal": "",
-    "medidas": "",
-    "unit_price": 0
 }
 
 
@@ -127,46 +119,6 @@ class Quote(db.Model):
     @property
     def autocomplete_data(self):
         return get_autocomplete_data()
-
-    
-class QuoteRequest:
-
-    def __init__(self, quote):
-        self.quote = quote
-        self.products = quote.products
-
-    def handle(self):
-        self.add_product()
-        self.update_products()
-        self.quote.form = empty_form
-
-    def add_product(self):
-        product = self.get_product()
-        if product:
-            self.quote.add_product(product)
-        else:
-            self.add_new_product()
-
-    def add_new_product(self):
-        product = self.quote.new_product
-        error = product.add()
-        if error:
-            self.quote.focused_product_id = 0
-            self.quote.error = error
-        else:
-            self.quote.focused_product_id = product.id
-
-    def get_product(self):
-        try:
-            product = Product.get(request.form['name'])
-        except KeyError:
-            product = None
-
-        return product
-
-    def update_products(self):
-        for product in self.products:
-            product.update_on_submit()
 
 
 def get_autocomplete_data():

@@ -2,11 +2,11 @@ from sqlalchemy import (
     Column, Integer, String,
     Float, ForeignKey
 )
-from flask import request
 from Glastore.models.window import Window
 from .final_window import FinalWindowImage
+from .request import ProductRequest
 from Glastore.models import (
-    db, add_to_db, commit_to_db, get_form
+    db, add_to_db, commit_to_db
 )
 
 product_heads = {
@@ -37,20 +37,6 @@ class Product(db.Model):
 
     def __repr__(self):
         return self.__dict__
-
-    @property
-    def unique_keys(self):
-        unique_value_keys = dict(
-            name=f"name{self.id}",
-            material=f"material{self.id}",
-            acabado=f"acabado{self.id}",
-            cristal=f"cristal{self.id}",
-            medidas=f"medidas{self.id}",
-            cantidad=f"cantidad{self.id}",
-            unit_price=f"unit_price{self.id}"
-        )
-
-        return unique_value_keys
 
     def add(self):
         error = self.validate_product()
@@ -129,35 +115,28 @@ class Product(db.Model):
 
         return error
 
-    def update_on_submit(self):
-        previous_name = self.name
-        self.update_attributes_on_submit()
-        self.update_total()
-        self.quote.error = self.update()
-        if self.quote.error:
-            self.name = previous_name
-
-    def update_attributes_on_submit(self):
-        attributes = [
-            "name",
-            "material",
-            "acabado",
-            "cristal",
-            "unit_price",
-            "medidas",
-            "cantidad"
-        ]
-        for attribute in attributes:
-            try:
-                request_value = request.form[self.unique_keys[attribute]]
-                setattr(self, attribute, request_value)
-            except KeyError:
-                pass
-
     def update_total(self):
         cantidad = float(self.cantidad)
         unit_price = float(self.unit_price)
         self.total = cantidad * unit_price
+
+    @property
+    def unique_keys(self):
+        unique_value_keys = dict(
+            name=f"name{self.id}",
+            material=f"material{self.id}",
+            acabado=f"acabado{self.id}",
+            cristal=f"cristal{self.id}",
+            medidas=f"medidas{self.id}",
+            cantidad=f"cantidad{self.id}",
+            unit_price=f"unit_price{self.id}"
+        )
+
+        return unique_value_keys
+
+    @property
+    def request(self):
+        return ProductRequest(self)
 
     @property
     def diseño(self):
