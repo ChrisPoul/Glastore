@@ -32,27 +32,6 @@ class AddCustomer(CustomerTest):
         self.assertEqual(error, customer.invalid_email_msg)
 
 
-class AddCustomerView(CustomerTest):
-
-    def test_view(self):
-        response = self.client.get(
-            '/customer/add'
-        )
-        self.assertIn(b'Registrar Cliente', response.data)
-
-    def test_add(self):
-        data = dict(
-            name="test",
-            email="test@email.com",
-            address="Fake address"
-        )
-        response = self.client.post(
-            '/customer/add',
-            data=data
-        )
-        self.assertRedirects(response, '/customer/customers')
-
-
 class UpdateCustomer(CustomerTest):
 
     def test_update(self):
@@ -80,42 +59,11 @@ class UpdateCustomer(CustomerTest):
         assert error == self.customer.invalid_email_msg
 
 
-class UpdateCustomerView(CustomerTest):
-
-    def test_view(self):
-        make_test_customer()
-        response = self.client.get(
-            '/customer/update/1'
-        )
-        self.assertIn(b'Test', response.data)
-
-    def test_update(self):
-        data = dict(
-            name="Changed name"
-        )
-        response = self.client.post(
-            '/customer/update/1',
-            data=data
-        )
-        self.assertRedirects(response, '/customer/customers')
-        self.assertEqual(self.customer.name, "Changed name")
-
-
 class DeleteCustomer(CustomerTest):
 
     def test_delete(self):
         assert self.customer in db.session
         self.customer.delete()
-        assert self.customer not in db.session
-
-
-class DeleteCustomerView(CustomerTest):
-
-    def test_delete(self):
-        response = self.client.post(
-            '/customer/delete/1'
-        )
-        self.assertRedirects(response, '/customer/customers')
         assert self.customer not in db.session
 
 
@@ -143,20 +91,3 @@ class GetCustomers(CustomerTest):
         customer = make_test_customer("Test second")
         customer.add()
         assert Customer.get_all() == [self.customer, customer]
-
-
-class CustomersView(CustomerTest):
-
-    def test_view(self):
-        response = self.client.get(
-            '/customer/customers'
-        )
-        self.assertEqual(response.status_code, 200)
-
-    def test_customers(self):
-        make_test_customer("Test second")
-        response = self.client.get(
-            '/customer/customers'
-        )
-        self.assertIn(b'Test', response.data)
-        self.assertIn(b'Test second', response.data)

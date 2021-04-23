@@ -101,49 +101,6 @@ class GetQuote(QuoteTest):
         self.assertNotIn(quote3, Quote.get_all(customer_id=1))
 
 
-class EditQuoteView(QuoteTest):
-
-    def test_view(self):
-        response = self.client.get(
-            'quote/edit/1'
-        )
-        self.assertEqual(response.status_code, 200)
-
-    def test_quote_info(self):
-        response = self.client.get(
-            'quote/edit/1'
-        )
-        formated_date = format_date(self.quote.date)
-        folio = self.quote.folio
-        self.assertIn(b"<img", response.data)
-        self.assertIn(bytes(folio, "utf-8"), response.data)
-        self.assertIn(bytes(formated_date, "utf-8"), response.data)
-
-    def test_customer_info(self):
-        self.customer.name = "Test Customer"
-        response = self.client.get(
-            'quote/edit/1'
-        )
-        self.assertIn(b"Test Customer", response.data)
-        self.assertIn(b"Test@email.com", response.data)
-        self.assertIn(b"Fake address", response.data)
-
-    def test_new_product_inputs(self):
-        response = self.client.get(
-            'quote/edit/1'
-        )
-        self.assertIn(b'<input name="name"', response.data)
-        self.assertIn(b'<input name="material"', response.data)
-        self.assertIn(b'<input name="cristal"', response.data)
-
-    def test_empty_values(self):
-        response = self.client.get(
-            'quote/edit/1'
-        )
-        self.assertIn(b'value=""', response.data)
-        self.assertNotIn(b'value="None"', response.data)
-
-
 class EditQuoteProducts(QuoteTest):
 
     def test_add_product(self):
@@ -275,43 +232,3 @@ class Handle_submit(QuoteTest):
             product = self.quote.get_product_on_submit()
         self.assertEqual(product, self.product)
 
-
-class EditQuoteProductsView(QuoteTest):
-
-    def test_add_product_view(self):
-        response = self.client.get(
-            'quote/edit/1'
-        )
-        self.assertIn(b'Test Product', response.data)
-        self.assertIn(b'<input name="material1"', response.data)
-        self.assertIn(b'<input name="cristal1"', response.data)
-        self.assertIn(b'<input name="medidas1"', response.data)
-
-    def test_add_product_from_view(self):
-        data = dict(
-            name="Test Product"
-        )
-        response = self.client.post(
-            'quote/edit/1',
-            data=data
-        )
-        self.assertIn(b"Test Product", response.data)
-        self.assertIn(b"Test Material", response.data)
-        self.assertIn(b"Test Cristal", response.data)
-        self.assertIn(b'<input name="name"', response.data)
-
-    def test_add_duplicate_product_from_view(self):
-        quote = Quote.new()
-        data = dict(
-            name="Test Product"
-        )
-        response = self.client.post(
-            'quote/edit/2',
-            data=data
-        )
-        new_response = self.client.post(
-            'quote/edit/2',
-            data=data
-        )
-        self.assertNotEqual(new_response.data, response.data)
-        self.assertEqual(len(quote.products), 2)
