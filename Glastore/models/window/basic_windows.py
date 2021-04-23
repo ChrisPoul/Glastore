@@ -1,21 +1,16 @@
 import matplotlib.pyplot as plt
 
 
-def draw_line(xdata, ydata, ax=plt):
-    line = plt.Line2D(xdata, ydata, lw=2, color="blue")
-    ax.add_line(line)
-
-
 class BasicWindow:
 
-    def __init__(self, ax, xy, width, height):
-        self.ax = ax
+    def __init__(self, axis, xy, width, height):
+        self.axis = axis
         self.xy = xy
         self.width = width
         self.height = height
-        self.ax.axis('off')
+        self.axis.axis('off')
         self.draw()
-        self.ax.axis('scaled')
+        self.axis.axis('scaled')
 
     
     def draw_frame(self, lw=6):
@@ -26,7 +21,7 @@ class BasicWindow:
             fill=False,
             linewidth=lw
         )
-        self.ax.add_patch(frame)
+        self.axis.add_patch(frame)
 
     def draw_selected_frame(self, lw=5):
         frame = plt.Rectangle(
@@ -37,13 +32,13 @@ class BasicWindow:
             linewidth=lw,
             color="blue"
         )
-        self.ax.add_patch(frame)
+        self.axis.add_patch(frame)
 
 
 class Fija(BasicWindow):
 
-    def __init__(self, ax, xy, width, height):
-        BasicWindow.__init__(self, ax, xy, width, height)
+    def __init__(self, axis, xy, width, height):
+        BasicWindow.__init__(self, axis, xy, width, height)
 
     def draw(self):
         self.draw_frame()
@@ -51,10 +46,10 @@ class Fija(BasicWindow):
 
 class Corrediza(BasicWindow):
 
-    def __init__(self, ax, xy, width, height, orientacion, selected=False):
+    def __init__(self, axis, xy, width, height, orientacion, selected=False):
         self.orientacion = orientacion
         self.selected = selected
-        BasicWindow.__init__(self, ax, xy, width, height)
+        BasicWindow.__init__(self, axis, xy, width, height)
 
     def draw(self):
         self.draw_frame()
@@ -82,7 +77,7 @@ class Corrediza(BasicWindow):
         ]
         xdata = (x1, x2)
         ydata = (y, y)
-        draw_line(xdata, ydata, self.ax)
+        draw_line(xdata, ydata, self.axis)
         arrow_head = plt.Polygon(
             points,
             fill=False,
@@ -90,13 +85,13 @@ class Corrediza(BasicWindow):
             color="blue",
             lw=2
         )
-        self.ax.add_line(arrow_head)
+        self.axis.add_line(arrow_head)
 
 
 class Guillotina(BasicWindow):
 
-    def __init__(self, ax, xy, width, height):
-        BasicWindow.__init__(self, ax, xy, width, height)
+    def __init__(self, axis, xy, width, height):
+        BasicWindow.__init__(self, axis, xy, width, height)
 
     def draw(self):
         xposition, _ = self.xy
@@ -113,7 +108,7 @@ class Guillotina(BasicWindow):
         x = self.width / 2 + xposition
         ydata = (y1, y2)
         xdata = (x, x)
-        draw_line(xdata, ydata, self.ax)
+        draw_line(xdata, ydata, self.axis)
         xmin = 0.9 * x
         xmid = x
         xmax = 1.1 * x
@@ -131,15 +126,15 @@ class Guillotina(BasicWindow):
             color="blue",
             lw=2
         )
-        self.ax.add_line(arrow_head)
+        self.axis.add_line(arrow_head)
 
 
 class Abatible(BasicWindow):
 
-    def __init__(self, ax, xy, width, height, orientacion, selected=False):
+    def __init__(self, axis, xy, width, height, orientacion, selected=False):
         self.orientacion = orientacion
         self.selected = selected
-        BasicWindow.__init__(self, ax, xy, width, height)
+        BasicWindow.__init__(self, axis, xy, width, height)
 
     def draw(self):
         self.draw_frame()
@@ -154,7 +149,7 @@ class Abatible(BasicWindow):
             color="blue",
             lw=2
         )
-        self.ax.add_line(triangle)
+        self.axis.add_line(triangle)
 
     def get_triangle_points(self):
         if self.orientacion == 1 or self.orientacion == 2:
@@ -214,6 +209,6 @@ class Abatible(BasicWindow):
         self.xmax = self.width + xposition
 
 
-if __name__ == "__main__":
-    corrediza = Abatible(plt.gca(), (20, 20), 10, 10, 4)
-    plt.show()
+def draw_line(xdata, ydata, axis=plt):
+    line = plt.Line2D(xdata, ydata, lw=2, color="blue")
+    axis.add_line(line)

@@ -8,7 +8,7 @@ from sqlalchemy import (
 from flask import request
 from Glastore.models.window import Window
 from Glastore.models.window.position import WindowPositioner
-from Glastore.models.window.description import WindowDescriptionExtractor
+from .description import FinalWindowDescription
 from Glastore.models import (
     db, add_to_db, commit_to_db, get_form
 )
@@ -165,13 +165,9 @@ class Product(db.Model):
 
     @property
     def diseño(self):
-        self.update_windows()
-        diseño = Diseño(self)
+        window_image = FinalWindowImage(self)
 
-        return diseño.get_diseño()
-
-    def update_windows(self):
-        UpdateWindows(self)
+        return window_image.temporary_uri
 
     def select_next_window(self):
         self.unselect_prev_window()
@@ -214,6 +210,46 @@ class Product(db.Model):
         self.update()
 
 
+class FinalWindowImage:
+
+    def __init__(self, product):
+        self.product = product
+        self.update_sub_windows()
+    
+    @property
+    def temporary_uri(self):
+        figure = self.make_figure()
+        temporary_buffer = self.save_to_temporary_buffer(figure)
+        temporary_uri = self.get_temporary_uri(temporary_buffer)
+
+        return temporary_uri
+
+    def update_sub_windows(self):
+        windows = SubWindows(self.product)
+        windows.update()
+
+    def make_figure(self):
+        figure = plt.Figure(dpi=150, figsize=(4.5, 4.5))
+        axis = figure.subplots()
+        final_window = FinalWindow(self.product)
+        final_window.draw(axis)
+
+        return figure
+
+    def save_to_temporary_buffer(self, figure):
+        buffer = BytesIO()
+        figure.savefig(buffer, format="png")
+
+        return buffer
+
+    def get_temporary_uri(self, buffer):
+        data_in_base64 = base64.b64encode(buffer.getbuffer())
+        data = data_in_base64.decode("ascii")
+        data_uri = 'data:image/png;base64,{}'.format(data)
+        
+        return data_uri
+
+
 class FinalWindow:
 
     def __init__(self, product):
@@ -240,39 +276,14 @@ class FinalWindow:
         return window_positions
 
 
-class Diseño:
-
-    def __init__(self, product):
-        self.product = product
-    
-    def get_diseño(self):
-        final_window = FinalWindow(self.product)
-        window_fig = plt.Figure(dpi=150, figsize=(4.5, 4.5))
-        axis = window_fig.subplots()
-        final_window.draw(axis)
-        self.save_fig_to_temporary_buffer(window_fig)
-        diseño = self.embed_in_html()
-
-        return diseño
-
-    def save_fig_to_temporary_buffer(self, fig):
-        self.buffer = BytesIO()
-        fig.savefig(self.buffer, format="png")
-
-    def embed_in_html(self):
-        data_in_base64 = base64.b64encode(self.buffer.getbuffer())
-        data = data_in_base64.decode("ascii")
-        data_uri = 'data:image/png;base64,{}'.format(data)
-        
-        return data_uri
-
-
-class UpdateWindows:
+class SubWindows:
 
     def __init__(self, product):
         self.id = product.id
         self.windows = product.windows
-        self.name = product.name
+        self.product_name = product.name
+
+    def update(self):
         self.update_existing_windows()
         self.add_new_windows()
 
@@ -298,7 +309,7 @@ class UpdateWindows:
                 window = self.make_new_window(description)
 
         if len(self.windows) == 0:
-            self.make_new_window(self.name)
+            self.make_new_window(self.product_name)
 
     def make_new_window(self, description):
         window = Window(
@@ -311,6 +322,7 @@ class UpdateWindows:
 
     @property
     def window_descriptions(self):
-        window_descriptions = WindowDescriptionExtractor(self.name).get_window_descriptions()
+        final_window_description = FinalWindowDescription(self.product_name)
+        sub_window_descriptions = final_window_description.get_sub_window_descriptions()
 
-        return window_descriptions
+        return sub_window_descriptions

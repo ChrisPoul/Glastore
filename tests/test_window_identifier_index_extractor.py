@@ -1,5 +1,5 @@
 from .setup import MyTest
-from Glastore.models.window.description import WindowIdentifierIndexExtractor
+from Glastore.models.product.description import WindowIdentifierIndexExtractor
 
 
 class TestGetWindowIdentifierIndexes(MyTest):

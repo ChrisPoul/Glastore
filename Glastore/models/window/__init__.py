@@ -120,10 +120,10 @@ class Window(db.Model):
         self.description = description
         self.update()
 
-    def draw(self, ax, xy):
+    def draw(self, axis, xy):
         if "corrediz" in self.name:
             ventana = Corrediza(
-                ax=ax,
+                axis=axis,
                 xy=xy,
                 width=self.width,
                 height=self.height,
@@ -132,7 +132,7 @@ class Window(db.Model):
             )
         elif "abatible" in self.name:
             ventana = Abatible(
-                ax=ax,
+                axis=axis,
                 xy=xy,
                 width=self.width,
                 height=self.height,
@@ -141,14 +141,14 @@ class Window(db.Model):
             )
         elif "guillotina" in self.name:
             ventana = Guillotina(
-                ax=ax,
+                axis=axis,
                 xy=xy,
                 width=self.width,
                 height=self.height
             )
         else:
             ventana = Fija(
-                ax=ax,
+                axis=axis,
                 xy=xy,
                 width=self.width,
                 height=self.height

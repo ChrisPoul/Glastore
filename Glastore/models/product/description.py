@@ -11,12 +11,12 @@ window_identifiers = [
 ]
 
 
-class WindowDescriptionExtractor:
+class FinalWindowDescription:
 
     def __init__(self, description):
         self.full_description = description
 
-    def get_window_descriptions(self):
+    def get_sub_window_descriptions(self):
         self.window_descriptions = {}
         for i, description_start in enumerate(self.start_of_descriptions):
             self.current_description_start = description_start
@@ -117,10 +117,6 @@ class WindowDescriptionExtractor:
         return WindowIdentifierIndexExtractor(self.full_description).get_window_identifier_indexes()
 
 
-def turn_dict_to_list(some_dict):
-    return [some_dict[key] for key in some_dict]
-
-
 class WindowIdentifierIndexExtractor:
 
     def __init__(self, description):
@@ -167,3 +163,7 @@ class WindowIdentifierIndexExtractor:
         if identifier_index != -1:
             self.current_identifier_indexes.append(identifier_index)
             self.start_of_search = identifier_index + 1
+
+
+def turn_dict_to_list(some_dict):
+    return [some_dict[key] for key in some_dict]
