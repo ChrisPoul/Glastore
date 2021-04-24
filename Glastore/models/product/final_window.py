@@ -117,8 +117,6 @@ class SubWindows:
         )
         window.add()
 
-        return window
-
     @property
     def window_descriptions(self):
         final_window_description = SubWindowDescription(self.product_name)
