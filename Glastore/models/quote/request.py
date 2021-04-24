@@ -16,11 +16,14 @@ class QuoteRequest:
     def __init__(self, quote):
         self.quote = quote
         self.products = quote.products
+        self.error = None
 
     def handle(self):
         self.add_product()
         self.update_products()
         self.quote.form = empty_form
+
+        return self.error
 
     def add_product(self):
         product = self.get_product()
@@ -31,11 +34,11 @@ class QuoteRequest:
 
     def add_new_product(self):
         product = self.quote.new_product
-        error = product.add()
+        error = product.request.validate()
         if error:
             self.quote.focused_product_id = 0
-            self.quote.error = error
         else:
+            product.add()
             self.quote.focused_product_id = product.id
 
     def get_product(self):

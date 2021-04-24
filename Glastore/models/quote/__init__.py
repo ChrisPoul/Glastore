@@ -30,20 +30,16 @@ class Quote(db.Model):
     )
     focused_product_id = Column(Integer, nullable=False, default=0)
     done = False
-    error = None
     form = None
 
     def __repr__(self):
         return self.__dict__
 
     def add(self):
-        self.error = add_to_db(self)
-        return self.error
+        add_to_db(self)
 
     def update(self):
-        if not self.error:
-            self.error = commit_to_db()
-        return self.error
+        commit_to_db()
 
     def delete(self):
         db.session.delete(self)

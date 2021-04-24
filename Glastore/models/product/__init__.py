@@ -39,36 +39,14 @@ class Product(db.Model):
         return self.__dict__
 
     def add(self):
-        error = self.validate_product()
-        if not error:
-            error = add_to_db(self)
-        return error
+        add_to_db(self)
 
     def update(self):
-        error = self.validate_product()
-        if not error:
-            error = commit_to_db()
-
-        return error
+        commit_to_db()
 
     def delete(self):
         db.session.delete(self)
         db.session.commit()
-
-    def new(name):
-        product = Product(
-            quote_id=1,
-            name=name,
-            material=name,
-            acabado=name,
-            cristal=name,
-            unit_price=0
-        )
-        error = product.add()
-        if error:
-            return product, error
-
-        return product
 
     def get(search_term):
         product = Product.query.get(search_term)
@@ -86,39 +64,6 @@ class Product(db.Model):
                 products = Product.query.filter_by(cristal=search_term).all()
 
         return products
-
-    def validate_product(self):
-        error = self.validate_fields()
-        if not error:
-            error = self.validate_price()
-
-        return error
-
-    def validate_fields(self):
-        error_msg = "No se pueden dejar campos en blanco"
-        error = None
-        if self.name == "" or self.material == "" or self.cristal == "" or self.acabado == "":
-            error = error_msg
-
-        return error
-
-    def validate_price(self):
-        error = None
-        if self.unit_price:
-            try:
-                float(self.unit_price)
-            except ValueError:
-                error = "Numero invalido"
-                self.unit_price = 0
-        else:
-            self.unit_price = 0
-
-        return error
-
-    def update_total(self):
-        cantidad = float(self.cantidad)
-        unit_price = float(self.unit_price)
-        self.total = cantidad * unit_price
 
     @property
     def unique_keys(self):
