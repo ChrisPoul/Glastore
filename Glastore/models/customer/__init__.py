@@ -20,47 +20,18 @@ class Customer(db.Model):
         cascade='all, delete-orphan'
     )
 
-    invalid_name_msg = "El nombre del cliente no puede llevar numeros, solo letras"
-    invalid_email_msg = "El correo que introdujo es invalido"
-
     def __repr__(self):
         return self.__dict__
 
     def add(self):
-        self.error = None
-        self.validate_name()
-        self.validate_email()
-        if not self.error:
-            self.error = add_to_db(self)
-
-        return self.error
+        add_to_db(self)
 
     def delete(self):
         db.session.delete(self)
         db.session.commit()
 
     def update(self):
-        self.error = None
-        self.validate_name()
-        self.validate_email()
-        if not self.error:
-            self.error = commit_to_db()
-
-        return self.error
-
-    def validate_name(self):
-        if not self.error:
-            nums = "1234567890"
-            for num in nums:
-                if num in self.name:
-                    self.error = self.invalid_name_msg
-                    break
-
-    def validate_email(self):
-        if not self.error:
-            if self.email:
-                if "@" not in self.email:
-                    self.error = self.invalid_email_msg
+        commit_to_db()
 
     def get(search_term):
         customer = Customer.query.get(search_term)

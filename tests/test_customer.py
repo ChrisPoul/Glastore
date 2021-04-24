@@ -20,43 +20,40 @@ class AddCustomer(CustomerTest):
         customer = Customer(
             name="1inval1d nam3"
         )
-        error = customer.add()
-        self.assertEqual(error, customer.invalid_name_msg)
+        error = customer.request.add()
+        self.assertTrue(error)
 
     def test_invalid_email(self):
         customer = Customer(
             name="test",
             email="test.email.com"
         )
-        error = customer.add()
-        self.assertEqual(error, customer.invalid_email_msg)
+        error = customer.request.add()
+        self.assertTrue(error)
 
 
 class UpdateCustomer(CustomerTest):
 
     def test_update(self):
         self.customer.name = "Test second"
-        error = self.customer.update()
         self.assertEqual(self.customer.name, "Test second")
-        assert error is None
 
     def test_repeated_name(self):
         customer = make_test_customer("Test second")
         customer.name = "Test"
-        error = customer.update()
-
-        assert error == repeated_value_msg
+        with self.assertRaises(ValueError):
+            customer.update()
         assert customer.name == "Test second"
 
     def test_invalid_name(self):
         self.customer.name = "Test2"
-        error = self.customer.update()
-        self.assertEqual(error, self.customer.invalid_name_msg)
+        error = self.customer.request.update()
+        self.assertTrue(error)
 
     def test_invalid_email(self):
         self.customer.email = "test.email.com"
-        error = self.customer.update()
-        assert error == self.customer.invalid_email_msg
+        error = self.customer.request.update()
+        self.assertTrue(error)
 
 
 class DeleteCustomer(CustomerTest):

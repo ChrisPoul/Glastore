@@ -24,21 +24,16 @@ def init_db_command():
 
 
 def commit_to_db():
-    error = None
     try:
         db.session.commit()
     except IntegrityError:
-        error = repeated_value_msg
         db.session.rollback()
-
-    return error
+        raise ValueError from None
 
 
 def add_to_db(item):
     db.session.add(item)
-    error = commit_to_db()
-
-    return error
+    commit_to_db()
 
 
 def add_column(engine, table_name, column):

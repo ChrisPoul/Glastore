@@ -38,7 +38,6 @@ def add():
 
     if request.method == 'POST':
         form = get_form(customer_heads)
-        error = None
         customer = Customer(
             name=form['name'],
             email=form['email'],

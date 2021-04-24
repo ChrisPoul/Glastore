@@ -1,8 +1,7 @@
 from .setup import MyTest
 from Glastore.models import (
     add_to_db, db, commit_to_db,
-    repeated_value_msg, get_form,
-    format_price, format_date,
+    get_form, format_price, format_date,
     add_comma_separators_to_num
 )
 from Glastore.models.customer import Customer, customer_heads
@@ -18,8 +17,6 @@ class CommitToDb(MyTest):
             address="Fake address Apt. 12"
         )
         db.session.add(customer)
-        error = commit_to_db()
-        assert error is None
         assert customer in db.session
 
     def test_repeated_value(self):
@@ -35,8 +32,8 @@ class CommitToDb(MyTest):
             address="Fake address"
         )
         db.session.add(customer2)
-        error = commit_to_db()
-        assert error == repeated_value_msg
+        with self.assertRaises(ValueError):
+            commit_to_db()
         assert customer not in db.session
         assert customer2 not in db.session
 
@@ -49,8 +46,7 @@ class AddToDb(MyTest):
             email="test@email.com",
             address="Fake address Apt. 12"
         )
-        error = add_to_db(customer)
-        assert error is None
+        add_to_db(customer)
         assert customer in db.session
 
     def test_repeated_value(self):
@@ -65,8 +61,8 @@ class AddToDb(MyTest):
             email="test@email.com",
             address="Fake address Apt. 12"
         )
-        error = add_to_db(customer2)
-        assert error == repeated_value_msg
+        with self.assertRaises(ValueError):
+            add_to_db(customer2)
         assert customer in db.session
         assert customer2 not in db.session
 

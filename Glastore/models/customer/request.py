@@ -8,7 +8,7 @@ class CustomerRequest:
         self.customer = customer
     
     def add(self):
-        error = None
+        error = self.validate()
         try:
             self.customer.add()
         except ValueError:
@@ -21,6 +21,32 @@ class CustomerRequest:
         self.customer.name = form['name']
         self.customer.email = form['email']
         self.customer.address = form['address']
-        error = self.customer.update()
+        error = self.validate()
+        try:
+            self.customer.update()
+        except ValueError:
+            error = "Eso ya siusa"
 
         return error
+
+    def validate(self):
+        self.error = None
+        self.validate_name()
+        self.validate_email()
+
+        return self.error
+
+    def validate_name(self):
+        invalid_name_msg = "El nombre del cliente no puede llevar numeros, solo letras"
+        if not self.error:
+            nums = "1234567890"
+            for num in nums:
+                if num in self.customer.name:
+                    self.error = invalid_name_msg
+                    break
+
+    def validate_email(self):
+        invalid_email_msg = "El correo que introdujo es invalido"
+        if not self.error:
+            if "@" not in self.customer.email:
+                self.error = invalid_email_msg
