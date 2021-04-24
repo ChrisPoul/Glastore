@@ -51,4 +51,7 @@ class QuoteRequest:
 
     def update_products(self):
         for product in self.products:
-            product.request.update()
+            error = product.request.update()
+            if error:
+                self.error = error
+                break

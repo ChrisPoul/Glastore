@@ -15,6 +15,8 @@ class ProductRequest:
         if self.error is None:
             self.product.update()
 
+        return self.error
+
     def validate(self):
         self.validate_fields()
         self.validate_price()
@@ -23,7 +25,6 @@ class ProductRequest:
 
     def validate_fields(self):
         if self.product.name == "" or self.product.material == "" or self.product.cristal == "" or self.product.acabado == "":
-            print(self.product.id)
             self.error = "No se pueden dejar campos en blanco"
 
     def validate_price(self):
