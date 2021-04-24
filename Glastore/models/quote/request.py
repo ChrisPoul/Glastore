@@ -2,14 +2,6 @@ from flask import request
 from Glastore.models.product import Product
 from Glastore.models import get_form
 
-product_keys = {
-    "name": ["Suministro y colocación de ", "nombre de pieza..."],
-    "material": ["en ", "material..."],
-    "acabado": ["acabado ", "acabado..."],
-    "cristal": ["con ", "cristal o vidrio..."],
-    "medidas": ["Dimenciones", "medidas..."]
-}
-
 
 class QuoteRequest:
 
@@ -17,6 +9,13 @@ class QuoteRequest:
         self.quote = quote
         self.products = quote.products
         self.error = None
+        self.product_keys = {
+            "name": ["Suministro y colocación de ", "nombre de pieza..."],
+            "material": ["en ", "material..."],
+            "acabado": ["acabado ", "acabado..."],
+            "cristal": ["con ", "cristal o vidrio..."],
+            "medidas": ["Dimenciones", "medidas..."]
+        }
 
     def handle(self):
         self.add_product()
@@ -70,7 +69,7 @@ class QuoteRequest:
         return new_product
 
     def get_form(self):
-        form = get_form(product_keys)
+        form = get_form(self.product_keys)
         product = Product.search(form["name"])
         if product:
             form = {

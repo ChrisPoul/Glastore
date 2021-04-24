@@ -7,7 +7,6 @@ from flask import (
 )
 from Glastore.models import format_date, format_price
 from Glastore.models.quote import Quote
-from Glastore.models.quote.request import product_keys
 from Glastore.models.product import Product
 from Glastore.models.customer import Customer
 from Glastore.views.auth import login_required
@@ -60,7 +59,7 @@ def edit(quote_id):
         quote=quote,
         customer_heads=customer_heads,
         product_heads=product_heads,
-        product_keys=product_keys,
+        product_keys=quote.request.product_keys,
         format_date=format_date,
         format_price=format_price
     )
@@ -76,7 +75,7 @@ def done(quote_id):
         quote=quote,
         customer_heads=customer_heads,
         product_heads=product_heads,
-        product_keys=product_keys,
+        product_keys=quote.request.product_keys,
         format_date=format_date,
         format_price=format_price,
     )
