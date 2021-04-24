@@ -1,13 +1,3 @@
-{% if not quote.done %}
-{% for key in quote.autocomplete_data %}
-<datalist id="autocomplete-{{ key }}">
-    {% for data in quote.autocomplete_data[key] %}
-    <option>{{ data }}</option>
-    {% endfor %}
-</datalist>
-{% endfor %}
-{% endif %}
-
 <table>
     <thead>
         {% for head in product_heads %}

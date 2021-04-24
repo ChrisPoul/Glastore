@@ -48,12 +48,11 @@ class Product(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-    def get(search_term):
-        product = Product.query.get(search_term)
-        if not product:
-            product = Product.query.filter_by(name=search_term).first()
+    def get(id):
+        return Product.query.get(id)
 
-        return product
+    def search(search_term):
+        return Product.query.filter_by(name=search_term).first()
 
     def get_all(search_term=None):
         if not search_term:

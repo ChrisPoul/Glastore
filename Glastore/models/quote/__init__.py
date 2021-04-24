@@ -4,19 +4,11 @@ from sqlalchemy import (
     ForeignKey, String
 )
 from Glastore.models import (
-    db, add_to_db, commit_to_db, get_form
+    db, add_to_db, commit_to_db
 )
 from Glastore.models.product import Product
 from Glastore.models.window import Window
 from .request import QuoteRequest
-
-product_keys = {
-    "name": ["Suministro y colocación de ", "nombre de pieza..."],
-    "material": ["en ", "material..."],
-    "acabado": ["acabado ", "acabado..."],
-    "cristal": ["con ", "cristal o vidrio..."],
-    "medidas": ["Dimenciones", "medidas..."]
-}
 
 
 class Quote(db.Model):
@@ -30,7 +22,6 @@ class Quote(db.Model):
     )
     focused_product_id = Column(Integer, nullable=False, default=0)
     done = False
-    form = None
 
     def __repr__(self):
         return self.__dict__
@@ -94,43 +85,3 @@ class Quote(db.Model):
             unit_price=product.unit_price
         )
         new_product.add()
-
-    @property
-    def new_product(self):
-        if not self.form:
-            self.form = self.get_form()
-        new_product = Product(
-            quote_id=self.id,
-            name=self.form['name'],
-            material=self.form['material'],
-            acabado=self.form['acabado'],
-            cristal=self.form['cristal'],
-            unit_price=0
-        )
-        return new_product
-
-    def get_form(self):
-        return get_form(product_keys)
-
-    @property
-    def autocomplete_data(self):
-        return get_autocomplete_data()
-
-
-def get_autocomplete_data():
-    autocomplete = {
-        "names": [],
-        "materials": [],
-        "acabados": [],
-        "cristals": []
-    }
-    for product in Product.get_all():
-        if product.name not in set(autocomplete["names"]):
-            autocomplete["names"].append(product.name)
-        if product.material not in set(autocomplete["materials"]):
-            autocomplete["materials"].append(product.material)
-        if product.cristal not in set(autocomplete["cristals"]):
-            autocomplete["cristals"].append(product.cristal)
-        if product.acabado not in set(autocomplete["acabados"]):
-            autocomplete["acabados"].append(product.acabado)
-    return autocomplete

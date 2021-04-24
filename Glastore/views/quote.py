@@ -6,7 +6,8 @@ from flask import (
     redirect, url_for, flash
 )
 from Glastore.models import format_date, format_price
-from Glastore.models.quote import Quote, product_keys
+from Glastore.models.quote import Quote
+from Glastore.models.quote.request import product_keys
 from Glastore.models.product import Product
 from Glastore.models.customer import Customer
 from Glastore.views.auth import login_required

@@ -103,11 +103,9 @@ class SubWindows:
             try:
                 self.windows[i]
             except IndexError:
-                print("pene")
                 self.make_new_window(description)
 
         if len(self.product.windows) == 0:
-            print("pene dos")
             self.make_new_window(self.product_name)
 
     def make_new_window(self, description):
