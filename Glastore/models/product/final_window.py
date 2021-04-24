@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 from .position import WindowPositioner
 from .description import SubWindowDescription
+from . import Window
 
 
 class FinalWindowImage:
@@ -75,7 +76,7 @@ class FinalWindow:
 class SubWindows:
 
     def __init__(self, product):
-        self.id = product.id
+        self.product = product
         self.windows = product.windows
         self.product_name = product.name
 
@@ -85,9 +86,9 @@ class SubWindows:
 
     def update_existing_windows(self):
         for window in self.windows:
-            self.update_existing_window(window)
+            self.update_window(window)
 
-    def update_existing_window(self, window):
+    def update_window(self, window):
         win_index = self.windows.index(window)
         try:
             description = self.window_descriptions[win_index]
@@ -100,16 +101,18 @@ class SubWindows:
     def add_new_windows(self):
         for i, description in enumerate(self.window_descriptions):
             try:
-                window = self.windows[i]
+                self.windows[i]
             except IndexError:
-                window = self.make_new_window(description)
+                print("pene")
+                self.make_new_window(description)
 
-        if len(self.windows) == 0:
+        if len(self.product.windows) == 0:
+            print("pene dos")
             self.make_new_window(self.product_name)
 
     def make_new_window(self, description):
         window = Window(
-            product_id=self.id,
+            product_id=self.product.id,
             description=description
         )
         window.add()
