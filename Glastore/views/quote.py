@@ -50,6 +50,7 @@ def add():
 @login_required
 def edit(quote_id):
     quote = Quote.get(quote_id)
+    quote.done = False
     if request.method == "POST":
         error = quote.request.handle()
         if error:

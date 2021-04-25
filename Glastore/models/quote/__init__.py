@@ -21,7 +21,6 @@ class Quote(db.Model):
         cascade='all, delete-orphan'
     )
     focused_product_id = Column(Integer, nullable=False, default=0)
-    done = False
 
     def __repr__(self):
         return self.__dict__
