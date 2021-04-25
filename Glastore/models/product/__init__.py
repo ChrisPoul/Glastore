@@ -5,6 +5,7 @@ from sqlalchemy import (
 from Glastore.models.window import Window
 from .final_window import FinalWindowImage
 from .request import ProductRequest
+from .orientation import WindowOrientation
 from Glastore.models import (
     db, add_to_db, commit_to_db
 )
@@ -88,42 +89,6 @@ class Product(db.Model):
 
         return window_image.temporary_uri
 
-    def select_next_window(self):
-        self.unselect_prev_window()
-        self.set_selected_window()
-        window = self.windows[self.selected_window]
-        window.selected = True
-        self.quote.focused_product_id = self.id
-        self.update()
-
-    def set_selected_window(self):
-        for _ in self.windows:
-            if self.selected_window != len(self.windows) - 1:
-                self.selected_window += 1
-            else:
-                self.selected_window = 0
-            if self.selected_window_is_rotatable():
-                break
-
-    def selected_window_is_rotatable(self):
-        window = self.windows[self.selected_window]
-        if "fija" in window.name or "fijo" in window.name:
-            return False
-        elif "antepecho" in window.name or "guillotina" in window.name:
-            return False
-        
-        return True
-
-    def unselect_prev_window(self):
-        prev_window = self.windows[self.selected_window]
-        prev_window.selected = False
-        prev_window.update()
-
-    def rotate_window(self):
-        window = self.windows[self.selected_window]
-        if window.orientacion >= 4:
-            window.orientacion = 1
-        else:
-            window.orientacion += 1
-        self.quote.focused_product_id = self.id
-        self.update()
+    @property
+    def orientation(self):
+        return WindowOrientation(self)

@@ -12,7 +12,7 @@ bp = Blueprint('product', __name__, url_prefix='/product')
 @login_required
 def select_next_window(product_id):
     product = Product.get(product_id)
-    product.select_next_window()
+    product.orientation.select_next_window()
 
     return redirect(
         url_for('quote.edit', quote_id=product.quote_id)
@@ -23,7 +23,7 @@ def select_next_window(product_id):
 @login_required
 def rotate_window(product_id):
     product = Product.get(product_id)
-    product.rotate_window()
+    product.orientation.rotate_window()
 
     return redirect(
         url_for('quote.edit', quote_id=product.quote_id)
