@@ -3,11 +3,11 @@ from flask import (
     Blueprint, render_template, request,
     flash, redirect, url_for, g
 )
-from Glastore.interactors.user import UserInteractor
+from Glastore.models.user.auth import UserAuth
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
-interactor = UserInteractor()
+user_auth = UserAuth()
 user_heads = {
     "username": "Nombre de Usuario",
     "password": "Contraseña"
@@ -17,7 +17,7 @@ user_heads = {
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == 'POST':
-        error = interactor.register()
+        error = user_auth.register()
 
         if not error:
             return redirect(
@@ -35,7 +35,7 @@ def register():
 @bp.route("/login", methods=('POST', 'GET'))
 def login():
     if request.method == "POST":
-        error = interactor.login()
+        error = user_auth.login()
 
         if not error:
             return redirect(
@@ -52,7 +52,7 @@ def login():
 
 @bp.route('/logout')
 def logout():
-    interactor.logout()
+    user_auth.logout()
     return redirect(
         url_for('auth.login')
     )
@@ -60,7 +60,7 @@ def logout():
 
 @bp.before_app_request
 def load_loged_in_user():
-    interactor.load_loged_in_user()
+    user_auth.load_loged_in_user()
 
 
 def login_required(view):

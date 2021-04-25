@@ -1,9 +1,9 @@
 import functools
 from flask import session, g, request
-from Glastore.models.user import User
+from . import User
 
 
-class UserInteractor:
+class UserAuth:
 
     def register(self):
         username = request.form['username']
