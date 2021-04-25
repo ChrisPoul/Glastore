@@ -143,7 +143,7 @@ class HandleSubmit(QuoteTest):
         )
         with self.request_context(url, data):
             self.quote.request.handle()
-        self.assertEqual(self.quote.error, None)
+        self.assertEqual(self.quote.request.error, None)
 
     def test_add_new_product(self):
         quote = Quote.new()
@@ -192,7 +192,7 @@ class HandleSubmit(QuoteTest):
         )
         with self.request_context(url, data):
             self.quote.request.handle()
-        self.assertEqual(self.quote.new_product.name, "")
+        self.assertEqual(self.quote.request.new_product.name, "")
 
     def test_add_duplicate_product_on_submit(self):
         quote = Quote.new()

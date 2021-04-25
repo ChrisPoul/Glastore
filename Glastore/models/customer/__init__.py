@@ -33,10 +33,11 @@ class Customer(db.Model):
     def update(self):
         commit_to_db()
 
-    def get(search_term):
-        customer = Customer.query.get(search_term)
-        if not customer:
-            customer = Customer.query.filter_by(name=search_term).first()
+    def get(id):
+        return Customer.query.get(id)
+
+    def search(search_term):
+        customer = Customer.query.filter_by(name=search_term).first()
         if not customer:
             customer = Customer.query.filter_by(email=search_term).first()
         if not customer:

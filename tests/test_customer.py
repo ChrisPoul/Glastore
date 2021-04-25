@@ -67,18 +67,17 @@ class DeleteCustomer(CustomerTest):
 class GetCustomer(CustomerTest):
 
     def test_get(self):
-        assert Customer.get("Test") == self.customer
-        assert Customer.get("Testing") is None
-
-    def test_with_id(self):
         assert Customer.get(1) == self.customer
 
+
+class TestSearchCustomer(CustomerTest):
+
     def test_with_email(self):
-        customer_search = Customer.get("Test@email.com")
+        customer_search = Customer.search("Test@email.com")
         assert customer_search == self.customer
 
     def test_with_address(self):
-        customer_search = Customer.get("Fake address of Test")
+        customer_search = Customer.search("Fake address of Test")
         assert customer_search == self.customer
 
 

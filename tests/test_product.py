@@ -4,6 +4,20 @@ from Glastore.models.product import Product
 from Glastore.models.quote import Quote
 
 
+def make_test_product(name):
+    product = Product(
+        quote_id=1,
+        name=name,
+        material=name,
+        acabado=name,
+        cristal=name,
+        unit_price=10
+    )
+    product.add()
+
+    return product
+
+
 class ProductTest(MyTest):
 
     def setUp(self):
@@ -65,7 +79,7 @@ class UpdateProduct(ProductTest):
         assert self.product.name == "New Test"
 
     def test_repeated_name(self):
-        product = Product.new("Test2")
+        product = make_test_product("Test2")
         product.name = "Test Product"
         error = product.update()
         self.assertEqual(error, None)
@@ -84,25 +98,28 @@ class GetProduct(ProductTest):
     def test_get(self):
         assert Product.get(1) == self.product
 
+
+class TestSearchProduct(ProductTest):
+
     def test_with_name(self):
-        assert Product.get("Test Product") == self.product
+        assert Product.search("Test Product") == self.product
 
 
 class GetProducts(ProductTest):
 
     def test_get_all(self):
-        product2 = Product.new("Test2")
+        product2 = make_test_product("Test2")
         assert Product.get_all() == [self.product, product2]
 
     def test_with_cristal(self):
         self.product.cristal = "Test cristal"
-        product2 = Product.new("Test2")
+        product2 = make_test_product("Test2")
         product2.cristal = "Test cristal"
         assert Product.get_all("Test cristal") == [self.product, product2]
 
     def test_with_material(self):
         self.product.material = "Test material"
-        Product.new("Test2")
+        make_test_product("Test2")
         assert Product.get_all("Test material") == [self.product]
 
 
@@ -127,8 +144,3 @@ class UpdateOnSumbit(ProductTest):
         with self.request_context(url, data):
             self.product.request.update_attributes()
         self.assertEqual(self.product.cantidad, str(1))
-
-    def test_update_total(self):
-        self.product.cantidad = 1
-        self.product.update_total()
-        self.assertEqual(self.product.total, 10)

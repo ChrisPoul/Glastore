@@ -12,6 +12,7 @@ from Glastore.models.customer import Customer
 from Glastore.views.auth import login_required
 
 bp = Blueprint("quote", __name__, url_prefix="/quote")
+
 customer_heads = {
     "name": "Cliente",
     "email": "Email",
@@ -31,13 +32,13 @@ product_heads = {
 def add():
     autocomplete = [customer.name for customer in Customer.get_all()]
     if request.method == "POST":
-        customer = Customer.get(request.form["search_term"])
+        customer = Customer.search(request.form["search_term"])
         if customer:
             quote = Quote.new(customer.id)
             return redirect(
                 url_for('quote.edit', quote_id=quote.id)
             )
-        flash("No se encontro un cliente con ese termino de busqueda")
+        flash("No se encontró ningún cliente, intentalo de nuevo")
 
     return render_template(
         'quote/add.html',
