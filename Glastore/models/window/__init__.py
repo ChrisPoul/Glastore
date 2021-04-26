@@ -4,7 +4,8 @@ from sqlalchemy import (
 )
 from Glastore.models import db, add_to_db, commit_to_db
 from .basic_windows import (
-    Corrediza, Fija, Guillotina, Abatible
+    Corrediza, Fija, Guillotina, Abatible,
+    Oscilobatiente
 )
 
 
@@ -146,6 +147,15 @@ class Window(db.Model):
                 width=self.width,
                 height=self.height
             )
+        elif "oscilobatiente" in self.name:
+            ventana = Oscilobatiente(
+                axis=axis,
+                xy=xy,
+                width=self.width,
+                height=self.height,
+                orientacion=self.orientacion,
+                selected=self.selected
+            )
         else:
             ventana = Fija(
                 axis=axis,
@@ -153,7 +163,6 @@ class Window(db.Model):
                 width=self.width,
                 height=self.height
             )
-
         self.ventana = ventana
 
     def draw_selected(self):
