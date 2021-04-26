@@ -7,6 +7,7 @@ window_identifiers = [
     "fijo",
     "corrediz",
     "abatible",
+    "oscilobatiente",
     "guillotina"
 ]
 

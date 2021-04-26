@@ -62,7 +62,7 @@ class FinalWindow:
         for window in self.windows:
             if window.selected is True:
                 selected_window = window
-        if selected_window:
+        if selected_window and self.quote.done is False:
             selected_window.draw_selected()
 
     @property
