@@ -1,6 +1,6 @@
 from .setup import MyTest
 from Glastore.models.window import Window
-from Glastore.models.product.position import WindowPositioner
+from Glastore.models.product.final_window.position import WindowPositioner
 
 
 def make_test_window(description):

@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 from .position import WindowPositioner
 from .description import SubWindowDescription
-from . import Window
+from Glastore.models.window import Window
 
 
 class FinalWindowImage:

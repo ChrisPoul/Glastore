@@ -1,5 +1,5 @@
 from .setup import MyTest
-from Glastore.models.product.description import (
+from Glastore.models.product.final_window.description import (
     SubWindowDescription, turn_dict_to_list
 )
 
