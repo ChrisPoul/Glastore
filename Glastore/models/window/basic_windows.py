@@ -35,6 +35,74 @@ class BasicWindow:
         )
         self.axis.add_patch(frame)
 
+    def draw_triangle(self):
+        points = self.get_triangle_points()
+        triangle = plt.Polygon(
+            points,
+            fill=False,
+            closed=False,
+            color="blue",
+            lw=2
+        )
+        self.axis.add_line(triangle)
+
+    def get_triangle_points(self):
+        if self.orientacion == 1 or self.orientacion == 3:
+            self.set_vertical_orientation()
+        elif self.orientacion == 2 or self.orientacion == 4:
+            self.set_horizontal_orientation()
+        points = [
+            [self.xmin, self.ymin],
+            [self.xmid, self.ymid],
+            [self.xmax, self.ymax]
+        ]
+
+        return points
+
+    def set_vertical_orientation(self):
+        xposition, yposition = self.xy
+        self.xmin = xposition
+        self.xmid = self.width / 2 + xposition
+        self.xmax = self.width + xposition
+        if self.orientacion == 1:
+            self.set_facing_up()
+        elif self.orientacion == 3:
+            self.set_facing_down()
+
+    def set_facing_up(self):
+        xposition, yposition = self.xy
+        self.ymin = yposition
+        self.ymid = self.height + yposition
+        self.ymax = yposition
+    
+    def set_facing_down(self):
+        xposition, yposition = self.xy
+        self.ymin = self.height + yposition
+        self.ymid = yposition
+        self.ymax = self.height + yposition
+
+    def set_horizontal_orientation(self):
+        xposition, yposition = self.xy
+        self.ymin = self.height + yposition
+        self.ymid = self.height / 2 + yposition
+        self.ymax = yposition
+        if self.orientacion == 2:
+            self.set_facing_right()
+        elif self.orientacion == 4:
+            self.set_facing_left()
+
+    def set_facing_right(self):
+        xposition, yposition = self.xy
+        self.xmin = xposition
+        self.xmid = self.width + xposition
+        self.xmax = xposition
+
+    def set_facing_left(self):
+        xposition, yposition = self.xy
+        self.xmin = self.width + xposition
+        self.xmid = xposition
+        self.xmax = self.width + xposition
+
 
 class Fija(BasicWindow):
 
@@ -141,74 +209,6 @@ class Abatible(BasicWindow):
         self.draw_frame()
         self.draw_triangle()
     
-    def draw_triangle(self):
-        points = self.get_triangle_points()
-        triangle = plt.Polygon(
-            points,
-            fill=False,
-            closed=False,
-            color="blue",
-            lw=2
-        )
-        self.axis.add_line(triangle)
-
-    def get_triangle_points(self):
-        if self.orientacion == 1 or self.orientacion == 2:
-            self.set_vertical_orientation()
-        elif self.orientacion == 3 or self.orientacion == 4:
-            self.set_horizontal_orientation()
-        points = [
-            [self.xmin, self.ymin],
-            [self.xmid, self.ymid],
-            [self.xmax, self.ymax]
-        ]
-
-        return points
-
-    def set_vertical_orientation(self):
-        xposition, yposition = self.xy
-        self.xmin = xposition
-        self.xmid = self.width / 2 + xposition
-        self.xmax = self.width + xposition
-        if self.orientacion == 1:
-            self.set_facing_up()
-        elif self.orientacion == 2:
-            self.set_facing_down()
-
-    def set_facing_up(self):
-        xposition, yposition = self.xy
-        self.ymin = yposition
-        self.ymid = self.height + yposition
-        self.ymax = yposition
-    
-    def set_facing_down(self):
-        xposition, yposition = self.xy
-        self.ymin = self.height + yposition
-        self.ymid = yposition
-        self.ymax = self.height + yposition
-
-    def set_horizontal_orientation(self):
-        xposition, yposition = self.xy
-        self.ymin = self.height + yposition
-        self.ymid = self.height / 2 + yposition
-        self.ymax = yposition
-        if self.orientacion == 3:
-            self.set_facing_right()
-        elif self.orientacion == 4:
-            self.set_facing_left()
-
-    def set_facing_right(self):
-        xposition, yposition = self.xy
-        self.xmin = xposition
-        self.xmid = self.width + xposition
-        self.xmax = xposition
-
-    def set_facing_left(self):
-        xposition, yposition = self.xy
-        self.xmin = self.width + xposition
-        self.xmid = xposition
-        self.xmax = self.width + xposition
-
 
 class Oscilobatiente(BasicWindow):
 
@@ -223,81 +223,11 @@ class Oscilobatiente(BasicWindow):
 
     def draw_triangles(self):
         self.draw_triangle()
-        print(self.orientacion)
         if self.orientacion == 4:
             self.orientacion = 1
         else:
             self.orientacion += 1
-        print(self.orientacion)
         self.draw_triangle()
-    
-    def draw_triangle(self):
-        points = self.get_triangle_points()
-        triangle = plt.Polygon(
-            points,
-            fill=False,
-            closed=False,
-            color="blue",
-            lw=2
-        )
-        self.axis.add_line(triangle)
-
-    def get_triangle_points(self):
-        if self.orientacion == 1 or self.orientacion == 3:
-            self.set_vertical_orientation()
-        elif self.orientacion == 2 or self.orientacion == 4:
-            self.set_horizontal_orientation()
-        points = [
-            [self.xmin, self.ymin],
-            [self.xmid, self.ymid],
-            [self.xmax, self.ymax]
-        ]
-
-        return points
-
-    def set_vertical_orientation(self):
-        xposition, yposition = self.xy
-        self.xmin = xposition
-        self.xmid = self.width / 2 + xposition
-        self.xmax = self.width + xposition
-        if self.orientacion == 1:
-            self.set_facing_up()
-        elif self.orientacion == 3:
-            self.set_facing_down()
-
-    def set_facing_up(self):
-        xposition, yposition = self.xy
-        self.ymin = yposition
-        self.ymid = self.height + yposition
-        self.ymax = yposition
-    
-    def set_facing_down(self):
-        xposition, yposition = self.xy
-        self.ymin = self.height + yposition
-        self.ymid = yposition
-        self.ymax = self.height + yposition
-
-    def set_horizontal_orientation(self):
-        xposition, yposition = self.xy
-        self.ymin = self.height + yposition
-        self.ymid = self.height / 2 + yposition
-        self.ymax = yposition
-        if self.orientacion == 2:
-            self.set_facing_right()
-        elif self.orientacion == 4:
-            self.set_facing_left()
-
-    def set_facing_right(self):
-        xposition, yposition = self.xy
-        self.xmin = xposition
-        self.xmid = self.width + xposition
-        self.xmax = xposition
-
-    def set_facing_left(self):
-        xposition, yposition = self.xy
-        self.xmin = self.width + xposition
-        self.xmid = xposition
-        self.xmax = self.width + xposition
 
 
 def draw_line(xdata, ydata, axis=plt):
