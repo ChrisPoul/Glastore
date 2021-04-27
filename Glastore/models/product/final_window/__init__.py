@@ -118,6 +118,6 @@ class SubWindows:
     @property
     def window_descriptions(self):
         final_window_description = SubWindowDescription(self.product_name)
-        sub_window_descriptions = final_window_description.get_sub_window_descriptions()
+        sub_window_descriptions = final_window_description.get_window_descriptions()
 
         return sub_window_descriptions

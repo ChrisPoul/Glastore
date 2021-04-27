@@ -120,9 +120,9 @@ class Corrediza(BasicWindow):
         BasicWindow.__init__(self, axis, xy, width, height)
 
     def draw(self):
-        BasicWindow.draw(self)
         xposition, _ = self.xy
         self.draw_arrow(xposition)
+        BasicWindow.draw(self)
 
     def draw_arrow(self, position):
         xposition, yposition = self.xy
@@ -201,8 +201,8 @@ class Abatible(BasicWindow):
         BasicWindow.__init__(self, axis, xy, width, height)
 
     def draw(self):
-        BasicWindow.draw(self)
         self.draw_triangle()
+        BasicWindow.draw(self)
     
 
 class Oscilobatiente(BasicWindow):
@@ -213,8 +213,8 @@ class Oscilobatiente(BasicWindow):
         BasicWindow.__init__(self, axis, xy, width, height)
 
     def draw(self):
-        BasicWindow.draw(self)
         self.draw_triangles()
+        BasicWindow.draw(self)
 
     def draw_triangles(self):
         self.draw_triangle()

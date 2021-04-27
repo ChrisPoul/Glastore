@@ -17,7 +17,7 @@ class SubWindowDescription:
     def __init__(self, description):
         self.full_description = description
 
-    def get_sub_window_descriptions(self):
+    def get_window_descriptions(self):
         self.window_descriptions = {}
         for i, description_start in enumerate(self.description_indexes):
             self.current_description_start = description_start

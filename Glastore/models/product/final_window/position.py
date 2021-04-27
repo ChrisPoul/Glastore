@@ -26,28 +26,23 @@ class WindowPositioner:
             self.add_current_window_position(window)
 
     def decide_window_position(self, window):
-        if "superior" in window.description:
-            self.position_window_top()
-        elif "antepecho" in window.description:
-            self.position_antepecho()
+        if "superior" in window.description or "antepecho" in window.description:
+            self.position_window_top(window)
         elif "inferior" in window.description:
             self.position_window_bottom(window)
         else:
             self.position_window_right(window)
 
-    def position_window_top(self):
+    def position_window_top(self, window):
         self.yposition = self.windows[0].height
-        if "dos" in self.windows[0].description:
-            self.xposition = 0
+        prev_window_index = self.windows.index(window)
+        prev_window = self.windows[prev_window_index]
+        self.xposition += prev_window.width
 
     def position_window_right(self, window):
         prev_window_index = self.windows.index(window) - 1
         self.yposition = 0
         self.xposition += self.windows[prev_window_index].width
-
-    def position_antepecho(self):
-        self.yposition = self.windows[0].height
-        self.xposition = 0
 
     def position_window_bottom(self, window):
         self.yposition = -window.height

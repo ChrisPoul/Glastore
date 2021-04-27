@@ -10,7 +10,7 @@ class TestGetWindowDescriptions(MyTest):
         extractor = SubWindowDescription(
             "ventana fija de 10x10"
         )
-        window_descriptions = extractor.get_sub_window_descriptions()
+        window_descriptions = extractor.get_window_descriptions()
         self.assertEqual(
             window_descriptions, ["ventana fija de 10x10"]
         )
@@ -19,7 +19,7 @@ class TestGetWindowDescriptions(MyTest):
         extractor = SubWindowDescription(
             "ventana fija de 10x10 con abatible superior de 1.002x4.233"
         )
-        window_descriptions = extractor.get_sub_window_descriptions()
+        window_descriptions = extractor.get_window_descriptions()
         self.assertEqual(window_descriptions, [
             "ventana fija de 10x10 con ",
             "abatible superior de 1.002x4.233"
@@ -29,7 +29,7 @@ class TestGetWindowDescriptions(MyTest):
         extractor = SubWindowDescription(
             "dos ventanas fijas de 10x10"
         )
-        window_descriptions = extractor.get_sub_window_descriptions()
+        window_descriptions = extractor.get_window_descriptions()
         self.assertEqual(
             window_descriptions, ["dos ventanas fijas de 10x10", "fijas de 10x10"]
         )
