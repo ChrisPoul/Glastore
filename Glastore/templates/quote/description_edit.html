@@ -16,7 +16,8 @@
         {% if quote.focused_product_id==product.id %}autofocus{%endif %}>
     {% else %}
     <input name="{{ product.unique_keys[key] }}" id="{{ product.unique_keys[key] }}"
-        placeholder="{{ product_keys[key][1] }}" value="{{ product[key] }}" list="autocomplete-{{ key }}s">
+        placeholder="{{ product_keys[key][1] }}" value="{{ product[key] }}" 
+        list="autocomplete-{{ key }}s">
     {% endif %}
     {% else %}
     {% if key != "medidas" %}

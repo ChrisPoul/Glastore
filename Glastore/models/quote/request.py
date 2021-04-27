@@ -10,11 +10,11 @@ class QuoteRequest:
         self.products = quote.products
         self.error = None
         self.product_keys = {
-            "name": ["Suministro y colocación de ", "nombre de pieza..."],
-            "material": ["en ", "material..."],
-            "acabado": ["acabado ", "acabado..."],
-            "cristal": ["con ", "cristal o vidrio..."],
-            "medidas": ["Dimenciones", "medidas..."]
+            "name": ("Suministro y colocación de ", "nombre de la pieza..."),
+            "material": ("en ", "material..."),
+            "acabado": ("acabado ", "acabado..."),
+            "cristal": ("con ", "cristal o vidrio..."),
+            "medidas": ("Dimenciones", "medidas...")
         }
 
     def handle(self):
