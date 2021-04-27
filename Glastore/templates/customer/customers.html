@@ -8,8 +8,28 @@
 {% endblock %}
 
 {% block content %}
-<div style="margin-left: 10%; margin-right: 10%;">
-    <table>
+<datalist id="autocomplete">
+    {% for data in autocomplete_data %}
+    <option>{{ data }}</option>
+    {% endfor %}
+</datalist>
+<div>
+    <form method="post" autocomplete="off">
+        <table class="search_bar">
+            <tr>
+                <td>
+                    <input name="search_term" id="search_term"
+                        placeholder="{{ placeholder }}" list="autocomplete">
+                </td>
+                <td>
+                    <input type="submit" value="Aceptar">
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div>
+    <table style="border-collapse: collapse; text-align: center;">
         <tr>
             {% for head in heads %}
             <th>{{ heads[head] }}</th>
@@ -18,7 +38,7 @@
         {% for customer in customers %}
         <tr>
             {% for head in heads %}
-            <td>
+            <td style="border-bottom: 1px solid black; padding: 1rem;">
                 {% if head == "name" %}
                 <a href="{{ url_for('customer.profile', customer_id=customer.id) }}">
                     {{ customer[head] }}

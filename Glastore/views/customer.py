@@ -9,15 +9,26 @@ from Glastore.views.auth import login_required
 bp = Blueprint('customer', __name__, url_prefix='/customer')
 
 
-@bp.route('/customers')
+@bp.route('/customers', methods=('POST', 'GET'))
 @login_required
 def customers():
     customers = Customer.get_all()
+    autocomplete_data = [customer.name for customer in customers]
+    placeholder = "Escribe el nombre o el email del cliente que buscas..."
+    if request.method == "POST":
+        search_term = request.form["search_term"]
+        customer = Customer.search(search_term)
+        if customer:
+            return redirect(
+                url_for('customer.profile', customer_id=customer.id)
+            )
 
     return render_template(
         'customer/customers.html',
         customers=customers,
-        heads=customer_heads
+        heads=customer_heads,
+        autocomplete_data=autocomplete_data,
+        placeholder=placeholder
     )
 
 

@@ -2,6 +2,7 @@ body {
     max-width: 100%;
     background: white;
     margin: 0;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 header {
     width: 100%;
@@ -21,8 +22,8 @@ header {
 }
 section {
     margin-top: 2em;
-    margin-left: 10%;
-    margin-right: 10%;
+    margin-left: 4%;
+    margin-right: 4%;
 }
 nav {
     display: flex;

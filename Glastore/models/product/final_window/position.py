@@ -7,8 +7,8 @@ class WindowPositioner:
         self.windows = windows
 
     def get_window_positions(self):
-        self.window_positions = []
         self.handle_laterales()
+        self.window_positions = []
         self.add_window_positions()
 
         return self.window_positions
@@ -21,39 +21,56 @@ class WindowPositioner:
 
     def add_window_positions(self):
         for i, window in enumerate(self.windows):
+            self.current_window = window
             if i > 0:
-                self.decide_window_position(window)
-            self.add_current_window_position(window)
+                self.decide_window_position()
+            self.add_current_window_position()
 
-    def decide_window_position(self, window):
-        if "superior" in window.description or "antepecho" in window.description:
-            self.position_window_top(window)
-        elif "inferior" in window.description:
-            self.position_window_bottom(window)
+    def decide_window_position(self):
+        if self.is_top_window():
+            self.position_window_top()
+        elif self.is_bottom_window():
+            self.position_window_bottom()
         else:
-            self.position_window_right(window)
+            self.position_window_right()
 
-    def position_window_top(self, window):
+    def is_top_window(self):
+        if "superior" in self.current_window.description:
+            return True
+        elif "antepecho" in self.current_window.description:
+            return True
+        
+        return False
+
+    def position_window_top(self):
         self.yposition = self.windows[0].height
         self.xposition = 0
+        self.current_window.position = "top"
+        self.current_window.update()
 
-    def position_window_right(self, window):
-        prev_window_index = self.windows.index(window) - 1
+    def position_window_right(self):
+        prev_window_index = self.windows.index(self.current_window) - 1
+        prev_window = self.windows[prev_window_index]
         self.yposition = 0
-        self.xposition += self.windows[prev_window_index].width
+        self.xposition += prev_window.width
 
-    def position_window_bottom(self, window):
-        self.yposition = -window.height
+    def is_bottom_window(self):
+        return "inferior" in self.current_window.description
+
+    def position_window_bottom(self):
+        self.yposition = -(self.current_window.height)
         self.xposition = 0
+        self.current_window.position = "bottom"
+        self.current_window.update()
 
-    def add_current_window_position(self, window):
-        current_window_position = self.get_current_window_position(window)
+    def add_current_window_position(self):
+        current_window_position = self.get_current_window_position()
         self.window_positions.append(current_window_position)
 
-    def get_current_window_position(self, window):
+    def get_current_window_position(self):
         self.current_window_position = (0, 0)
-        if "dos" in window.description:
-            self.handle_window_twice(window)
+        if "dos" in self.current_window.description:
+            self.handle_window_twice()
         else:
             self.position_window_once()
 
@@ -62,12 +79,12 @@ class WindowPositioner:
     def position_window_once(self):
         self.current_window_position = (self.xposition, self.yposition)
 
-    def handle_window_twice(self, window):
-        if "laterales" in window.description:
-            self.position_lateral(window)
+    def handle_window_twice(self):
+        if "laterales" in self.current_window.description:
+            self.position_lateral()
         else:
             self.position_window_once()
 
-    def position_lateral(self, window):
+    def position_lateral(self):
         self.current_window_position = (0, self.yposition)
-        self.xposition -= window.width
+        self.xposition -= self.current_window.width
