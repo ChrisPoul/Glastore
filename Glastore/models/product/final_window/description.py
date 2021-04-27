@@ -12,7 +12,7 @@ window_identifiers = [
 ]
 
 
-class SubWindowDescription:
+class SubWindowDescriptionGetter:
 
     def __init__(self, description):
         self.full_description = description
@@ -115,12 +115,12 @@ class SubWindowDescription:
 
     @property
     def description_indexes(self):
-        sub_win_description_index = SubWindowDescriptionIndex(self.full_description)
+        sub_win_description_index = SubWindowDescriptionIndexGetter(self.full_description)
 
         return sub_win_description_index.get_window_description_indexes()
 
 
-class SubWindowDescriptionIndex:
+class SubWindowDescriptionIndexGetter:
 
     def __init__(self, description):
         self.full_description = description

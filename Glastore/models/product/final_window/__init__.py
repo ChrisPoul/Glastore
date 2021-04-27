@@ -2,7 +2,7 @@ import base64
 import matplotlib.pyplot as plt
 from io import BytesIO
 from .position import WindowPositioner
-from .description import SubWindowDescription
+from .description import SubWindowDescriptionGetter
 from Glastore.models.window import Window
 
 
@@ -117,7 +117,7 @@ class SubWindows:
 
     @property
     def window_descriptions(self):
-        final_window_description = SubWindowDescription(self.product_name)
+        final_window_description = SubWindowDescriptionGetter(self.product_name)
         sub_window_descriptions = final_window_description.get_window_descriptions()
 
         return sub_window_descriptions

@@ -35,9 +35,7 @@ class WindowPositioner:
 
     def position_window_top(self, window):
         self.yposition = self.windows[0].height
-        prev_window_index = self.windows.index(window)
-        prev_window = self.windows[prev_window_index]
-        self.xposition += prev_window.width
+        self.xposition = 0
 
     def position_window_right(self, window):
         prev_window_index = self.windows.index(window) - 1
