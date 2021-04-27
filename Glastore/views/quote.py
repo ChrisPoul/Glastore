@@ -13,11 +13,6 @@ from Glastore.views.auth import login_required
 
 bp = Blueprint("quote", __name__, url_prefix="/quote")
 
-customer_heads = {
-    "name": "Cliente",
-    "email": "Email",
-    "address": "Dirección"
-}
 product_heads = {
     "cantidad": "Cant.",
     "description": "Descripción",
@@ -59,7 +54,6 @@ def edit(quote_id):
     return render_template(
         'quote/edit.html',
         quote=quote,
-        customer_heads=customer_heads,
         product_heads=product_heads,
         product_keys=quote.request.product_keys,
         format_date=format_date,
@@ -75,7 +69,6 @@ def done(quote_id):
     return render_template(
         'quote/done.html',
         quote=quote,
-        customer_heads=customer_heads,
         product_heads=product_heads,
         product_keys=quote.request.product_keys,
         format_date=format_date,

@@ -1,15 +1,23 @@
 <table>
     <tr>
-        {% for head in customer_heads %}
+        {% for head in quote.request.customer_heads %}
         <th>
-            {{ customer_heads[head] }}
+            {{ quote.request.customer_heads[head] }}
         </th>
         {% endfor %}
     </tr>
     <tr>
-        {% for head in customer_heads %}
+        {% for head in quote.request.customer_heads %}
         <td style="height: 3em;">
+            {% if quote.done %}
             {{ quote.author[head] }}
+            {% else %}
+            {% if head == "name" %}
+            <input name="customer_name" id="customer_name" value="{{ quote.author[head] }}">
+            {% else %}
+            <input name="{{ head }}" id="{{ head }}" value="{{ quote.author[head] }}">
+            {% endif %}
+            {% endif %}
         </td>
         {% endfor %}
     </tr>

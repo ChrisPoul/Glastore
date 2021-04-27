@@ -1,4 +1,5 @@
 from flask import request
+from Glastore.models.customer import Customer
 from Glastore.models.product import Product
 from Glastore.models import get_form
 
@@ -7,8 +8,14 @@ class QuoteRequest:
 
     def __init__(self, quote):
         self.quote = quote
+        self.customer = Customer.get(quote.customer_id)
         self.products = quote.products
         self.error = None
+        self.customer_heads = {
+            "name": "Cliente",
+            "email": "Email",
+            "address": "Dirección"
+        }
         self.product_keys = {
             "name": ("Suministro y colocación de ", "nombre de la pieza..."),
             "material": ("en ", "material..."),
@@ -18,10 +25,36 @@ class QuoteRequest:
         }
 
     def handle(self):
+        self.update_customer()
         self.add_product()
         self.update_products()
 
         return self.error
+
+    def update_customer(self):
+        self.update_customer_attributes()
+        error = self.customer.request.validate()
+        if not error:
+            self.attempt_customer_update()
+        else:
+            self.error = error
+
+    def attempt_customer_update(self):
+        try:
+            self.customer.update()
+        except ValueError:
+            self.error = "Eso ya esta en uso"
+
+    def update_customer_attributes(self):
+        for attribute in self.customer_heads:
+            self.update_customer_attribute(attribute)
+
+    def update_customer_attribute(self, attribute):
+        if attribute == "name":
+            head = "customer_name"
+        else:
+            head = attribute
+        setattr(self.customer, attribute, request.form[head])
 
     def add_product(self):
         product = self.get_product()
@@ -56,7 +89,7 @@ class QuoteRequest:
 
     @property
     def new_product(self):
-        form = self.get_form()
+        form = self.product_form
         new_product = Product(
             quote_id=self.quote.id,
             name=form['name'],
@@ -68,7 +101,8 @@ class QuoteRequest:
 
         return new_product
 
-    def get_form(self):
+    @property
+    def product_form(self):
         form = get_form(self.product_keys)
         product = Product.search(form["name"])
         if product:

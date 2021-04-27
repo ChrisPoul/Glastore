@@ -18,9 +18,8 @@ class CustomerRequest:
 
     def update(self):
         form = get_form(customer_heads)
-        self.customer.name = form['name']
-        self.customer.email = form['email']
-        self.customer.address = form['address']
+        for attribute in customer_heads:
+            setattr(self.customer, attribute, form[attribute])
         error = self.validate()
         try:
             self.customer.update()

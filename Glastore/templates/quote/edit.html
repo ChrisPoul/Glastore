@@ -1,6 +1,7 @@
 {% extends "base_quote.html" %}
 
 {% block content %}
+<form method="post" autocomplete="off">
 <div>
     {% include "quote/quote_info.html" %}
 </div>
@@ -10,8 +11,7 @@
 </div>
 
 <div class="bottom">
-    <form method="post" autocomplete="off">
-        {% include "quote/products.html" %}
-    </form>
+    {% include "quote/products.html" %}
 </div>
+</form>
 {% endblock %}
