@@ -8,25 +8,8 @@
 {% endblock %}
 
 {% block content %}
-<datalist id="autocomplete">
-    {% for data in autocomplete_data %}
-    <option>{{ data }}</option>
-    {% endfor %}
-</datalist>
 <div>
-    <form method="post" autocomplete="off">
-        <table class="search_bar">
-            <tr>
-                <td>
-                    <input name="search_term" id="search_term"
-                        placeholder="{{ placeholder }}" list="autocomplete">
-                </td>
-                <td>
-                    <input type="submit" value="Aceptar">
-                </td>
-            </tr>
-        </table>
-    </form>
+    {% include "search_bar.html" %}
 </div>
 <div>
     <table style="border-collapse: collapse; text-align: center;">

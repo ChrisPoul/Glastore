@@ -1,0 +1,19 @@
+<datalist id="autocomplete">
+    {% for data in autocomplete_data %}
+    <option>{{ data }}</option>
+    {% endfor %}
+</datalist>
+
+<form method="post" autocomplete="off">
+    <table class="search_bar">
+        <tr>
+            <td>
+                <input name="search_term" id="search_term"
+                    placeholder="{{ placeholder }}" list="autocomplete">
+            </td>
+            <td>
+                <input type="submit" value="Aceptar">
+            </td>
+        </tr>
+    </table>
+</form>
