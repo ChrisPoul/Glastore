@@ -31,11 +31,6 @@ product_heads = {
 @login_required
 def add():
     form = get_form(customer_heads)
-    customer = Customer(
-        name=form['name'],
-        email=form['email'],
-        address=form['address']
-    )
     if request.method == "POST":
         customer = Customer.search(request.form["name"])
         if customer:
@@ -43,11 +38,22 @@ def add():
             return redirect(
                 url_for('quote.edit', quote_id=quote.id)
             )
-        flash("No se encontró ningún cliente, intentalo de nuevo")
+        customer = Customer(
+            name=form['name'],
+            email=form['email'],
+            address=form['address']
+        )
+        error = customer.request.add()
+        if not error:
+            quote = Quote.new(customer.id)
+            return redirect(
+                url_for('quote.edit', quote_id=quote.id)
+            )
+        flash(error)
 
     return render_template(
         'quote/add.html',
-        customer=customer,
+        form=form,
         customer_heads=customer_heads
     )
 
