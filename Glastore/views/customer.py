@@ -22,6 +22,8 @@ def customers():
             return redirect(
                 url_for('customer.profile', customer_id=customer.id)
             )
+        else:
+            flash("No se encontró ningún cliente")
 
     return render_template(
         'customer/customers.html',
