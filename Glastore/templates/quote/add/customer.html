@@ -1,0 +1,16 @@
+<table>
+    <tr>
+        {% for head in customer_heads %}
+        <th>
+            {{ customer_heads[head] }}
+        </th>
+        {% endfor %}
+    </tr>
+    <tr>
+        {% for head in customer_heads %}
+        <td style="height: 3em;">
+            <input name="{{ head }}" id="{{ head }}" value="{{ form[head] }}">
+        </td>
+        {% endfor %}
+    </tr>
+</table>

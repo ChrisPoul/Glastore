@@ -1,43 +1,9 @@
 {% extends "base_quote.html" %}
 
-
 {% block content %}
 <form method="post">
-    <table>
-        <tr>
-            <td class="image" rowspan=2>
-                <a href="{{ url_for('home.home') }}">
-                    <img src="{{ url_for('static', filename='images/glastore.png') }}">
-                </a>
-            </td>
-            <td>
-                <b>Cotización:</b>
-                <br>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <b>Fecha:</b>
-                <br>
-            </td>
-        </tr>
-    </table>
-    <table>
-        <tr>
-            {% for head in customer_heads %}
-            <th>
-                {{ customer_heads[head] }}
-            </th>
-            {% endfor %}
-        </tr>
-        <tr>
-            {% for head in customer_heads %}
-            <td style="height: 3em;">
-                <input name="{{ head }}" id="{{ head }}" value="{{ form[head] }}">
-            </td>
-            {% endfor %}
-        </tr>
-    </table>
+    {% include "quote/add/quote_info.html" %}
+    {% include "quote/add/customer.html" %}
     <input type="submit">
 </form>
 {% endblock %}
