@@ -1,13 +1,13 @@
 <table>
     <tr>
-        {% for head in quote.request.customer_heads %}
+        {% for head in customer_heads %}
         <th>
-            {{ quote.request.customer_heads[head] }}
+            {{ customer_heads[head] }}
         </th>
         {% endfor %}
     </tr>
     <tr>
-        {% for head in quote.request.customer_heads %}
+        {% for head in customer_heads %}
         <td style="height: 3em;">
             {% if quote.done %}
             {{ quote.author[head] }}

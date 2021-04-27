@@ -5,7 +5,7 @@ from flask import (
     Blueprint, render_template, request,
     redirect, url_for, flash
 )
-from Glastore.models import format_date, format_price
+from Glastore.models import format_date, format_price, get_form
 from Glastore.models.quote import Quote
 from Glastore.models.product import Product
 from Glastore.models.customer import Customer
@@ -13,6 +13,11 @@ from Glastore.views.auth import login_required
 
 bp = Blueprint("quote", __name__, url_prefix="/quote")
 
+customer_heads = {
+    "name": "Cliente",
+    "email": "Email",
+    "address": "Dirección"
+}
 product_heads = {
     "cantidad": "Cant.",
     "description": "Descripción",
@@ -25,9 +30,14 @@ product_heads = {
 @bp.route('/add', methods=('GET', 'POST'))
 @login_required
 def add():
-    autocomplete = [customer.name for customer in Customer.get_all()]
+    form = get_form(customer_heads)
+    customer = Customer(
+        name=form['name'],
+        email=form['email'],
+        address=form['address']
+    )
     if request.method == "POST":
-        customer = Customer.search(request.form["search_term"])
+        customer = Customer.search(request.form["name"])
         if customer:
             quote = Quote.new(customer.id)
             return redirect(
@@ -37,7 +47,8 @@ def add():
 
     return render_template(
         'quote/add.html',
-        autocomplete=autocomplete
+        customer=customer,
+        customer_heads=customer_heads
     )
 
 
@@ -54,6 +65,7 @@ def edit(quote_id):
     return render_template(
         'quote/edit.html',
         quote=quote,
+        customer_heads=customer_heads,
         product_heads=product_heads,
         product_keys=quote.request.product_keys,
         format_date=format_date,
@@ -69,6 +81,7 @@ def done(quote_id):
     return render_template(
         'quote/done.html',
         quote=quote,
+        customer_heads=customer_heads,
         product_heads=product_heads,
         product_keys=quote.request.product_keys,
         format_date=format_date,

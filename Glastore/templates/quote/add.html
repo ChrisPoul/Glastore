@@ -1,29 +1,43 @@
-{% extends "base.html" %}
+{% extends "base_quote.html" %}
 
-{% block header %}
-<h1>
-    {% block title %}Crear Nueva Cotización{% endblock %}
-</h1>
-{% endblock %}
 
 {% block content %}
-<datalist id="autocomplete">
-    {% for name in autocomplete %}
-    <option>{{ name }}</option>
-    {% endfor %}
-</datalist>
-<h3>Cliente de Cotización</h3>
-<form method="post" autocomplete="off">
-    <table class="search_bar">
+<form method="post">
+    <table>
         <tr>
-            <td>
-                <input name="search_term" id="search_term"
-                    placeholder="Escribe el nombre o el email del cliente que buscas..." list="autocomplete">
+            <td class="image" rowspan=2>
+                <a href="{{ url_for('home.home') }}">
+                    <img src="{{ url_for('static', filename='images/glastore.png') }}">
+                </a>
             </td>
             <td>
-                <input type="submit" value="Aceptar">
+                <b>Cotización:</b>
+                <br>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <b>Fecha:</b>
+                <br>
             </td>
         </tr>
     </table>
+    <table>
+        <tr>
+            {% for head in customer_heads %}
+            <th>
+                {{ customer_heads[head] }}
+            </th>
+            {% endfor %}
+        </tr>
+        <tr>
+            {% for head in customer_heads %}
+            <td style="height: 3em;">
+                <input name="{{ head }}" id="{{ head }}" value="{{ customer[head] }}">
+            </td>
+            {% endfor %}
+        </tr>
+    </table>
+    <input type="submit">
 </form>
 {% endblock %}
