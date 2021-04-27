@@ -52,5 +52,7 @@ class WindowOrientation:
             window.orientacion = 1
         else:
             window.orientacion += 1
+        if "uerta" in window.name:
+            window.orientacion += 1
         self.quote.focused_product_id = self.product.id
         self.update()

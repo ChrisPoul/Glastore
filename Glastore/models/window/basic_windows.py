@@ -12,6 +12,8 @@ class BasicWindow:
         self.draw()
         self.axis.axis('scaled')
 
+    def draw(self):
+        self.draw_frame()
     
     def draw_frame(self, lw=8):
         frame = plt.Rectangle(
@@ -47,10 +49,10 @@ class BasicWindow:
         self.axis.add_line(triangle)
 
     def get_triangle_points(self):
-        if self.orientacion == 1 or self.orientacion == 3:
-            self.set_vertical_orientation()
-        elif self.orientacion == 2 or self.orientacion == 4:
+        if self.orientacion % 2 == 0:
             self.set_horizontal_orientation()
+        else:
+            self.set_vertical_orientation()
         points = [
             [self.xmin, self.ymin],
             [self.xmid, self.ymid],
@@ -109,9 +111,6 @@ class Fija(BasicWindow):
     def __init__(self, axis, xy, width, height):
         BasicWindow.__init__(self, axis, xy, width, height)
 
-    def draw(self):
-        self.draw_frame()
-
 
 class Corrediza(BasicWindow):
 
@@ -121,7 +120,7 @@ class Corrediza(BasicWindow):
         BasicWindow.__init__(self, axis, xy, width, height)
 
     def draw(self):
-        self.draw_frame()
+        BasicWindow.draw(self)
         xposition, _ = self.xy
         self.draw_arrow(xposition)
 
@@ -163,12 +162,8 @@ class Guillotina(BasicWindow):
         BasicWindow.__init__(self, axis, xy, width, height)
 
     def draw(self):
-        xposition, _ = self.xy
-        for i in range(2):
-            self.draw_frame()
-            if i == 0:
-                self.draw_arrow(yposition)
-            yposition += self.height
+        BasicWindow.draw(self)
+        self.draw_arrow()
 
     def draw_arrow(self, position):
         xposition, yposition = self.xy
@@ -206,7 +201,7 @@ class Abatible(BasicWindow):
         BasicWindow.__init__(self, axis, xy, width, height)
 
     def draw(self):
-        self.draw_frame()
+        BasicWindow.draw(self)
         self.draw_triangle()
     
 
@@ -218,7 +213,7 @@ class Oscilobatiente(BasicWindow):
         BasicWindow.__init__(self, axis, xy, width, height)
 
     def draw(self):
-        self.draw_frame()
+        BasicWindow.draw(self)
         self.draw_triangles()
 
     def draw_triangles(self):

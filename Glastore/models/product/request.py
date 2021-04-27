@@ -60,4 +60,4 @@ class ProductRequest:
     def update_total(self):
         cantidad = float(self.product.cantidad)
         unit_price = float(self.product.unit_price)
-        self.total = cantidad * unit_price
+        self.product.total = cantidad * unit_price
