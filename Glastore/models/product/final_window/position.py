@@ -44,6 +44,7 @@ class WindowPositioner:
 
     def position_window_bottom(self, window):
         self.yposition = -window.height
+        self.xposition = 0
 
     def add_current_window_position(self, window):
         current_window_position = self.get_current_window_position(window)
