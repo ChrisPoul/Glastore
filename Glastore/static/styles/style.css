@@ -114,7 +114,7 @@ table {
     border-collapse: collapse;
     text-align: center;
 }
-td.customer {
+.customers td {
     border-bottom: 1px solid black;
     padding: 1em;
 }

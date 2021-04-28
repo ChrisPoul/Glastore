@@ -17,11 +17,11 @@ class QuoteRequest:
             "address": "Dirección"
         }
         self.product_keys = {
-            "name": ("Suministro y colocación de ", "nombre de la pieza..."),
-            "material": ("en ", "material..."),
-            "acabado": ("acabado ", "acabado..."),
-            "cristal": ("con ", "cristal o vidrio..."),
-            "medidas": ("Dimenciones", "medidas...")
+            "name": "Suministro y colocación de ",
+            "material": "en ",
+            "acabado": "acabado ", 
+            "cristal": "con ",
+            "medidas": "Dimenciones"
         }
 
     def handle(self):

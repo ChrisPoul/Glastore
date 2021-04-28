@@ -76,3 +76,6 @@ td.bd-right-0 {
 a {
     text-decoration: none;
 }
+.customer input {
+    width: 95%;
+}

@@ -25,6 +25,13 @@ product_heads = {
     "unit_price": "P.Unidad",
     "total": "Total"
 }
+product_placeholders = {
+    "name": "nombre de la pieza...",
+    "material": "material...",
+    "acabado": "acabado...",
+    "cristal": "cristal o vidrio...",
+    "medidas": "medidas..."
+}
 
 
 @bp.route('/add', methods=('GET', 'POST'))
@@ -76,6 +83,7 @@ def edit(quote_id):
         customer_heads=customer_heads,
         product_heads=product_heads,
         product_keys=quote.request.product_keys,
+        product_placeholders=product_placeholders,
         format_date=format_date,
         format_price=format_price
     )
@@ -92,6 +100,7 @@ def done(quote_id):
         customer_heads=customer_heads,
         product_heads=product_heads,
         product_keys=quote.request.product_keys,
+        product_placeholders=product_placeholders,
         format_date=format_date,
         format_price=format_price,
     )
