@@ -8,7 +8,7 @@ class QuoteRequest:
 
     def __init__(self, quote):
         self.quote = quote
-        self.customer = Customer.get(quote.customer_id)
+        self.customer = quote.author
         self.products = quote.products
         self.error = None
         self.customer_heads = {
@@ -35,15 +35,9 @@ class QuoteRequest:
         self.update_customer_attributes()
         error = self.customer.request.validate()
         if not error:
-            self.attempt_customer_update()
+            self.error = self.customer.request.attempt_update()
         else:
             self.error = error
-
-    def attempt_customer_update(self):
-        try:
-            self.customer.update()
-        except ValueError:
-            self.error = "Eso ya esta en uso"
 
     def update_customer_attributes(self):
         for attribute in self.customer_heads:

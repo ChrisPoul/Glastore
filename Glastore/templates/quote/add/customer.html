@@ -1,3 +1,7 @@
+<datalist id="autocomplete">
+    <option>pene</option>
+</datalist>
+
 <table>
     <tr>
         {% for head in customer_heads %}
@@ -9,7 +13,8 @@
     <tr>
         {% for head in customer_heads %}
         <td style="height: 3em;">
-            <input name="{{ head }}" id="{{ head }}" value="{{ form[head] }}">
+            <input name="{{ head }}" id="{{ head }}" value="{{ form[head] }}" 
+                list="autocomplete">
         </td>
         {% endfor %}
     </tr>

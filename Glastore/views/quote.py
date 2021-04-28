@@ -34,7 +34,10 @@ def add():
     if request.method == "POST":
         customer = Customer.search(request.form["name"])
         if customer:
-            make_new_quote(customer)
+            quote = Quote.new(customer.id)
+            return redirect(
+                url_for('quote.edit', quote_id=quote.id)
+            )
         customer = Customer(
             name=form['name'],
             email=form['email'],
@@ -42,20 +45,16 @@ def add():
         )
         error = customer.request.add()
         if not error:
-            make_new_quote(customer)
+            quote = Quote.new(customer.id)
+            return redirect(
+                url_for('quote.edit', quote_id=quote.id)
+            )
         flash(error)
 
     return render_template(
         'quote/add.html',
         form=form,
         customer_heads=customer_heads
-    )
-
-
-def make_new_quote(customer):
-    quote = Quote.new(customer.id)
-    return redirect(
-        url_for('quote.edit', quote_id=quote.id)
     )
 
 

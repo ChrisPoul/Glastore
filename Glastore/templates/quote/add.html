@@ -1,9 +1,11 @@
 {% extends "base_quote.html" %}
 
 {% block content %}
-<form method="post">
+<form method="post" autocomplete="off">
     {% include "quote/add/quote_info.html" %}
     {% include "quote/add/customer.html" %}
-    <input type="submit">
+    <div style="display: flex;">
+        <input type="submit">
+    </div>
 </form>
 {% endblock %}
