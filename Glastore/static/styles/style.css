@@ -22,8 +22,8 @@ header {
 }
 section {
     margin-top: 2em;
-    margin-left: 4%;
-    margin-right: 4%;
+    margin-left: 14%;
+    margin-right: 14%;
 }
 nav {
     display: flex;
@@ -109,4 +109,12 @@ table {
     width: 5%;
     margin: 0;
     margin-left: 7px;
+}
+.customers {
+    border-collapse: collapse;
+    text-align: center;
+}
+td.customer {
+    border-bottom: 1px solid black;
+    padding: 1em;
 }

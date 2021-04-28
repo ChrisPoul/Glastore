@@ -12,7 +12,7 @@
     {% include "search_bar.html" %}
 </div>
 <div>
-    <table style="border-collapse: collapse; text-align: center;">
+    <table class="customers">
         <tr>
             {% for head in heads %}
             <th>{{ heads[head] }}</th>
@@ -21,7 +21,7 @@
         {% for customer in customers %}
         <tr>
             {% for head in heads %}
-            <td style="border-bottom: 1px solid black; padding: 1rem;">
+            <td>
                 {% if head == "name" %}
                 <a href="{{ url_for('customer.profile', customer_id=customer.id) }}">
                     {{ customer[head] }}
