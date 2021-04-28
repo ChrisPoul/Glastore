@@ -68,7 +68,6 @@ def add():
 
 
 @bp.route("/edit/<int:quote_id>", methods=('GET', 'POST'))
-@login_required
 def edit(quote_id):
     quote = Quote.get(quote_id)
     quote.done = False

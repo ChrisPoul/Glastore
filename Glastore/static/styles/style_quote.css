@@ -79,3 +79,13 @@ a {
 .customer input {
     width: 95%;
 }
+.delete-product {
+    display: flex;
+}
+.delete-product a {
+    margin-left: auto;
+    margin-right: 0.5em;
+}
+.delete-product input {
+    color: red;
+}

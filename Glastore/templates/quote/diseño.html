@@ -1,4 +1,10 @@
 {% if not quote.done %}
+<div class="delete-product">
+    <a href="{{ url_for('product.delete', product_id=product.id) }}">
+        <input type="button" value="x">
+    </a>
+</div>
+<img style="width: 80%;" src="{{ product.diseño }}"/>
 <div class="manipulate-window">
     <a href="{{ url_for('product.rotate_window', product_id=product.id) }}">
         <input type="button" value="Rotar">
@@ -7,9 +13,6 @@
         <input type="button" value="Siguiente">
     </a>
 </div>
-<a href="{{ url_for('product.remove', product_id=product.id) }}">
-    <img style="width: 80%;" src="{{ product.diseño }}"/>
-</a>
 {% else %}
 <img style="width: 80%;" src="{{ product.diseño }}"/>
 {% endif %}

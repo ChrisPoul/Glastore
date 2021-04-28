@@ -30,19 +30,6 @@ def rotate_window(product_id):
     )
 
 
-@bp.route('/remove/<int:product_id>')
-@login_required
-def remove(product_id):
-    product = Product.get(product_id)
-    quote_id = product.quote_id
-    product.quote_id = 0
-    product.update()
-
-    return redirect(
-        url_for('quote.edit', quote_id=quote_id)
-    )
-
-
 @bp.route('/delete/<int:product_id>')
 @login_required
 def delete(product_id):
