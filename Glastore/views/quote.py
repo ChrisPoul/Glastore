@@ -31,6 +31,7 @@ product_heads = {
 @login_required
 def add():
     form = get_form(customer_heads)
+    autocomplete_data = [customer.name for customer in Customer.get_all()]
     if request.method == "POST":
         customer = Customer.search(request.form["name"])
         if customer:
@@ -54,7 +55,8 @@ def add():
     return render_template(
         'quote/add.html',
         form=form,
-        customer_heads=customer_heads
+        customer_heads=customer_heads,
+        autocomplete_data=autocomplete_data
     )
 
 

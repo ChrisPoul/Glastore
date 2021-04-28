@@ -1,5 +1,7 @@
 <datalist id="autocomplete">
-    <option>pene</option>
+    {% for data in autocomplete_data %}
+    <option>{{ data }}</option>
+    {% endfor %}
 </datalist>
 
 <table>
