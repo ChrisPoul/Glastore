@@ -14,7 +14,6 @@ class QuoteRequest:
         self.customer_heads = {
             "name": "Cliente",
             "email": "Email",
-            "address": "Dirección"
         }
         self.product_keys = {
             "name": "Suministro y colocación de ",
@@ -25,11 +24,19 @@ class QuoteRequest:
         }
 
     def handle(self):
+        self.update_address()
         self.update_customer()
         self.add_product()
         self.update_products()
 
         return self.error
+
+    def update_address(self):
+        if self.quote.address == "":
+            self.error = "No se pueden dejar campos en blanco"
+        if not self.error:
+            self.quote.address = request.form["address"]
+            self.quote.update()
 
     def update_customer(self):
         self.update_customer_attributes()

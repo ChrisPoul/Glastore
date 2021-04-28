@@ -14,6 +14,8 @@
             {% else %}
             {% if head == "name" %}
             <input name="customer_name" id="customer_name" value="{{ quote.author[head] }}">
+            {% elif head == "address" and quote[head] %}
+            <input name="{{ head }}" id="{{ head }}" value="{{ quote[head] }}">
             {% else %}
             <input name="{{ head }}" id="{{ head }}" value="{{ quote.author[head] }}">
             {% endif %}
