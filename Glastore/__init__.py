@@ -19,8 +19,9 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    from .models import db
+    from .models import db, init_db_command
     db.init_app(app)
+    app.cli.add_command(init_db_command)
 
     from .models.quote import Quote
     @app.context_processor
@@ -30,9 +31,6 @@ def create_app(test_config=None):
         return dict(
             sidebar_quotes=quotes[:5]
         )
-
-    from .models import init_db_command
-    app.cli.add_command(init_db_command)
 
     from .views import home
     app.register_blueprint(home.bp)
