@@ -1,4 +1,5 @@
 import os
+from operator import attrgetter
 from flask import Flask
 
 
@@ -20,6 +21,15 @@ def create_app(test_config=None):
 
     from .models import db
     db.init_app(app)
+
+    from .models.quote import Quote
+    @app.context_processor
+    def inject_sidebar_data():
+        quotes = Quote.get_all()
+        quotes = sorted(quotes, key=attrgetter('date'), reverse=True)
+        return dict(
+            sidebar_quotes=quotes
+        )
 
     from .models import init_db_command
     app.cli.add_command(init_db_command)
