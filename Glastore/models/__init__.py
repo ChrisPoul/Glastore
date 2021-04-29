@@ -38,6 +38,11 @@ def add_to_db(item):
     commit_to_db()
 
 
+def delete_from_db(item):
+    db.session.delete(item)
+    db.session.commit()
+
+
 def add_column(engine, table_name, column):
     column_name = column.compile(dialect=engine.dialect)
     column_type = column.type.compile(engine.dialect)
