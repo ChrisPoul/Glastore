@@ -1,9 +1,8 @@
-import base64
 import matplotlib.pyplot as plt
-from io import BytesIO
 from .position import WindowPositioner
 from .description import SubWindowDescriptionGetter
 from Glastore.models.window import Window
+from Glastore.models import get_temporary_uri
 
 
 class FinalWindowImage:
@@ -15,8 +14,7 @@ class FinalWindowImage:
     @property
     def temporary_uri(self):
         figure = self.make_figure()
-        temporary_buffer = self.save_to_temporary_buffer(figure)
-        temporary_uri = self.get_temporary_uri(temporary_buffer)
+        temporary_uri = get_temporary_uri(figure)
 
         return temporary_uri
 
@@ -31,19 +29,6 @@ class FinalWindowImage:
         final_window.draw(axis)
 
         return figure
-
-    def save_to_temporary_buffer(self, figure):
-        buffer = BytesIO()
-        figure.savefig(buffer, format="png")
-
-        return buffer
-
-    def get_temporary_uri(self, buffer):
-        data_in_base64 = base64.b64encode(buffer.getbuffer())
-        data = data_in_base64.decode("ascii")
-        data_uri = 'data:image/png;base64,{}'.format(data)
-        
-        return data_uri
 
 
 class FinalWindow:

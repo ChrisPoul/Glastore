@@ -1,4 +1,6 @@
 import click
+import base64
+from io import BytesIO
 from flask import request
 from flask.cli import with_appcontext
 from flask_sqlalchemy import SQLAlchemy
@@ -43,6 +45,21 @@ def add_column(engine, table_name, column):
 
 # column = Column('orientacion', String(100), nullable=True, default=1)
 # add_column(d.engine, "window", column)
+
+
+def save_to_temporary_buffer(figure):
+        buffer = BytesIO()
+        figure.savefig(buffer, format="png")
+
+        return buffer
+
+def get_temporary_uri(figure):
+    temporary_buffer = save_to_temporary_buffer(figure)
+    data_in_base64 = base64.b64encode(temporary_buffer.getbuffer())
+    data = data_in_base64.decode("ascii")
+    data_uri = 'data:image/png;base64,{}'.format(data)
+    
+    return data_uri
 
 
 def get_form(heads):
