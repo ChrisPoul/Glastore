@@ -13,6 +13,11 @@
     <option>{{ address }}</option>
     {% endfor %}
 </datalist>
+<datalist id="customer-phones">
+    {% for phone in customer_phones %}
+    <option>{{ phone }}</option>
+    {% endfor %}
+</datalist>
 
 <table>
     <tr>

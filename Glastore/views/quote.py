@@ -21,6 +21,7 @@ customer_heads = {
 customer_placeholders = {
     "name": "Nombre del cliente...",
     "email": "Corréo electrónico...",
+    "phone": "Teléfono del cliente...",
     "address": "Dirección de facturación..."
 }
 product_heads = {
@@ -42,28 +43,34 @@ product_placeholders = {
 @bp.route('/add', methods=('GET', 'POST'))
 @login_required
 def add():
+    customer_heads = {
+        "name": "Cliente",
+        "email": "Email",
+        "phone": "Tel.",
+        "address": "Dirección"
+    }
     form = get_form(customer_heads)
     customer_names = []
     customer_emails = []
+    customer_phones = []
     customer_addresses = []
     for customer in Customer.get_all():
         customer_names.append(customer.name)
         customer_emails.append(customer.email)
+        customer_phones.append(customer.phone)
         customer_addresses.append(customer.address)
     if request.method == "POST":
-        customer = Customer.search(request.form["name"])
-        if not customer:
-            customer = Customer.search(request.form["email"])
-        if not customer:
-            customer = Customer.search(request.form["address"])
-        if customer:
-            quote = Quote.new(customer.id)
-            return redirect(
-                url_for('quote.edit', quote_id=quote.id)
-            )
+        for key in customer_heads:
+            customer = Customer.search(request.form[key])
+            if customer:
+                quote = Quote.new(customer.id)
+                return redirect(
+                    url_for('quote.edit', quote_id=quote.id)
+                )
         customer = Customer(
             name=form['name'],
             email=form['email'],
+            phone=form['phone'],
             address=form['address']
         )
         error = customer.request.add()
@@ -81,6 +88,7 @@ def add():
         customer_placeholders=customer_placeholders,
         customer_names=customer_names,
         customer_emails=customer_emails,
+        customer_phones=customer_phones,
         customer_addresses=customer_addresses
     )
 
@@ -90,7 +98,7 @@ def edit(quote_id):
     quote = Quote.get(quote_id)
     quote.done = False
     if request.method == "POST":
-        error = quote.request.handle()
+        error = quote.request.edit()
         if error:
             flash(error)
 
@@ -109,6 +117,7 @@ def edit(quote_id):
 @bp.route("/done/<int:quote_id>")
 def done(quote_id):
     quote = Quote.get(quote_id)
+    qutoe.request.done()
     quote.done = True
 
     return render_template(

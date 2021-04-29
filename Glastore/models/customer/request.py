@@ -42,9 +42,9 @@ class CustomerRequest:
     def validate(self):
         self.error = None
         self.check_for_emtpy_values()
-        if not self.error:
-            self.validate_name()
-            self.validate_email()
+        self.validate_name()
+        self.validate_email()
+        self.validate_phone()
 
         return self.error
 
@@ -57,8 +57,8 @@ class CustomerRequest:
 
     def validate_name(self):
         invalid_name_msg = "El nombre del cliente no puede llevar numeros, solo letras"
+        nums = "1234567890"
         if not self.error:
-            nums = "1234567890"
             for num in nums:
                 if num in self.customer.name:
                     self.error = invalid_name_msg
@@ -69,3 +69,12 @@ class CustomerRequest:
         if not self.error:
             if "@" not in self.customer.email:
                 self.error = invalid_email_msg
+
+    def validate_phone(self):
+        invalid_phone_msg = "El teléfono que puso es invalido"
+        nums = "1234567890 "
+        if not self.error:
+            for char in self.customer.phone:
+                if char not in nums:
+                    self.error = invalid_phone_msg
+                    break

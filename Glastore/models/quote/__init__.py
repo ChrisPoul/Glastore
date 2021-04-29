@@ -1,10 +1,11 @@
 from datetime import datetime
 from sqlalchemy import (
     Column, Integer, DateTime,
-    ForeignKey, String
+    ForeignKey, String, Float
 )
 from Glastore.models import (
-    db, add_to_db, commit_to_db
+    db, add_to_db, commit_to_db,
+    delete_from_db
 )
 from Glastore.models.product import Product
 from Glastore.models.window import Window
@@ -20,6 +21,10 @@ class Quote(db.Model):
         'Product', backref='quote', lazy=True,
         cascade='all, delete-orphan'
     )
+    sold_quotes = db.relationship(
+        'SoldQuote', backref='quote', lazy=True,
+        cascade='all, delete-orphan'
+    )
     focused_product_id = Column(Integer, nullable=False, default=0)
 
     def __repr__(self):
@@ -32,8 +37,7 @@ class Quote(db.Model):
         commit_to_db()
 
     def delete(self):
-        db.session.delete(self)
-        db.session.commit()
+        delete_from_db(self)
 
     def new(customer_id=1):
         quote = Quote(customer_id=customer_id)
@@ -84,3 +88,28 @@ class Quote(db.Model):
             unit_price=product.unit_price
         )
         new_product.add()
+
+
+class SoldQuote(db.Model):
+    id = Column(Integer, primary_key=True)
+    quote_id = Column(Integer, ForeignKey('quote.id'), nullable=False)
+    date = Column(DateTime, nullable=False, default=datetime.now)
+    total = Column(Float, nullable=False, default=0)
+
+    def __repr__(self):
+        return self.__dict__
+
+    def add(self):
+        add_to_db(self)
+
+    def update(self):
+        commit_to_db()
+
+    def delte(self):
+        delete_from_db(self)
+
+    def get(id):
+        return SoldQuote.query.get(id)
+
+    def get_all():
+        return SoldQuote.query.all()

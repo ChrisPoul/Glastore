@@ -12,10 +12,11 @@ class QuoteRequest:
         self.customer = quote.author
         self.products = quote.products
         self.error = None
-        self.customer_heads = {
-            "name": "Cliente",
-            "email": "Email",
-        }
+        self.customer_heads = [
+            "name",
+            "email",
+            "phone"
+        ]
         self.product_keys = {
             "name": "Suministro y colocación de ",
             "material": "en ",
@@ -24,7 +25,7 @@ class QuoteRequest:
             "medidas": "Dimenciones"
         }
 
-    def handle(self):
+    def edit(self):
         self.update_date()
         self.update_address()
         self.update_customer()
@@ -123,6 +124,15 @@ class QuoteRequest:
             }
 
         return form
+
+    def done(self):
+        from . import SoldQuote
+        sold_quote = SoldQuote(
+            quote_id=self.quote.id,
+            date=datetime.now(),
+            total=self.quote.total
+        )
+        sold_quote.add()
 
     @property
     def autocomplete_data(self):

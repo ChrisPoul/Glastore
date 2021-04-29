@@ -4,6 +4,7 @@ from flask import (
 )
 import matplotlib.pyplot as plt
 from Glastore.models import get_temporary_uri
+from Glastore.models.quote import SoldQuote
 
 bp = Blueprint('home', __name__)
 
@@ -12,7 +13,10 @@ bp = Blueprint('home', __name__)
 def home():
     figure = plt.Figure(dpi=150, figsize=(4, 4))
     axis = figure.subplots()
-    axis.plot([1, 2, 3], [1, 2, 3])
+    sold_quotes = SoldQuote.get_all()
+    dates = [sold_quote.date for sold_quote in sold_quotes]
+    totals = [sold_quote.total for sold_quote in sold_quotes]
+    axis.plot(dates, totals)
     temporary_uri = get_temporary_uri(figure)
 
     return render_template(
