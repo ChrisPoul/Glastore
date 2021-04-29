@@ -5,6 +5,7 @@ class WindowOrientation:
         self.windows = product.windows
         self.quote = product.quote
         self.selected_window = product.selected_window
+        self.windows_are_selectable = True
 
     def select_next_window(self):
         self.unselect_prev_window()
@@ -13,8 +14,9 @@ class WindowOrientation:
         self.update()
 
     def select_window(self):
-        window = self.windows[self.selected_window]
-        window.selected = True
+        if self.windows_are_selectable:
+            window = self.windows[self.selected_window]
+            window.selected = True
         self.quote.focused_product_id = self.product.id
     
     def update(self):
@@ -28,7 +30,8 @@ class WindowOrientation:
             else:
                 self.selected_window += 1
             if self.selected_window_is_rotatable():
-                break
+                return
+        self.windows_are_selectable = False
 
     def is_last_window(self):
         return self.selected_window == len(self.windows) - 1
