@@ -7,7 +7,7 @@ from Glastore.models import get_temporary_uri
 bp = Blueprint('home', __name__)
 
 
-@bp.route('/', methods=('POST', 'GET'))
+@bp.route('/')
 def home():
     figure = plt.Figure(dpi=150, figsize=(4, 4))
     axis = figure.subplots()

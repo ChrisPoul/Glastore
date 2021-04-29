@@ -33,7 +33,7 @@ def customers():
     )
 
 
-@bp.route('/profile/<int:customer_id>', methods=('POST', 'GET'))
+@bp.route('/profile/<int:customer_id>')
 @login_required
 def profile(customer_id):
     customer = Customer.get(customer_id)
