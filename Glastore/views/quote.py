@@ -18,6 +18,11 @@ customer_heads = {
     "email": "Email",
     "address": "Dirección"
 }
+customer_placeholders = {
+    "name": "Nombre del cliente...",
+    "email": "Corréo electrónico...",
+    "address": "Dirección de facturación..."
+}
 product_heads = {
     "cantidad": "Cant.",
     "description": "Descripción",
@@ -38,9 +43,19 @@ product_placeholders = {
 @login_required
 def add():
     form = get_form(customer_heads)
-    autocomplete_data = [customer.name for customer in Customer.get_all()]
+    customer_names = []
+    customer_emails = []
+    customer_addresses = []
+    for customer in Customer.get_all():
+        customer_names.append(customer.name)
+        customer_emails.append(customer.email)
+        customer_addresses.append(customer.address)
     if request.method == "POST":
         customer = Customer.search(request.form["name"])
+        if not customer:
+            customer = Customer.search(request.form["email"])
+        if not customer:
+            customer = Customer.search(request.form["address"])
         if customer:
             quote = Quote.new(customer.id)
             return redirect(
@@ -63,7 +78,10 @@ def add():
         'quote/add.html',
         form=form,
         customer_heads=customer_heads,
-        autocomplete_data=autocomplete_data
+        customer_placeholders=customer_placeholders,
+        customer_names=customer_names,
+        customer_emails=customer_emails,
+        customer_addresses=customer_addresses
     )
 
 

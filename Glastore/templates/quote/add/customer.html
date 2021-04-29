@@ -1,6 +1,16 @@
-<datalist id="autocomplete">
-    {% for data in autocomplete_data %}
-    <option>{{ data }}</option>
+<datalist id="customer-names">
+    {% for name in customer_names %}
+    <option>{{ name }}</option>
+    {% endfor %}
+</datalist>
+<datalist id="customer-emails">
+    {% for email in customer_emails %}
+    <option>{{ email }}</option>
+    {% endfor %}
+</datalist>
+<datalist id="customer-addresss">
+    {% for address in customer_addresses %}
+    <option>{{ address }}</option>
     {% endfor %}
 </datalist>
 
@@ -16,7 +26,7 @@
         {% for head in customer_heads %}
         <td style="height: 3em;">
             <input name="{{ head }}" id="{{ head }}" value="{{ form[head] }}" 
-                list="autocomplete">
+                placeholder="{{ customer_placeholders[head] }}" list="customer-{{ head }}s">
         </td>
         {% endfor %}
     </tr>
