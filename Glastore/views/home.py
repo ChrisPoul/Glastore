@@ -5,7 +5,7 @@ from flask import (
 bp = Blueprint('home', __name__)
 
 
-@bp.route('/')
+@bp.route('/', methods=('POST', 'GET'))
 def home():
 
     return render_template(
