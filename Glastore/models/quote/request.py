@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import request
 from Glastore.models.customer import Customer
 from Glastore.models.product import Product
@@ -24,12 +25,17 @@ class QuoteRequest:
         }
 
     def handle(self):
+        self.update_date()
         self.update_address()
         self.update_customer()
         self.add_product()
         self.update_products()
 
         return self.error
+
+    def update_date(self):
+        self.quote.date = datetime.now()
+        self.quote.update()
 
     def update_address(self):
         if self.quote.address == "":

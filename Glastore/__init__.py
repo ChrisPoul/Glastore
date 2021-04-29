@@ -28,7 +28,7 @@ def create_app(test_config=None):
         quotes = Quote.get_all()
         quotes = sorted(quotes, key=attrgetter('date'), reverse=True)
         return dict(
-            sidebar_quotes=quotes
+            sidebar_quotes=quotes[:5]
         )
 
     from .models import init_db_command
