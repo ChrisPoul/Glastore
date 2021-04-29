@@ -165,10 +165,10 @@ class Guillotina(BasicWindow):
         BasicWindow.draw(self)
         self.draw_arrow()
 
-    def draw_arrow(self, position):
+    def draw_arrow(self):
         xposition, yposition = self.xy
-        y1 = position + self.height
-        y2 = 0.6 * self.height + yposition
+        y1 = yposition
+        y2 = 0.3 * self.height + yposition
         x = self.width / 2 + xposition
         ydata = (y1, y2)
         xdata = (x, x)
@@ -176,12 +176,12 @@ class Guillotina(BasicWindow):
         xmin = 0.9 * x
         xmid = x
         xmax = 1.1 * x
-        ymin = y2
-        ymax = 1.1 * y2
+        ymax = y2
+        ymin = 0.7 * y2
         points = [
-            [xmin, ymax],
-            [xmid, ymin],
-            [xmax, ymax]
+            [xmin, ymin],
+            [xmid, ymax],
+            [xmax, ymin]
         ]
         arrow_head = plt.Polygon(
             points,

@@ -34,11 +34,17 @@ class WindowOrientation:
         return self.selected_window == len(self.windows) - 1
 
     def selected_window_is_rotatable(self):
+        non_rotatable_window_types = [
+            "guillotina",
+            "fijo",
+            "fija",
+            "antepecho"
+        ]
         window = self.windows[self.selected_window]
-        if "fija" in window.name or "fijo" in window.name:
-            return False
-        elif "antepecho" in window.name or "guillotina" in window.name:
-            return False
+        print(window.name)
+        for win_type in non_rotatable_window_types:
+            if win_type in window.name:
+                return False
         
         return True
 
@@ -58,5 +64,4 @@ class WindowOrientation:
             else:
                 window.orientacion += 1
         self.quote.focused_product_id = self.product.id
-        print(window.orientacion)
         self.update()
