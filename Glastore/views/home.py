@@ -23,7 +23,7 @@ def home():
 
 @bp.route('/sidebar')
 def sidebar():
-    print(request.args["sidebar-search-term"])
+    search_term = request.args["sidebar-search-term"]
 
     return redirect(
         url_for('home.home')
