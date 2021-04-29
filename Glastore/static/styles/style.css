@@ -116,7 +116,7 @@ table {
     border-bottom: 1px solid black;
     padding: 1em;
 }
-table.sidebar-menu {
+table.sidebar {
     float: left;
     text-align: left;
     vertical-align: top;
@@ -124,6 +124,6 @@ table.sidebar-menu {
     margin-top: 1em;
     width: 18%;
 }
-.sidebar-menu input {
+.sidebar input {
     width: 95%;
 }

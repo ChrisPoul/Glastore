@@ -1,5 +1,6 @@
 from flask import (
-    Blueprint, render_template
+    Blueprint, render_template, redirect,
+    url_for, request
 )
 import matplotlib.pyplot as plt
 from Glastore.models import get_temporary_uri
@@ -17,4 +18,13 @@ def home():
     return render_template(
         'home/home.html',
         my_plot=temporary_uri
+    )
+
+
+@bp.route('/sidebar')
+def sidebar():
+    print(request.args["sidebar-search-term"])
+
+    return redirect(
+        url_for('home.home')
     )

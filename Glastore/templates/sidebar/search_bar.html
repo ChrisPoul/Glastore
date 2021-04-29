@@ -1,15 +1,15 @@
-<datalist id="autocomplete">
+<datalist id="autocomplete-sidebar">
     {% for data in autocomplete_data %}
     <option>{{ data }}</option>
     {% endfor %}
 </datalist>
 
-<form method="post" autocomplete="off">
+<form action="{{ url_for('home.sidebar') }}" autocomplete="off">
     <table class="search_bar">
         <tr>
             <td>
-                <input name="search_term" id="search_term"
-                    placeholder="{{ placeholder }}" list="autocomplete">
+                <input name="sidebar-search-term" id="sidebar-search-term"
+                    placeholder="Busca cotizaciónes aquí..." list="autocomplete-sidebar">
             </td>
             <td>
                 <button type="submit"><i class="fa fa-search"></i></button>
