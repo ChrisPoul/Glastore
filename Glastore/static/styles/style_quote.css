@@ -61,6 +61,9 @@ td.diseño {
     min-width: fit-content;
     min-height: fit-content;
 }
+.diseño img {
+    width: 100%;
+}
 td.total {
     width: 6em;
 }
