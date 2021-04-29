@@ -10,7 +10,6 @@ bp = Blueprint('customer', __name__, url_prefix='/customer')
 
 
 @bp.route('/customers', methods=('POST', 'GET'))
-@login_required
 def customers():
     customers = Customer.get_all()
     autocomplete_data = [customer.name for customer in customers]

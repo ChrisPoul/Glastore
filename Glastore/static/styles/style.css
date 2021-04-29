@@ -22,8 +22,8 @@ header {
 }
 section {
     margin-top: 2em;
-    margin-left: 14%;
-    margin-right: 14%;
+    margin-left: 20%;
+    margin-right: 20%;
 }
 nav {
     display: flex;
@@ -102,13 +102,11 @@ table {
     padding: 0;
 }
 .search_bar input {
-    width: 99%;
-    margin: 0
-}
-.search_bar input[type=submit] {
-    width: 5%;
     margin: 0;
-    margin-left: 7px;
+}
+.search_bar button {
+    background-color: white;
+    border-color: white;
 }
 .customers {
     border-collapse: collapse;
@@ -117,4 +115,15 @@ table {
 .customers td {
     border-bottom: 1px solid black;
     padding: 1em;
+}
+table.sidebar-menu {
+    float: left;
+    text-align: left;
+    vertical-align: top;
+    margin: 0.5em;
+    margin-top: 1em;
+    width: 18%;
+}
+.sidebar-menu input {
+    width: 95%;
 }
