@@ -36,5 +36,5 @@ def sidebar():
         )
 
     return redirect(
-        session['uri']
+        session['prev_uri']
     )
