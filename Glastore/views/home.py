@@ -1,10 +1,11 @@
 from flask import (
     Blueprint, render_template, redirect,
-    url_for, request
+    url_for, request, session
 )
 import matplotlib.pyplot as plt
 from Glastore.models import get_temporary_uri
 from Glastore.models.quote import SoldQuote
+from Glastore.models.customer import Customer
 
 bp = Blueprint('home', __name__)
 
@@ -28,7 +29,12 @@ def home():
 @bp.route('/sidebar')
 def sidebar():
     search_term = request.args["sidebar-search-term"]
+    customer = Customer.search(search_term)
+    if customer:
+        return redirect(
+            url_for('customer.profile', customer_id=customer.id)
+        )
 
     return redirect(
-        url_for('home.home')
+        session['uri']
     )

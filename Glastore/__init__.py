@@ -1,6 +1,6 @@
 import os
 from operator import attrgetter
-from flask import Flask
+from flask import Flask, request, session
 
 
 def create_app(test_config=None):
@@ -27,6 +27,7 @@ def create_app(test_config=None):
     from .models.customer import Customer
     @app.context_processor
     def inject_sidebar_data():
+        session['uri'] = request.path
         quotes = Quote.get_all()
         quotes = sorted(quotes, key=attrgetter('date'), reverse=True)
         customer_names = [customer.name for customer in Customer.get_all()]

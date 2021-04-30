@@ -25,7 +25,11 @@
 <header>
     {% block header %}{% endblock %}
 </header>
-{% include "sidebar/sidebar.html" %}
+{% if g.user %}
+<div>
+    {% include "sidebar/sidebar.html" %}
+</div>
+{% endif %}
 <section>
     {% for message in get_flashed_messages() %}
     <div class="flash">{{ message }}</div>
