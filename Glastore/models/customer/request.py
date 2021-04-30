@@ -1,6 +1,8 @@
 from Glastore.models import get_form
 from . import Customer, customer_heads
 
+repeated_value_error = "El valor que introdujo no se encuentra disponible"
+
 
 class CustomerRequest:
 
@@ -14,7 +16,7 @@ class CustomerRequest:
             try:
                 self.customer.add()
             except ValueError:
-                error = "Eso ya está en uso"
+                error = repeated_value_error
 
         return error
 
@@ -30,7 +32,7 @@ class CustomerRequest:
         try:
             self.customer.update()
         except ValueError:
-            self.error = "Eso ya siusa"
+            self.error = repeated_value_error
 
         return self.error
 

@@ -14,8 +14,7 @@ class QuoteRequest:
         self.error = None
         self.customer_heads = [
             "name",
-            "email",
-            "phone"
+            "email"
         ]
         self.product_keys = {
             "name": "Suministro y colocación de ",

@@ -60,13 +60,6 @@ def add():
         customer_phones.append(customer.phone)
         customer_addresses.append(customer.address)
     if request.method == "POST":
-        for key in customer_heads:
-            customer = Customer.search(request.form[key])
-            if customer:
-                quote = Quote.new(customer.id)
-                return redirect(
-                    url_for('quote.edit', quote_id=quote.id)
-                )
         customer = Customer(
             name=form['name'],
             email=form['email'],
@@ -79,6 +72,13 @@ def add():
             return redirect(
                 url_for('quote.edit', quote_id=quote.id)
             )
+            for key in customer_heads:
+                customer = Customer.search(request.form[key])
+                if customer:
+                    quote = Quote.new(customer.id)
+                    return redirect(
+                        url_for('quote.edit', quote_id=quote.id)
+                    )
         flash(error)
 
     return render_template(

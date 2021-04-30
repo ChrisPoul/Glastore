@@ -24,12 +24,15 @@ def create_app(test_config=None):
     app.cli.add_command(init_db_command)
 
     from .models.quote import Quote
+    from .models.customer import Customer
     @app.context_processor
     def inject_sidebar_data():
         quotes = Quote.get_all()
         quotes = sorted(quotes, key=attrgetter('date'), reverse=True)
+        customer_names = [customer.name for customer in Customer.get_all()]
         return dict(
-            sidebar_quotes=quotes[:5]
+            sidebar_quotes=quotes[:5],
+            autocomplete_sidebar=customer_names
         )
 
     from .views import home
