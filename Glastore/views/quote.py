@@ -117,7 +117,7 @@ def edit(quote_id):
 @bp.route("/done/<int:quote_id>")
 def done(quote_id):
     quote = Quote.get(quote_id)
-    qutoe.request.done()
+    quote.request.done()
     quote.done = True
 
     return render_template(
