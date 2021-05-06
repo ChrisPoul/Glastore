@@ -61,7 +61,7 @@ class WindowOrientation:
             window.orientacion = 1
         else:
             window.orientacion += 1
-        if "uerta" in window.name:
+        if window.is_door():
             if window.orientacion == 4:
                 window.orientacion = 2
             else:

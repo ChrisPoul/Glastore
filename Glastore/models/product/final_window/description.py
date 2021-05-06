@@ -15,7 +15,7 @@ window_identifiers = [
 class SubWindowDescriptionGetter:
 
     def __init__(self, description):
-        self.full_description = description
+        self.full_description = description.lower()
 
     def get_window_descriptions(self):
         self.window_descriptions = {}

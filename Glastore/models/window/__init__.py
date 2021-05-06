@@ -33,7 +33,7 @@ class Window(db.Model):
 
     @property
     def name(self):
-        if self.has_dimensions():
+        if has_dimensions(self.description):
             nums = "1234567890"
             for i, char in enumerate(self.description):
                 if char in nums:
@@ -46,22 +46,16 @@ class Window(db.Model):
 
     @property
     def dimensions(self):
-        if self.has_dimensions():
+        if has_dimensions(self.description):
             dimensions_str = self.extract_dimensions_string()
         else:
             dimensions_str = self.product.medidas
-
         width, height = self.get_width_and_height(dimensions_str)
 
+        if has_dimensions(self.product.name) is False:
+            width = width / len(self.product.windows)
+
         return (width, height)
-
-    def has_dimensions(self):
-        nums = "1234567890"
-        for num in nums:
-            if num in self.description:
-                return True
-
-        return False
 
     def extract_dimensions_string(self):
         nums = "1234567890"
@@ -169,7 +163,7 @@ class Window(db.Model):
             self.set_door_orientation()
 
     def is_door(self):
-        return "uerta" in self.name
+        return "uerta" in self.name.lower()
 
     def set_door_orientation(self):
         if self.orientacion % 2 != 0:
@@ -177,3 +171,12 @@ class Window(db.Model):
 
     def draw_selected(self):
         self.ventana.draw_selected_frame()
+
+
+def has_dimensions(description):
+    nums = "1234567890"
+    for num in nums:
+        if num in description:
+            return True
+
+    return False

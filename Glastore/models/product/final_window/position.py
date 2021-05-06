@@ -69,7 +69,7 @@ class WindowPositioner:
 
     def get_current_window_position(self):
         self.current_window_position = (0, 0)
-        if "dos" in self.current_window.description:
+        if "dos" in self.current_window.description.lower():
             self.handle_window_twice()
         else:
             self.position_window_once()
