@@ -44,7 +44,6 @@ class WindowOrientation:
             "antepecho"
         ]
         window = self.windows[self.selected_window]
-        print(window.name)
         for win_type in non_rotatable_window_types:
             if win_type in window.name:
                 return False
@@ -61,10 +60,11 @@ class WindowOrientation:
             window.orientacion = 1
         else:
             window.orientacion += 1
-        if window.is_door():
+        if window.is_door() and not window.is_corrediza():
             if window.orientacion == 4:
                 window.orientacion = 2
             else:
                 window.orientacion += 1
+        print(window.orientacion)
         self.quote.focused_product_id = self.product.id
         self.update()

@@ -114,8 +114,7 @@ class Window(db.Model):
         self.update()
 
     def draw(self, axis, xy):
-        self.handle_door()
-        if "corrediz" in self.name:
+        if self.is_corrediza():
             ventana = Corrediza(
                 axis=axis,
                 xy=xy,
@@ -124,7 +123,7 @@ class Window(db.Model):
                 orientacion=self.orientacion,
                 selected=self.selected
             )
-        elif "abatible" in self.name:
+        elif self.is_abatible():
             ventana = Abatible(
                 axis=axis,
                 xy=xy,
@@ -133,14 +132,14 @@ class Window(db.Model):
                 orientacion=self.orientacion,
                 selected=self.selected
             )
-        elif "guillotina" in self.name:
+        elif self.is_guillotina():
             ventana = Guillotina(
                 axis=axis,
                 xy=xy,
                 width=self.width,
                 height=self.height
             )
-        elif "oscilobatiente" in self.name:
+        elif self.is_oscilobatiente():
             ventana = Oscilobatiente(
                 axis=axis,
                 xy=xy,
@@ -158,16 +157,20 @@ class Window(db.Model):
             )
         self.ventana = ventana
 
-    def handle_door(self):
-        if self.is_door():
-            self.set_door_orientation()
-
     def is_door(self):
         return "uerta" in self.name.lower()
 
-    def set_door_orientation(self):
-        if self.orientacion % 2 != 0:
-            self.orientacion += 1
+    def is_corrediza(self):
+        return "corrediz" in self.name
+
+    def is_abatible(self):
+        return "abatible" in self.name
+
+    def is_guillotina(self):
+        return "guillotina" in self.name
+
+    def is_oscilobatiente(self):
+        return "oscilobatiente" in self.name
 
     def draw_selected(self):
         self.ventana.draw_selected_frame()
