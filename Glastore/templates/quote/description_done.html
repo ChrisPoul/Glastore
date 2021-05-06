@@ -1,9 +1,9 @@
 <p>
     {% for key in product_keys %}
     {% if key == "medidas" %}
-    . {{ product_keys[key][0] }}
+    . {{ product_keys[key] }}
     {% else %}
-    {{ product_keys[key][0] }}
+    {{ product_keys[key] }}
     {% endif %}
     {{ product[key] }}
     {% endfor %}
