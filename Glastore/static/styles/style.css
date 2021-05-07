@@ -133,7 +133,12 @@ div.auth {
     margin-top: 10%
 }
 
-.auth input[type=submit] {
+.auth input {
     width: 100%;
     height: 2em;
+}
+
+.auth input[type=submit] {
+    color: whitesmoke;
+    background-color: #333;
 }
