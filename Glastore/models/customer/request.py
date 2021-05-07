@@ -1,7 +1,7 @@
 from Glastore.models import get_form
-from . import Customer, customer_heads
+from . import customer_heads
 
-repeated_value_error = "El valor que introdujo no se encuentra disponible"
+repeated_value_error = "Ese valor no está disponible, intenta usar otra cosa"
 
 
 class CustomerRequest:
