@@ -114,6 +114,7 @@ class Window(db.Model):
         self.update()
 
     def draw(self, axis, xy):
+        self.handle_door()
         if self.is_corrediza():
             ventana = Corrediza(
                 axis=axis,
@@ -157,8 +158,12 @@ class Window(db.Model):
             )
         self.ventana = ventana
 
+    def handle_door(self):
+        if self.is_door() and not self.is_corrediza():
+            self.set_door_orientation()
+
     def is_door(self):
-        return "uerta" in self.name.lower()
+        return "puerta" in self.name.lower()
 
     def is_corrediza(self):
         return "corrediz" in self.name
@@ -171,6 +176,10 @@ class Window(db.Model):
 
     def is_oscilobatiente(self):
         return "oscilobatiente" in self.name
+
+    def set_door_orientation(self):
+        if self.orientacion % 2 != 0:
+            self.orientacion += 1
 
     def draw_selected(self):
         self.ventana.draw_selected_frame()
