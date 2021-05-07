@@ -127,3 +127,13 @@ table.sidebar {
 .sidebar input {
     width: 95%;
 }
+
+div.auth {
+    margin: 30%;
+    margin-top: 10%
+}
+
+.auth input[type=submit] {
+    width: 100%;
+    height: 2em;
+}
