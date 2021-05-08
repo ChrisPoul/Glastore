@@ -62,6 +62,9 @@ nav div.centered {
     left: 50%;
     transform: translate(-50%, -50%);
 }
+nav div a:first-child {
+    border-left: 1px solid #bbb;
+}
 nav div.right a {
     float: right;
 }
