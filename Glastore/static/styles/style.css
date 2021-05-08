@@ -11,7 +11,6 @@ header {
     grid-template-columns: 1fr 1fr;
     color: #333;
     background: lightgray;
-    margin-top: 2.3rem;
 }
 .flash {
     margin: 1em 0;
@@ -21,7 +20,6 @@ header {
     text-align: center;
 }
 section {
-    margin-top: 2em;
     margin-left: 20%;
     margin-right: 20%;
 }
@@ -37,19 +35,36 @@ header a {
 }
 
 nav {
-    display: flex;
+    position: relative;
+    overflow: hidden;
     background-color: #333;
 }
 nav a {
-    display: inline-block;
-    color: white;
+    float: left;
+    color: #f2f2f2;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
+    font-size: 17px;
     border-right: 1px solid #bbb;
+    border-left: 1px solid #bbb;
 }
 nav a:hover {
     background-color: #111;
+}
+nav a.active {
+    background-color: #04AA6D;
+    color: white;
+}
+nav div.centered {
+    float: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+nav div.right a {
+    float: right;
 }
 
 form {

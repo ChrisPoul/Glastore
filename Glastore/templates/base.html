@@ -10,12 +10,12 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
 </head>
 <nav>
-    <div>
+    <div class="centered">
         <a href="{{ url_for('home.home') }}">Home</a>
         <a href="{{ url_for('customer.customers') }}">Clientes</a>
         <a href="{{ url_for('quote.add') }}">Cotización</a>
     </div>
-    <div style="float: right;">
+    <div class="right">
         {% if g.user %}
         <a href="{{ url_for('auth.logout') }}">Log Out</a>
         {% else %}
