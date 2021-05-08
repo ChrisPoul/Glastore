@@ -148,7 +148,8 @@ table.sidebar {
 
 div.auth {
     width: 17em;
-    margin: auto;
+    margin-right: auto;
+    margin-left: auto;
     margin-top: 5%;
     padding: 5%;
     background-color: rgb(219, 219, 219);
