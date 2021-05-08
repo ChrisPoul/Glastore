@@ -48,25 +48,26 @@ nav a {
     font-size: 17px;
     border-right: 1px solid #bbb;
 }
+nav form {
+    float: left;
+    margin: 0.5em;
+    
+}
 nav a:hover {
     background-color: #111;
 }
-nav div.left a {
+nav div.left {
     border: none;
     font-size: x-large;
-}
-nav div.centered {
-    float: none;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
 }
 nav div a:first-child {
     border-left: 1px solid #bbb;
 }
 nav div.right {
     float: right;
+}
+nav div.right a {
+    border-left: 1px solid #bbb;
 }
 
 form {

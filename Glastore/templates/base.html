@@ -11,21 +11,19 @@
 </head>
 <nav>
     <div class="left">
-        <a href="{{ url_for('home.home') }}">
-            Glastore
-        </a>
-    </div>
-    <div class="centered">
         <a href="{{ url_for('home.home') }}">Home</a>
+        {% if g.user %}
         <a href="{{ url_for('customer.customers') }}">Clientes</a>
         <a href="{{ url_for('quote.add') }}">Cotización</a>
+        {% endif %}
     </div>
     <div class="right">
-        {% if not g.user %}
-        <a href="{{ url_for('auth.login') }}">Login</a>
-        <a href="{{ url_for('auth.register') }}">Register</a>
-        {% else %}
+        {% if g.user %}
+        {% include "search_bar.html" %}
         <a href="{{ url_for('auth.logout') }}">Log Out</a>
+        {% else %}
+        <a href="{{ url_for('auth.register') }}">Register</a>
+        <a href="{{ url_for('auth.login') }}">Login</a>
         {% endif %}
     </div>
 </nav>
