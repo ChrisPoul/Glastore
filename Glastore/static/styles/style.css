@@ -148,7 +148,7 @@ div.auth {
     margin-top: 5vmax;
     align-self: center;
     padding: 5%;
-    background-color: rgb(219, 219, 219);
+    background-color: rgba(218, 216, 216, 0.685);
     border-radius: 10px;
     text-align: center;
 }
