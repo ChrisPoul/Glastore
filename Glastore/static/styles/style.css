@@ -66,14 +66,11 @@ nav div.left {
     border: none;
     font-size: x-large;
 }
-nav div.left a {
+nav div a {
     border-right: 1px solid #bbb;;
 }
 nav div.right {
     float: right;
-}
-nav div.right a {
-    border-left: 1px solid #bbb;
 }
 
 form {
@@ -113,7 +110,7 @@ table {
 }
 .search_bar td {
     width: 99%;
-    padding: auto;
+    padding: 0;
 }
 .search_bar input {
     margin: auto;
