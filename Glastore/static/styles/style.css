@@ -113,7 +113,7 @@ table {
 }
 .search_bar td {
     width: 99%;
-    padding: 0;
+    padding: auto;
 }
 .search_bar input {
     margin: auto;
