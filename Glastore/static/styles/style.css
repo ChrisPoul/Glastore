@@ -129,9 +129,11 @@ table.sidebar {
 }
 
 div.auth {
-    margin: 30%;
+    margin: 25%;
     margin-top: 10%;
-    padding: 5px;
+    padding: 5%;
+    background-color: rgb(219, 219, 219);
+    border-radius: 5px;
 }
 
 .auth input {
