@@ -147,16 +147,19 @@ table.sidebar {
 }
 
 div.auth {
-    margin: 25%;
+    width: 17em;
+    margin: auto;
     margin-top: 5%;
     padding: 5%;
     background-color: rgb(219, 219, 219);
-    border-radius: 5px;
+    border-radius: 10px;
     text-align: center;
 }
 
 .auth input {
     height: 2em;
+    border-radius: 5px;
+    border: 1px solid gray
 }
 
 .auth input[type=submit] {
