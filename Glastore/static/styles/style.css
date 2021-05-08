@@ -90,6 +90,12 @@ input, textarea {
 }
 input {
     font-size: small;
+    padding: 0.7vmin;
+}
+button {
+    padding: 0.7vmin;
+    margin-left: 0.1vmin;
+    width: 2.5em;
 }
 input.danger {
     color: #cc2f2e;
@@ -113,18 +119,13 @@ table {
 }
 .search_bar input {
     margin: 0;
-    height: 1.5em;
     border-radius: 5px;
     
 }
 .search_bar button {
     background-color: white;
     border-color: white;
-    height: 1.6em;
     border-radius: 4px;
-}
-.sidebar button {
-    height: 1.8em;
 }
 .customers {
     border-collapse: collapse;
