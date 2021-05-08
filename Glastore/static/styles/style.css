@@ -51,9 +51,9 @@ nav a {
 nav a:hover {
     background-color: #111;
 }
-nav a.active {
-    background-color: #04AA6D;
-    color: white;
+nav div.left a {
+    border: none;
+    font-size: x-large;
 }
 nav div.centered {
     float: none;
@@ -65,7 +65,7 @@ nav div.centered {
 nav div a:first-child {
     border-left: 1px solid #bbb;
 }
-nav div.right a {
+nav div.right {
     float: right;
 }
 

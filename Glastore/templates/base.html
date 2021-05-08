@@ -10,17 +10,22 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
 </head>
 <nav>
+    <div class="left">
+        <a href="{{ url_for('home.home') }}">
+            Glastore
+        </a>
+    </div>
     <div class="centered">
         <a href="{{ url_for('home.home') }}">Home</a>
         <a href="{{ url_for('customer.customers') }}">Clientes</a>
         <a href="{{ url_for('quote.add') }}">Cotización</a>
     </div>
     <div class="right">
-        {% if g.user %}
-        <a href="{{ url_for('auth.logout') }}">Log Out</a>
-        {% else %}
-        <a href="{{ url_for('auth.register') }}">Register</a>
+        {% if not g.user %}
         <a href="{{ url_for('auth.login') }}">Login</a>
+        <a href="{{ url_for('auth.register') }}">Register</a>
+        {% else %}
+        <a href="{{ url_for('auth.logout') }}">Log Out</a>
         {% endif %}
     </div>
 </nav>
