@@ -144,4 +144,5 @@ div.auth {
     color: whitesmoke;
     background-color: #333;
     border-radius: 5px;
+    border: 0;
 }
