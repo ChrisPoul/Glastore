@@ -51,7 +51,16 @@ nav a {
 nav form {
     float: left;
     margin: 2vmin;
-    
+}
+nav .search_bar input {
+    border: 0;
+    height: 1.5em;
+}
+nav .search_bar button {
+    border: 0;
+    height: 1.6em;
+    width: 2.3em;
+    border-radius: 4px;
 }
 nav a:hover {
     background-color: #111;
@@ -106,10 +115,13 @@ table {
 }
 .search_bar input {
     margin: 0;
+    border-radius: 5px;
+    
 }
 .search_bar button {
     background-color: white;
     border-color: white;
+    border-radius: 3px;
 }
 .customers {
     border-collapse: collapse;
