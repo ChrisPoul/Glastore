@@ -147,8 +147,7 @@ table.sidebar {
 }
 
 div.auth {
-    min-width: 20em;
-    width: 35%;
+    max-width: 17em;
     margin: auto;
     margin-top: 5vmax;
     align-self: center;
