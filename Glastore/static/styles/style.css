@@ -46,7 +46,6 @@ nav a {
     padding: 14px 16px;
     text-decoration: none;
     font-size: 17px;
-    border-right: 1px solid #bbb;
 }
 nav form {
     float: left;
@@ -54,11 +53,9 @@ nav form {
 }
 nav .search_bar input {
     border: 0;
-    height: 1.5em;
 }
 nav .search_bar button {
     border: 0;
-    height: 1.6em;
     width: 2.3em;
     border-radius: 4px;
 }
@@ -69,8 +66,8 @@ nav div.left {
     border: none;
     font-size: x-large;
 }
-nav div a:first-child {
-    border-left: 1px solid #bbb;
+nav div.left a {
+    border-right: 1px solid #bbb;;
 }
 nav div.right {
     float: right;
@@ -112,16 +109,22 @@ table {
     width: 99%;
     margin: 0;
     padding: 0;
+    vertical-align: middle;
 }
 .search_bar input {
     margin: 0;
+    height: 1.5em;
     border-radius: 5px;
     
 }
 .search_bar button {
     background-color: white;
     border-color: white;
-    border-radius: 3px;
+    height: 1.6em;
+    border-radius: 4px;
+}
+.sidebar button {
+    height: 1.8em;
 }
 .customers {
     border-collapse: collapse;
@@ -145,7 +148,7 @@ table.sidebar {
 
 div.auth {
     margin: 25%;
-    margin-top: 10%;
+    margin-top: 5%;
     padding: 5%;
     background-color: rgb(219, 219, 219);
     border-radius: 5px;
