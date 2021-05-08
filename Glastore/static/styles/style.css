@@ -111,16 +111,12 @@ textarea {
 table {
     width: 100%;
 }
-.search_bar {
-    vertical-align: middle;
-}
 .search_bar td {
     width: 99%;
-    margin: auto;
-    padding: auto;
+    padding: 0;
 }
 .search_bar input {
-    margin: 0;
+    margin: auto;
     border-radius: 5px;
     
 }
