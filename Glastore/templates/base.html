@@ -10,17 +10,19 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
 </head>
 <nav>
-    <ul>
-        <li><a href="{{ url_for('home.home') }}">Home</a></li>
+    <div>
+        <a href="{{ url_for('home.home') }}">Home</a>
+        <a href="{{ url_for('customer.customers') }}">Clientes</a>
+        <a href="{{ url_for('quote.add') }}">Cotización</a>
+    </div>
+    <div style="float: right;">
         {% if g.user %}
-        <li><a href="{{ url_for('customer.customers') }}">Clientes</a></li>
-        <li><a href="{{ url_for('quote.add') }}">Cotización</a></li>
-        <li style="float: right;"><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
+        <a href="{{ url_for('auth.logout') }}">Log Out</a>
         {% else %}
-        <li style="float: right;"><a href="{{ url_for('auth.register') }}">Register</a></li>
-        <li style="float: right;"><a href="{{ url_for('auth.login') }}">Login</a></li>
+        <a href="{{ url_for('auth.register') }}">Register</a>
+        <a href="{{ url_for('auth.login') }}">Login</a>
         {% endif %}
-    </ul>
+    </div>
 </nav>
 <header>
     {% block header %}{% endblock %}
