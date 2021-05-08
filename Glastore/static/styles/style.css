@@ -50,7 +50,7 @@ nav a {
 }
 nav form {
     float: left;
-    margin: 0.5em;
+    margin: 2vmin;
     
 }
 nav a:hover {
