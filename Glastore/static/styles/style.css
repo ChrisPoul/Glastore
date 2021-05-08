@@ -134,6 +134,7 @@ div.auth {
     padding: 5%;
     background-color: rgb(219, 219, 219);
     border-radius: 5px;
+    text-align: center;
 }
 
 .auth input {
@@ -147,4 +148,5 @@ div.auth {
     background-color: #333;
     border-radius: 5px;
     border: 0;
+    margin-top: 1em;
 }

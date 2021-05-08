@@ -10,6 +10,9 @@
         {% for head in heads %}
         <input name="{{ head }}" id="{{ head }}" placeholder="{{ heads[head] }}...">
         {% endfor %}
+        <a href="{{ url_for('auth.login') }}">
+            Ya tienes una cuenta? Has click aquí
+        </a>
         <input type="submit" value="Registrate Ahora">
     </form>
 </div>
