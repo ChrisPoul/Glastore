@@ -135,6 +135,37 @@ class TestValidate(CustomerRequestTest):
 
         self.assertNotEqual(error, None)
 
+    def test_invalid_value(self):
+        customer_request = CustomerRequest(self.customer)
+        self.customer.name = "Test2"
+        error = customer_request.validate()
+
+        self.assertNotEqual(error, None)
+
+
+class TestCheckForEmptyValues(CustomerRequestTest):
+
+    def test_empty_name(self):
+        customer_request = CustomerRequest(self.customer)
+        self.customer.name = ""
+        error = customer_request.check_for_emtpy_values()
+
+        self.assertNotEqual(error, None)
+
+    def test_empty_email(self):
+        customer_request = CustomerRequest(self.customer)
+        self.customer.email = ""
+        error = customer_request.check_for_emtpy_values()
+
+        self.assertNotEqual(error, None)
+
+    def test_emtpy_phone(self):
+        customer_request = CustomerRequest(self.customer)
+        self.customer.phone = ""
+        error = customer_request.check_for_emtpy_values()
+
+        self.assertNotEqual(error, None)
+
 
 class TestValidateName(CustomerRequestTest):
 
