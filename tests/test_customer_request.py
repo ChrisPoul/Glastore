@@ -132,3 +132,39 @@ class TestUpdate(CustomerRequestTest):
 
         self.assertEqual(error, None)
         self.assertEqual(self.customer.name, "New Name")
+
+    def test_empty_value(self):
+        customer_request = CustomerRequest(self.customer)
+        url = url_for('customer.update', customer_id=self.customer.id)
+        data = dict(
+            name="",
+            email="test@email.com",
+            phone="123 456 7890",
+            address="Test address"
+        )
+        with self.request_context(url, data):
+            error = customer_request.update()
+
+        self.assertNotEqual(error, None)
+
+    def test_repeated_name(self):
+        customer = Customer(
+            name="Test two",
+            email="test2@email.com",
+            phone="222 456 7890",
+            address="Test2 address"
+        )
+        customer.add()
+        customer_request = CustomerRequest(customer)
+        url = url_for('customer.update', customer_id=customer.id)
+        data = dict(
+            name="Test",
+            email="test2@email.com",
+            phone="222 456 7890",
+            address="Test2 address"
+        )
+        with self.request_context(url, data):
+            error = customer_request.update()
+
+        self.assertNotEqual(error, None)
+        self.assertNotIn(customer.name, db.session)

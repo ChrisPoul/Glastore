@@ -1,4 +1,4 @@
-from Glastore.models import get_form
+from Glastore.views import get_form
 from . import customer_heads
 
 repeated_value_error = "Ese valor no está disponible, intenta usar otra cosa"

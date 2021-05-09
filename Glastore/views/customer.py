@@ -2,7 +2,7 @@ from flask import (
     Blueprint, render_template, request, url_for,
     redirect, flash
 )
-from Glastore.models import get_form
+from Glastore.views import get_form
 from Glastore.models.customer import Customer, customer_heads
 from Glastore.views.auth import login_required
 

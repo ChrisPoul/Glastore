@@ -2,7 +2,7 @@ from datetime import datetime
 from flask import request
 from Glastore.models.customer import Customer
 from Glastore.models.product import Product
-from Glastore.models import get_form
+from Glastore.views import get_form
 
 
 class QuoteRequest:
