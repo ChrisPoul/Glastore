@@ -56,6 +56,8 @@ class CustomerRequest:
             if attribute == "":
                 self.error = "No se pueden dejar campos en blanco"
                 return self.error
+        
+        return self.error
 
     def validate_name(self):
         invalid_name_msg = "El nombre del cliente no puede llevar numeros, solo letras"
@@ -64,7 +66,9 @@ class CustomerRequest:
             for num in nums:
                 if num in self.customer.name:
                     self.error = invalid_name_msg
-                    break
+                    return self.error
+
+        return self.error
 
     def validate_email(self):
         invalid_email_msg = "El correo que introdujo es invalido"
@@ -72,11 +76,15 @@ class CustomerRequest:
             if "@" not in self.customer.email:
                 self.error = invalid_email_msg
 
+        return self.error
+
     def validate_phone(self):
         invalid_phone_msg = "El teléfono que puso es invalido"
-        nums = "1234567890 "
+        nums = "+1234567890 "
         if not self.error:
             for char in self.customer.phone:
                 if char not in nums:
                     self.error = invalid_phone_msg
-                    break
+                    return self.error
+
+        return self.error

@@ -17,7 +17,7 @@ class CustomerRequestTest(MyTest):
         )
         self.customer.add()
 
-    
+
 class TestAdd(MyTest):
 
     def setUp(self):
@@ -34,7 +34,7 @@ class TestAdd(MyTest):
         error = customer_request.add()
 
         self.assertIn(self.customer, db.session)
-        self.assertEqual(error, None)       
+        self.assertEqual(error, None)
 
     def test_repeated_name(self):
         self.customer.add()
@@ -130,57 +130,65 @@ class TestValidate(CustomerRequestTest):
 
     def test_empty_value(self):
         customer_request = CustomerRequest(self.customer)
-        url = url_for('customer.update', customer_id=self.customer.id)
-        data = dict(
-            name="",
-            email="test@email.com",
-            phone="123 456 7890",
-            address="Test address"
-        )
-        with self.request_context(url, data):
-            error = customer_request.update()
+        self.customer.name = ""
+        error = customer_request.validate()
 
         self.assertNotEqual(error, None)
+
+
+class TestValidateName(CustomerRequestTest):
+
+    def test_validate_name(self):
+        customer_request = CustomerRequest(self.customer)
+        self.customer.name = "New Name"
+        error = customer_request.validate_name()
+
+        self.assertEqual(error, None)
 
     def test_invalid_name(self):
         customer_request = CustomerRequest(self.customer)
-        url = url_for('customer.update', customer_id=self.customer.id)
-        data = dict(
-            name="Test2",
-            email="test@email.com",
-            phone="123 456 7890",
-            address="Test address"
-        )
-        with self.request_context(url, data):
-            error = customer_request.update()
+        self.customer.name = "Test2"
+        error = customer_request.validate_name()
 
         self.assertNotEqual(error, None)
+
+
+class TestValidateEmail(CustomerRequestTest):
+
+    def test_validate_email(self):
+        customer_request = CustomerRequest(self.customer)
+        self.customer.email = "new@email.com"
+        error = customer_request.validate_email()
+
+        self.assertEqual(error, None)
 
     def test_invalid_email(self):
         customer_request = CustomerRequest(self.customer)
-        url = url_for('customer.update', customer_id=self.customer.id)
-        data = dict(
-            name="Test",
-            email="test.email.com",
-            phone="123 456 7890",
-            address="Test address"
-        )
-        with self.request_context(url, data):
-            error = customer_request.update()
+        self.customer.email = "test.email.com"
+        error = customer_request.validate_email()
 
         self.assertNotEqual(error, None)
+
+
+class TestValidatePhone(CustomerRequestTest):
+
+    def test_validate_phone(self):
+        customer_request = CustomerRequest(self.customer)
+        self.customer.phone = "442 300 1411"
+        error = customer_request.validate_phone()
+
+        self.assertEqual(error, None)
+
+    def test_with_plus_sign(self):
+        customer_request = CustomerRequest(self.customer)
+        self.customer.phone = "+442 300 1411"
+        error = customer_request.validate_phone()
+
+        self.assertEqual(error, None)
 
     def test_invalid_phone(self):
         customer_request = CustomerRequest(self.customer)
-        url = url_for('customer.update', customer_id=self.customer.id)
-        data = dict(
-            name="Test",
-            email="test@email.com",
-            phone="some text",
-            address="Test address"
-        )
-        with self.request_context(url, data):
-            error = customer_request.update()
+        self.customer.phone = "string"
+        error = customer_request.validate_phone()
 
         self.assertNotEqual(error, None)
-
