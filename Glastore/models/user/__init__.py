@@ -9,6 +9,7 @@ from Glastore.models import (
 
 class User(db.Model):
     id = Column(Integer, primary_key=True)
+    email = Column(String(150), nullable=False, unique=True)
     username = Column(String(50), nullable=False, unique=True)
     password = Column(Text, nullable=False)
 
@@ -28,6 +29,10 @@ class User(db.Model):
     def get(id):
         return User.query.get(id)
 
-    def search(username):
-        return User.query.filter_by(username=username).first()
+    def search(search_term):
+        user = User.query.filter_by(username=search_term).first()
+        if not user:
+            user = User.query.filter_by(email=search_term).first()
+
+        return user
 

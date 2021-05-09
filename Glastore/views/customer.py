@@ -54,6 +54,7 @@ def add():
         customer = Customer(
             name=form['name'],
             email=form['email'],
+            phone=form['phone'],
             address=form['address']
         )
         error = customer.request.add()

@@ -6,32 +6,37 @@ from . import User
 class UserAuth:
 
     def register(self):
+        email = request.form['email']
         username = request.form['username']
         password = request.form['password']
         error = None
 
-        if not username:
-            error = "Nombre de usuario requerido"
+        if not email:
+            error = "Es necesario proporcionar un correo valido"        
+        elif not username:
+            error = "El nombre de usuario es requerido"
         elif not password:
             error = "Contraseña requerida"
-        elif User.search(username) is not None:
-            error = "That username is already in use"
 
         if not error:
             user = User(
+                email=email,
                 username=username,
                 password=password
             )
-            user.add()
+            try:
+                user.add()
+            except ValueError:
+                error = "Eso no está disponible"
 
         return error
 
     def login(self):
-        username = request.form['username']
+        username_email = request.form['username_email']
         password = request.form['password']
         error = None
 
-        user = User.search(username)
+        user = User.search(username_email)
         if not user:
             error = "Incorrect Username"
         elif password != user.password:

@@ -7,9 +7,13 @@ from Glastore.models.user.auth import UserAuth
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
-user_auth = UserAuth()
-user_heads = {
-    "username": "Nombre de Usuario",
+register_heads = {
+    "email": "Correo electrónico",
+    "username": "Nombre de usuario",
+    "password": "Contraseña"
+}
+login_heads = {
+    "username_email": "Nombre de usuario o correo electrónico",
     "password": "Contraseña"
 }
 
@@ -17,6 +21,7 @@ user_heads = {
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == 'POST':
+        user_auth = UserAuth()
         error = user_auth.register()
 
         if not error:
@@ -28,13 +33,14 @@ def register():
 
     return render_template(
         'auth/register.html',
-        heads=user_heads
+        heads=register_heads
     )
 
 
 @bp.route("/login", methods=('POST', 'GET'))
 def login():
     if request.method == "POST":
+        user_auth = UserAuth()
         error = user_auth.login()
 
         if not error:
@@ -46,12 +52,13 @@ def login():
     
     return render_template(
         'auth/login.html',
-        heads=user_heads
+        heads=login_heads
     )
 
 
 @bp.route('/logout')
 def logout():
+    user_auth = UserAuth()
     user_auth.logout()
     return redirect(
         url_for('auth.login')
@@ -60,6 +67,7 @@ def logout():
 
 @bp.before_app_request
 def load_loged_in_user():
+    user_auth = UserAuth()
     user_auth.load_loged_in_user()
 
 

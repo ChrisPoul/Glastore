@@ -12,8 +12,8 @@ repeated_value_msg = "Introdujo un valor que ya está en uso"
 
 
 def init_db():
-    # from .quote import SoldProduct
-    # SoldProduct.__table__.drop(db.engine)
+    # from .user import User
+    # User.__table__.drop(db.engine)
     db.drop_all()
     db.create_all()
 
