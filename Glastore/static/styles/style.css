@@ -145,10 +145,10 @@ table.sidebar {
 div.auth {
     max-width: 19em;
     margin: auto;
-    margin-top: 7vmax;
-    margin-bottom: 10vmax;
+    margin-top: 4em;
+    margin-bottom: 10em;
     align-self: center;
-    padding: 5%;
+    padding: 3em 2em;
     background-color: rgba(218, 216, 216, 0.685);
     border-radius: 2em;
     text-align: center;
