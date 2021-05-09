@@ -167,4 +167,4 @@ class TestUpdate(CustomerRequestTest):
             error = customer_request.update()
 
         self.assertNotEqual(error, None)
-        self.assertNotIn(customer.name, db.session)
+        self.assertNotEqual(customer.name, "Test")

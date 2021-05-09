@@ -6,9 +6,7 @@ from Glastore.models.window import Window
 from .final_window import FinalWindowImage
 from .request import ProductRequest
 from .orientation import WindowOrientation
-from Glastore.models import (
-    db, add_to_db, commit_to_db
-)
+from Glastore.models import db, MyModel
 
 product_heads = {
     "name": "Nombre",
@@ -19,7 +17,7 @@ product_heads = {
 }
 
 
-class Product(db.Model):
+class Product(db.Model, MyModel):
     id = Column(Integer, primary_key=True)
     quote_id = Column(Integer, ForeignKey('quote.id'), nullable=False)
     name = Column(String(300), nullable=False, unique=False, default="")
@@ -35,19 +33,6 @@ class Product(db.Model):
         'Window', backref='product', lazy=True,
         cascade='all, delete-orphan'
     )
-
-    def __repr__(self):
-        return self.__dict__
-
-    def add(self):
-        add_to_db(self)
-
-    def update(self):
-        commit_to_db()
-
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
 
     def get(id):
         return Product.query.get(id)

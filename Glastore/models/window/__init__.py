@@ -2,14 +2,14 @@ from sqlalchemy import (
     Column, Integer, String,
     Float, ForeignKey, Boolean
 )
-from Glastore.models import db, add_to_db, commit_to_db
+from Glastore.models import db, MyModel
 from .basic_windows import (
     Corrediza, Fija, Guillotina, Abatible,
     Oscilobatiente
 )
 
 
-class Window(db.Model):
+class Window(db.Model, MyModel):
     id = Column(Integer, primary_key=True)
     product_id = Column(Integer, ForeignKey('product.id'), nullable=False)
     description = Column(
@@ -17,16 +17,6 @@ class Window(db.Model):
     )
     orientacion = Column(Integer, nullable=False, default=1)
     selected = Column(Boolean, nullable=False, default=False)
-
-    def add(self):
-        add_to_db(self)
-
-    def update(self):
-        commit_to_db()
-
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
 
     def get(window_id):
         return Window.query.get(window_id)

@@ -3,16 +3,13 @@ from sqlalchemy import (
     Column, Integer, DateTime,
     ForeignKey, String, Float
 )
-from Glastore.models import (
-    db, add_to_db, commit_to_db,
-    delete_from_db
-)
+from Glastore.models import db, MyModel
 from Glastore.models.product import Product
 from Glastore.models.window import Window
 from .request import QuoteRequest
 
 
-class Quote(db.Model):
+class Quote(db.Model, MyModel):
     id = Column(Integer, primary_key=True)
     date = Column(DateTime, nullable=False, default=datetime.now)
     customer_id = Column(Integer, ForeignKey('customer.id'), nullable=False)
@@ -26,18 +23,6 @@ class Quote(db.Model):
         cascade='all, delete-orphan'
     )
     focused_product_id = Column(Integer, nullable=False, default=0)
-
-    def __repr__(self):
-        return self.__dict__
-
-    def add(self):
-        add_to_db(self)
-
-    def update(self):
-        commit_to_db()
-
-    def delete(self):
-        delete_from_db(self)
 
     def new(customer_id=1):
         quote = Quote(customer_id=customer_id)

@@ -11,6 +11,21 @@ db = SQLAlchemy()
 repeated_value_msg = "Introdujo un valor que ya está en uso"
 
 
+class MyModel:
+
+    def __repr__(self):
+        return self.__dict__
+
+    def add(self):
+        add_to_db(self)
+
+    def delete(self):
+        delete_from_db(self)
+
+    def update(self):
+        commit_to_db()
+
+
 def init_db():
     # from .user import User
     # User.__table__.drop(db.engine)

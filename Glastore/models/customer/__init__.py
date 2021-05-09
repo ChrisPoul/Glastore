@@ -1,10 +1,7 @@
 from sqlalchemy import (
     Column, Integer, String
 )
-from Glastore.models import (
-    db, add_to_db, commit_to_db,
-    delete_from_db
-)
+from Glastore.models import db, MyModel
 
 customer_heads = {
     "name": "Nombre del Cliente",
@@ -14,7 +11,7 @@ customer_heads = {
 }
 
 
-class Customer(db.Model):
+class Customer(db.Model, MyModel):
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False, unique=True)
     email = Column(String(100), nullable=True, unique=True)
@@ -24,18 +21,6 @@ class Customer(db.Model):
         'Quote', backref='author', lazy=True,
         cascade='all, delete-orphan'
     )
-
-    def __repr__(self):
-        return self.__dict__
-
-    def add(self):
-        add_to_db(self)
-
-    def delete(self):
-        delete_from_db(self)
-
-    def update(self):
-        commit_to_db()
 
     def get(id):
         return Customer.query.get(id)
