@@ -24,6 +24,9 @@ class QuoteRequest:
             "medidas": "Dimenciones"
         }
 
+    def add(self):
+        pass
+
     def edit(self):
         self.update_date()
         self.update_address()

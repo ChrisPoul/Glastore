@@ -24,7 +24,7 @@ class Quote(db.Model, MyModel):
     )
     focused_product_id = Column(Integer, nullable=False, default=0)
 
-    def new(customer_id=1):
+    def new(customer_id):
         quote = Quote(customer_id=customer_id)
         quote.add()
 
@@ -75,23 +75,11 @@ class Quote(db.Model, MyModel):
         new_product.add()
 
 
-class SoldQuote(db.Model):
+class SoldQuote(db.Model, MyModel):
     id = Column(Integer, primary_key=True)
     quote_id = Column(Integer, ForeignKey('quote.id'), nullable=False)
     date = Column(DateTime, nullable=False, default=datetime.now)
     total = Column(Float, nullable=False, default=0)
-
-    def __repr__(self):
-        return self.__dict__
-
-    def add(self):
-        add_to_db(self)
-
-    def update(self):
-        commit_to_db()
-
-    def delte(self):
-        delete_from_db(self)
 
     def get(id):
         return SoldQuote.query.get(id)
