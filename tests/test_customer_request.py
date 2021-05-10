@@ -54,7 +54,7 @@ class TestUpdate(CustomerRequestTest):
 
     def test_update(self):
         customer_request = CustomerRequest(self.customer)
-        url = url_for('customer.update', customer_id=self.customer.id)
+        url = url_for('customer.update', id=self.customer.id)
         data = dict(
             name="New Name",
             email="test@email.com",
@@ -76,7 +76,7 @@ class TestUpdate(CustomerRequestTest):
         )
         customer.add()
         customer_request = CustomerRequest(customer)
-        url = url_for('customer.update', customer_id=customer.id)
+        url = url_for('customer.update', id=customer.id)
         data = dict(
             name="Test",
             email="test2@email.com",
@@ -91,7 +91,7 @@ class TestUpdate(CustomerRequestTest):
 
     def test_update_attributes(self):
         customer_request = CustomerRequest(self.customer)
-        url = url_for('customer.update', customer_id=self.customer.id)
+        url = url_for('customer.update', id=self.customer.id)
         data = dict(
             name="New Name",
             email="test@email.com",

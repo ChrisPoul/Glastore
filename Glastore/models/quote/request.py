@@ -16,6 +16,13 @@ class QuoteRequest:
             "name",
             "email"
         ]
+        self.product_keys = {
+            "name": "Suministro y colocación de ",
+            "material": "en ",
+            "acabado": "acabado ", 
+            "cristal": "con ",
+            "medidas": "Dimenciones"
+        }
 
     def edit(self):
         self.update_date()
@@ -64,6 +71,7 @@ class QuoteRequest:
             self.add_new_product()
 
     def add_new_product(self):
+        product = self.new_product
         error = product.request.add()
         if error:
             self.quote.focused_product_id = 0
@@ -83,7 +91,24 @@ class QuoteRequest:
             error = product.request.update()
             if error:
                 self.error = error
-                break
+                return error
+
+    @property
+    def new_product(self):
+        form = get_form(empty_form)
+        product = Product.search(form["name"])
+        if product:
+            form = empty_form
+        product = Product(
+            quote_id=self.quote.id,
+            name=form['name'],
+            material=form['material'],
+            acabado=form['acabado'],
+            cristal=form['cristal'],
+            unit_price=0
+        )
+
+        return product
 
     def done(self):
         from . import SoldQuote
@@ -116,3 +141,13 @@ def get_autocomplete_data():
         if product.acabado not in set(autocomplete["acabados"]):
             autocomplete["acabados"].append(product.acabado)
     return autocomplete
+
+
+empty_form = {
+    "name": "",
+    "material": "",
+    "acabado": "",
+    "cristal": "",
+    "medidas": "",
+    "unit_price": 0
+}

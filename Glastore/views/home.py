@@ -32,7 +32,7 @@ def sidebar():
     customer = Customer.search(search_term)
     if customer:
         return redirect(
-            url_for('customer.profile', customer_id=customer.id)
+            url_for('customer.profile', id=customer.id)
         )
 
     return redirect(

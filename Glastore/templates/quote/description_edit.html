@@ -13,7 +13,7 @@
     {% if key == "medidas" %}
     <input name="{{ product.unique_keys[key] }}" id="{{ product.unique_keys[key] }}"
         placeholder="{{ product_placeholders[key] }}" value="{{ product[key] }}" 
-        {% if quote.focused_product_id==product.id %}autofocus{%endif %}>
+        {% if quote.focused_id==product.id %}autofocus{%endif %}>
     {% else %}
     <input name="{{ product.unique_keys[key] }}" id="{{ product.unique_keys[key] }}"
         placeholder="{{ product_placeholders[key] }}" value="{{ product[key] }}" 
@@ -24,7 +24,7 @@
     {{ product_keys[key] }}<br>
     <input name="{{ key }}" id="{{ key }}" placeholder="{{ product_placeholders[key] }}"
         value="{{ quote.request.new_product[key] }}" list="autocomplete-{{ key }}s" 
-        {% if quote.focused_product_id==0 %}autofocus{% endif %}>
+        {% if quote.focused_id==0 %}autofocus{% endif %}>
     {% endif %}
     {% endif %}
     <br>

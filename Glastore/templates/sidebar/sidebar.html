@@ -7,7 +7,7 @@
     {% for quote in sidebar_quotes %}
     <tr>
         <td>
-            <a href="{{ url_for('quote.edit', quote_id=quote.id) }}">
+            <a href="{{ url_for('quote.edit', id=quote.id) }}">
                 {{ quote.folio }}
             </a>
         </td>

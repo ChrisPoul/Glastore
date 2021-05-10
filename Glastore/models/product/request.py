@@ -1,6 +1,6 @@
 from flask import request
 from Glastore.views import get_form
-from . import Product
+from . import Product, product_heads
 
 
 class ProductRequest:
@@ -9,44 +9,14 @@ class ProductRequest:
         self.product = product
         self.quote = product.quote
         self.error = None
-        self.product_keys = {
-            "name": "Suministro y colocación de ",
-            "material": "en ",
-            "acabado": "acabado ", 
-            "cristal": "con ",
-            "medidas": "Dimenciones"
-        }
 
     def add(self):
-        form = self.get_form()
-        product = Product(
-            quote_id=self.quote.id,
-            name=form['name'],
-            material=form['material'],
-            acabado=form['acabado'],
-            cristal=form['cristal'],
-            unit_price=0
-        )
         error = self.validate()
         if not error:
             self.product.add()
 
         return error
 
-    def get_form(self):
-        form = get_form(self.product_keys)
-        product = Product.search(form["name"])
-        if product:
-            form = {
-                "name": "",
-                "material": "",
-                "acabado": "",
-                "cristal": "",
-                "medidas": "",
-                "unit_price": 0
-            }
-
-        return form
 
     def update(self):
         self.update_attributes()
@@ -58,24 +28,28 @@ class ProductRequest:
         return self.error
 
     def validate(self):
-        self.validate_fields()
-        self.validate_price()
+        self.validate_attributes()
+        self.validate_unit_price()
 
         return self.error
 
-    def validate_fields(self):
-        if self.product.name == "" or self.product.material == "" or self.product.cristal == "" or self.product.acabado == "":
-            self.error = "No se pueden dejar campos en blanco"
+    def validate_attributes(self):
+        for head in product_heads:
+            value = getattr(self.product, head)
+            if value == "":
+                self.error = "No se pueden dejar campos en blanco"
+                return self.error
 
-    def validate_price(self):
-        if self.product.unit_price:
-            try:
-                float(self.product.unit_price)
-            except ValueError:
-                self.error = "Numero invalido"
-                self.product.unit_price = 0
-        else:
+    def validate_unit_price(self):
+        if not self.product.unit_price:
             self.product.unit_price = 0
+        try:
+            float(self.product.unit_price)
+        except ValueError:
+            self.error = "Numero invalido"
+            self.product.unit_price = 0
+        
+        return self.error
 
     def update_attributes(self):
         attributes = [

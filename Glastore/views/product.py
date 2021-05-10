@@ -8,35 +8,35 @@ from Glastore.views.auth import login_required
 bp = Blueprint('product', __name__, url_prefix='/product')
 
 
-@bp.route('/select_next_window/<int:product_id>')
+@bp.route('/select_next_window/<int:id>')
 @login_required
-def select_next_window(product_id):
-    product = Product.get(product_id)
+def select_next_window(id):
+    product = Product.get(id)
     product.orientation.select_next_window()
 
     return redirect(
-        url_for('quote.edit', quote_id=product.quote_id)
+        url_for('quote.edit', id=product.quote_id)
     )
 
 
-@bp.route('/rotate_window/<int:product_id>')
+@bp.route('/rotate_window/<int:id>')
 @login_required
-def rotate_window(product_id):
-    product = Product.get(product_id)
+def rotate_window(id):
+    product = Product.get(id)
     product.orientation.rotate_window()
 
     return redirect(
-        url_for('quote.edit', quote_id=product.quote_id)
+        url_for('quote.edit', id=product.quote_id)
     )
 
 
-@bp.route('/delete/<int:product_id>')
+@bp.route('/delete/<int:id>')
 @login_required
-def delete(product_id):
-    product = Product.get(product_id)
+def delete(id):
+    product = Product.get(id)
     quote_id = product.quote.id
     product.delete()
 
     return redirect(
-        url_for('quote.edit', quote_id=quote_id)
+        url_for('quote.edit', id=quote_id)
     )

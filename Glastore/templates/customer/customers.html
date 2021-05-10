@@ -23,7 +23,7 @@
             {% for head in heads %}
             <td>
                 {% if head == "name" %}
-                <a href="{{ url_for('customer.profile', customer_id=customer.id) }}">
+                <a href="{{ url_for('customer.profile', id=customer.id) }}">
                     {{ customer[head] }}
                 </a>
                 {% else %}

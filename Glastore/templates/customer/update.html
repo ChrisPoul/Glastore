@@ -14,7 +14,7 @@
         <input type="submit" value="Aceptar">
     </form>
     <hr>
-    <form action="{{ url_for('customer.delete', customer_id=customer.id) }}" method="post">
+    <form action="{{ url_for('customer.delete', id=customer.id) }}" method="post">
         <input class="danger" type="submit" value="Eliminar" onclick="return confirm('Estás Seguro?');">
     </form>
 </div>

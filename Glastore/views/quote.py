@@ -66,7 +66,7 @@ def add():
             if customer:
                 quote = Quote.new(customer.id)
                 return redirect(
-                    url_for('quote.edit', quote_id=quote.id)
+                    url_for('quote.edit', id=quote.id)
                 )
         customer = Customer(
             name=form['name'],
@@ -78,7 +78,7 @@ def add():
         if not error:
             quote = Quote.new(customer.id)
             return redirect(
-                url_for('quote.edit', quote_id=quote.id)
+                url_for('quote.edit', id=quote.id)
             )
         flash(error)
 
@@ -94,9 +94,9 @@ def add():
     )
 
 
-@bp.route("/edit/<int:quote_id>", methods=('GET', 'POST'))
-def edit(quote_id):
-    quote = Quote.get(quote_id)
+@bp.route("/edit/<int:id>", methods=('GET', 'POST'))
+def edit(id):
+    quote = Quote.get(id)
     quote.done = False
     if request.method == "POST":
         error = quote.request.edit()
@@ -115,9 +115,9 @@ def edit(quote_id):
     )
 
 
-@bp.route("/done/<int:quote_id>")
-def done(quote_id):
-    quote = Quote.get(quote_id)
+@bp.route("/done/<int:id>")
+def done(id):
+    quote = Quote.get(id)
     quote.request.done()
     quote.done = True
 

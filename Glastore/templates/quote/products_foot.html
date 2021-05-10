@@ -2,7 +2,7 @@
     <td class="bd-right-0" style="text-align: left;" colspan=3>
         {% if not quote.done %}
         <input type="submit" value="Aceptar"><br>
-        <a href="{{ url_for('quote.done', quote_id=quote.id) }}">
+        <a href="{{ url_for('quote.done', id=quote.id) }}">
             <input type="button" value="Done">
         </a>
         {% endif %}

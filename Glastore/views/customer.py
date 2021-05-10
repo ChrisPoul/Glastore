@@ -20,7 +20,7 @@ def customers():
         customer = Customer.search(search_term)
         if customer:
             return redirect(
-                url_for('customer.profile', customer_id=customer.id)
+                url_for('customer.profile', id=customer.id)
             )
         else:
             flash("No se encontró ningún cliente")
@@ -34,10 +34,10 @@ def customers():
     )
 
 
-@bp.route('/profile/<int:customer_id>')
+@bp.route('/profile/<int:id>')
 @login_required
-def profile(customer_id):
-    customer = Customer.get(customer_id)
+def profile(id):
+    customer = Customer.get(id)
 
     return render_template(
         'customer/profile.html', customer=customer
@@ -73,10 +73,10 @@ def add():
     )
 
 
-@bp.route('/update/<int:customer_id>', methods=('GET', 'POST'))
+@bp.route('/update/<int:id>', methods=('GET', 'POST'))
 @login_required
-def update(customer_id):
-    customer = Customer.get(customer_id)
+def update(id):
+    customer = Customer.get(id)
 
     if request.method == "POST":
         error = customer.request.update()
@@ -95,10 +95,10 @@ def update(customer_id):
     )
 
 
-@bp.route('/delete/<int:customer_id>', methods=('POST',))
+@bp.route('/delete/<int:id>', methods=('POST',))
 @login_required
-def delete(customer_id):
-    customer = Customer.get(customer_id)
+def delete(id):
+    customer = Customer.get(id)
     customer.delete()
 
     return redirect(
