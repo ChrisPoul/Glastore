@@ -28,24 +28,40 @@ class QuoteRequest:
         pass
 
     def edit(self):
-        self.update_date()
+        self.validate()
         self.update_address()
         self.update_customer()
         self.add_product()
         self.update_products()
+        self.update_date()
 
         return self.error
 
-    def update_date(self):
-        self.quote.date = datetime.now()
-        self.quote.update()
-
-    def update_address(self):
+    def validate(self):
         if self.quote.address == "":
             self.error = "No se pueden dejar campos en blanco"
+        
+        return self.error
+
+    def update_date(self):
         if not self.error:
-            self.quote.address = request.form["address"]
+            self.quote.date = datetime.now()
             self.quote.update()
+
+    def update_address(self):
+        if not self.quote.address:
+            self.quote.address = self.customer.address
+        if not self.error:
+            self.attempt_update_address()
+
+        return self.error
+
+    def attempt_update_address(self):
+        try:
+            self.quote.address = request.form["address"]
+        except KeyError:
+            pass
+        self.quote.update()
 
     def update_customer(self):
         self.update_customer_attributes()
@@ -54,6 +70,8 @@ class QuoteRequest:
             self.error = self.customer.request.attempt_update()
         else:
             self.error = error
+
+        return self.error
 
     def update_customer_attributes(self):
         for attribute in self.customer_heads:
@@ -64,14 +82,24 @@ class QuoteRequest:
             head = "customer_name"
         else:
             head = attribute
-        setattr(self.customer, attribute, request.form[head])
+        self.attempt_update_customer_attribute(attribute, head)
+    
+    def attempt_update_customer_attribute(self, attribute, head):
+        try:
+            value = request.form[head]
+            setattr(self.customer, attribute, value)
+        except KeyError:
+            pass
 
     def add_product(self):
+        error = None
         product = self.get_product()
         if product:
             self.quote.add_product(product)
         else:
-            self.add_new_product()
+            error = self.add_new_product()
+
+        return error
 
     def add_new_product(self):
         product = self.new_product
@@ -80,6 +108,8 @@ class QuoteRequest:
             self.quote.focused_product_id = 0
         else:
             self.quote.focused_product_id = product.id
+
+        return error
 
     def get_product(self):
         try:

@@ -55,7 +55,7 @@ class TestUpdate(ProductRequestTest):
 
     def test_update(self):
         product_request = ProductRequest(self.product)
-        url = url_for('quote.edit', id=self.product.id)
+        url = url_for('quote.edit', id=self.quote.id)
         data = dict(
             name1="New Name",
             material1="Material",
@@ -93,7 +93,7 @@ class TestUpdate(ProductRequestTest):
 
     def test_empty_value(self):
         product_request = ProductRequest(self.product)
-        url = url_for('quote.edit', id=self.product.id)
+        url = url_for('quote.edit', id=self.quote.id)
         data = dict(
             name1="",
             material1="Material",
@@ -107,7 +107,7 @@ class TestUpdate(ProductRequestTest):
 
     def test_update_attributes(self):
         product_request = ProductRequest(self.product)
-        url = url_for('quote.edit', id=self.product.id)
+        url = url_for('quote.edit', id=self.quote.id)
         data = dict(
             name1="New Name",
             material1="New Material",
@@ -122,7 +122,7 @@ class TestUpdate(ProductRequestTest):
 
     def test_update_attribute(self):
         product_request = ProductRequest(self.product)
-        url = url_for('quote.edit', id=self.product.id)
+        url = url_for('quote.edit', id=self.quote.id)
         data = dict(
             name1="New Name",
             material1="New Material",
