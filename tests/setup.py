@@ -4,19 +4,6 @@ from Glastore import create_app
 from Glastore.models.customer import Customer
 
 
-def make_test_customer(name="Test"):
-    customer = Customer(
-        name=name,
-        email=f"{name}@email.com",
-        address=f"Fake address of {name}"
-    )
-    error = customer.add()
-    if error:
-        return customer, error
-
-    return customer
-
-
 class MyTest(TestCase):
 
     def create_app(self):
