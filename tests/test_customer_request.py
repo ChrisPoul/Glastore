@@ -1,6 +1,5 @@
 from flask import url_for
 from .setup import MyTest
-from Glastore.models import db
 from Glastore.models.customer import Customer
 from Glastore.models.customer.request import CustomerRequest
 
@@ -33,7 +32,7 @@ class TestAdd(MyTest):
         customer_request = CustomerRequest(self.customer)
         error = customer_request.add()
 
-        self.assertIn(self.customer, db.session)
+        self.assertIn(self.customer, self.db.session)
         self.assertEqual(error, None)
 
     def test_repeated_name(self):
@@ -47,7 +46,7 @@ class TestAdd(MyTest):
         customer_request = CustomerRequest(customer)
         error = customer_request.add()
 
-        self.assertNotIn(customer, db.session)
+        self.assertNotIn(customer, self.db.session)
         self.assertNotEqual(error, None)
 
 

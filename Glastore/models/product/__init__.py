@@ -4,7 +4,6 @@ from sqlalchemy import (
 )
 from Glastore.models.window import Window
 from .final_window import FinalWindowImage
-from .request import ProductRequest
 from .orientation import WindowOrientation
 from Glastore.models import db, MyModel
 
@@ -66,6 +65,7 @@ class Product(db.Model, MyModel):
 
     @property
     def request(self):
+        from .request import ProductRequest
         return ProductRequest(self)
 
     @property

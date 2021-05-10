@@ -1,5 +1,4 @@
 from .setup import MyTest
-from Glastore.models import db
 from Glastore.models.customer import Customer
 
 
@@ -14,7 +13,7 @@ class TestDbMethods(MyTest):
         )
         customer.add()
 
-        self.assertIn(customer, db.session)
+        self.assertIn(customer, self.db.session)
     
     def test_update(self):
         customer = Customer(
@@ -39,7 +38,7 @@ class TestDbMethods(MyTest):
         customer.add()
         customer.delete()
         
-        self.assertNotIn(customer, db.session)
+        self.assertNotIn(customer, self.db.session)
 
     
 class TestQueryMethods(MyTest):

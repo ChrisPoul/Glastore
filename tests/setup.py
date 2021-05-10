@@ -17,11 +17,12 @@ class MyTest(TestCase):
 
     def setUp(self):
         self.client = self.app.test_client()
-        db.create_all()
+        self.db = db
+        self.db.create_all()
 
     def tearDown(self):
-        db.session.remove()
-        db.drop_all()
+        self.db.session.remove()
+        self.db.drop_all()
 
     def request_context(self, url, data):
         with self.client:

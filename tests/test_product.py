@@ -1,5 +1,4 @@
 from .setup import MyTest
-from Glastore.models import db
 from Glastore.models.product import Product
 
 
@@ -29,7 +28,7 @@ class TestAdd(ProductTest):
         )
         product.add()
 
-        self.assertIn(product, db.session)
+        self.assertIn(product, self.db.session)
 
     def test_repeated_name(self):
         product = Product(
@@ -41,7 +40,7 @@ class TestAdd(ProductTest):
         )
         product.add()
 
-        self.assertIn(product, db.session)
+        self.assertIn(product, self.db.session)
 
 
 class TestUpdate(ProductTest):
@@ -72,5 +71,5 @@ class TestDelete(ProductTest):
     def test_delete(self):
         self.product.delete()
 
-        self.assertNotIn(self.product, db.session)
+        self.assertNotIn(self.product, self.db.session)
 
