@@ -11,7 +11,7 @@ class WindowOrientation:
         self.unselect_prev_window()
         self.set_selected_window()
         self.select_window()
-        self.update()
+        
 
     def select_window(self):
         if self.windows_are_selectable:
@@ -21,7 +21,6 @@ class WindowOrientation:
     
     def update(self):
         self.product.selected_window = self.selected_window
-        self.product.update()
 
     def set_selected_window(self):
         for _ in self.windows:
@@ -67,4 +66,3 @@ class WindowOrientation:
                 window.orientacion += 1
         print(window.orientacion)
         self.quote.focused_product_id = self.product.id
-        self.update()

@@ -12,8 +12,8 @@ class QuoteRequest:
         self.customer = quote.author
         self.products = quote.products
         self.error = None
-        self.customer_heads = [
-            "name",
+        self.customer.request_heads = [
+            "customer_name",
             "email"
         ]
         self.product_keys = {
@@ -29,30 +29,46 @@ class QuoteRequest:
 
     def edit(self):
         self.validate()
-        self.update_address()
-        self.update_customer()
-        self.add_product()
-        self.update_products()
-        self.update_date()
+        if not self.error:
+            self.update()
+            self.add_product()
 
         return self.error
 
     def validate(self):
         if self.quote.address == "":
             self.error = "No se pueden dejar campos en blanco"
+        if not self.error:
+            self.validate_customer()
+        if not self.error:
+            self.validate_products()
         
         return self.error
 
-    def update_date(self):
-        if not self.error:
-            self.quote.date = datetime.now()
-            self.quote.update()
+    def validate_customer(self):
+        self.customer.request.update_attributes()
+        self.error = self.customer.request.validate()
+
+        return self.error
+
+    def validate_products(self):
+        for product in self.products:
+            product.request.update_attributes()
+            self.error = product.request.validate()
+            if self.error:
+                return self.error
+
+        return self.error
+
+    def update(self):
+        self.update_address()
+        self.update_date()
+        self.quote.update()
 
     def update_address(self):
         if not self.quote.address:
             self.quote.address = self.customer.address
-        if not self.error:
-            self.attempt_update_address()
+        self.attempt_update_address()
 
         return self.error
 
@@ -61,45 +77,16 @@ class QuoteRequest:
             self.quote.address = request.form["address"]
         except KeyError:
             pass
-        self.quote.update()
 
-    def update_customer(self):
-        self.update_customer_attributes()
-        error = self.customer.request.validate()
-        if not error:
-            self.error = self.customer.request.attempt_update()
-        else:
-            self.error = error
-
-        return self.error
-
-    def update_customer_attributes(self):
-        for attribute in self.customer_heads:
-            self.update_customer_attribute(attribute)
-
-    def update_customer_attribute(self, attribute):
-        if attribute == "name":
-            head = "customer_name"
-        else:
-            head = attribute
-        self.attempt_update_customer_attribute(attribute, head)
-    
-    def attempt_update_customer_attribute(self, attribute, head):
-        try:
-            value = request.form[head]
-            setattr(self.customer, attribute, value)
-        except KeyError:
-            pass
+    def update_date(self):
+        self.quote.date = datetime.now()
 
     def add_product(self):
-        error = None
         product = self.get_product()
         if product:
             self.quote.add_product(product)
         else:
-            error = self.add_new_product()
-
-        return error
+            self.add_new_product()
 
     def add_new_product(self):
         product = self.new_product
@@ -109,8 +96,6 @@ class QuoteRequest:
         else:
             self.quote.focused_product_id = product.id
 
-        return error
-
     def get_product(self):
         try:
             product = Product.search(request.form['name'])
@@ -118,13 +103,6 @@ class QuoteRequest:
             product = None
 
         return product
-
-    def update_products(self):
-        for product in self.products:
-            error = product.request.update()
-            if error:
-                self.error = error
-                return error
 
     @property
     def new_product(self):

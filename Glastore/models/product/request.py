@@ -11,18 +11,18 @@ class ProductRequest:
         self.error = None
 
     def add(self):
-        error = self.validate()
-        if not error:
+        self.validate()
+        if not self.error:
             self.product.add()
 
-        return error
+        return self.error
 
 
     def update(self):
         self.update_attributes()
         self.validate()
-        self.update_total()
         if self.error is None:
+            self.update_total()
             self.product.update()
 
         return self.error

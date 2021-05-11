@@ -21,6 +21,7 @@ class Customer(db.Model, MyModel):
         'Quote', backref='author', lazy=True,
         cascade='all, delete-orphan'
     )
+    request_heads = customer_heads
 
     def get(id):
         return Customer.query.get(id)

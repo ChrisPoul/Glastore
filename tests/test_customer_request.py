@@ -35,20 +35,6 @@ class TestAdd(MyTest):
         self.assertIn(self.customer, self.db.session)
         self.assertEqual(error, None)
 
-    def test_repeated_name(self):
-        self.customer.add()
-        customer = Customer(
-            name="Test",
-            email="test2@email.com",
-            phone="222 456 7890",
-            address="Test2 address"
-        )
-        customer_request = CustomerRequest(customer)
-        error = customer_request.add()
-
-        self.assertNotIn(customer, self.db.session)
-        self.assertNotEqual(error, None)
-
 
 class TestUpdate(CustomerRequestTest):
 
@@ -67,28 +53,6 @@ class TestUpdate(CustomerRequestTest):
         self.assertEqual(error, None)
         self.assertEqual(self.customer.name, "New Name")
 
-    def test_repeated_name(self):
-        customer = Customer(
-            name="Test two",
-            email="test2@email.com",
-            phone="222 456 7890",
-            address="Test2 address"
-        )
-        customer.add()
-        customer_request = CustomerRequest(customer)
-        url = url_for('customer.update', id=customer.id)
-        data = dict(
-            name="Test",
-            email="test2@email.com",
-            phone="222 456 7890",
-            address="Test2 address"
-        )
-        with self.request_context(url, data):
-            error = customer_request.update()
-
-        self.assertNotEqual(error, None)
-        self.assertNotEqual(customer.name, "Test")
-
     def test_update_attributes(self):
         customer_request = CustomerRequest(self.customer)
         url = url_for('customer.update', id=self.customer.id)
@@ -102,21 +66,6 @@ class TestUpdate(CustomerRequestTest):
             customer_request.update_attributes()
 
         self.assertEqual(self.customer.name, "New Name")
-
-    def test_attempt_update(self):
-        customer = Customer(
-            name="Test two",
-            email="test2@email.com",
-            phone="222 456 7890",
-            address="Test2 address"
-        )
-        customer.add()
-        customer_request = CustomerRequest(customer)
-        customer.name = "Test"
-        error = customer_request.attempt_update()
-
-        self.assertNotEqual(error, None)
-        self.assertNotEqual(customer.name, "Test")
 
 
 class TestValidate(CustomerRequestTest):

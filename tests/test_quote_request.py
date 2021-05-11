@@ -99,18 +99,6 @@ class TestUpdateCustomer(QuoteTest):
         self.assertEqual(error, None)
         self.assertEqual(self.customer.name, "New Name")
 
-    def test_invalid_name(self):
-        quote_request = QuoteRequest(self.quote)
-        url = url_for('quote.edit', id=self.quote.id)
-        data = dict(
-            customer_name="New 1nval1d nam3"
-        )
-        with self.request_context(url, data):
-            error = quote_request.update_customer()
-
-        self.assertNotEqual(error, None)
-        self.db.session.rollback()
-        self.assertEqual(self.customer.name, "Test")
 
     def test_update_email(self):
         quote_request = QuoteRequest(self.quote)
@@ -123,19 +111,6 @@ class TestUpdateCustomer(QuoteTest):
 
         self.assertEqual(error, None)
         self.assertEqual(self.customer.email, "new@email.com")
-
-    def test_invalid_email(self):
-        quote_request = QuoteRequest(self.quote)
-        url = url_for('quote.edit', id=self.quote.id)
-        data = dict(
-            email="new.email.com"
-        )
-        with self.request_context(url, data):
-            error = quote_request.update_customer()
-
-        self.assertNotEqual(error, None)
-        self.db.session.rollback()
-        self.assertEqual(self.customer.email, "test@email.com")
 
 
 class TestAddProduct(QuoteTest):
@@ -181,3 +156,69 @@ class TestAddProduct(QuoteTest):
 
         self.assertNotEqual(error, None)
         self.assertEqual(len(self.quote.products), 1)
+
+
+class TestAddNewProduct(QuoteTest):
+
+    def test_add_new_product(self):
+        quote_request = QuoteRequest(self.quote)
+        url = url_for('quote.edit', id=self.quote.id)
+        data = dict(
+            name="Test two",
+            material="Material two",
+            acabado="Acabado two",
+            cristal="Cristal two"
+        )
+        with self.request_context(url, data):
+            error = quote_request.add_new_product()
+
+        self.assertEqual(error, None)
+        self.assertEqual(len(self.quote.products), 2)
+        self.assertEqual(self.quote.focused_product_id, 2)
+
+    def test_invalid_product(self):
+        quote_request = QuoteRequest(self.quote)
+        url = url_for('quote.edit', id=self.quote.id)
+        data = dict(
+            name="Test two",
+            material="",
+            acabado="",
+            cristal=""
+        )
+        with self.request_context(url, data):
+            error = quote_request.add_product()
+
+        self.assertNotEqual(error, None)
+        self.assertEqual(len(self.quote.products), 1)
+        self.assertEqual(self.quote.focused_product_id, 0)
+
+
+class TestGetProduct(QuoteTest):
+
+    def test_get_existing(self):
+        quote_request = QuoteRequest(self.quote)
+        url = url_for('quote.edit', id=self.quote.id)
+        data = dict(
+            name="Test"
+        )
+        with self.request_context(url, data):
+            product = quote_request.get_product()
+
+        self.assertEqual(product, self.product)
+
+    def test_non_existing_product(self):
+        quote_request = QuoteRequest(self.quote)
+        url = url_for('quote.edit', id=self.quote.id)
+        data = dict(
+            name="Test two"
+        )
+        with self.request_context(url, data):
+            product = quote_request.get_product()
+
+        self.assertEqual(product, None)
+
+
+class TestUpgradeProducts(QuoteTest):
+
+    def test_upgrade_products(self):
+        pass
