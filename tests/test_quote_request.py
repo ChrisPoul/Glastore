@@ -33,7 +33,14 @@ class TestEdit(QuoteTest):
     def test_edit(self):
         quote_request = QuoteRequest(self.quote)
         url = url_for('quote.edit', id=self.quote.id)
-        data = {}
+        data = dict(
+            customer_name="Chris",
+            email="test@email.com",
+            name="Test two",
+            material="Material two",
+            acabado="Acabado two",
+            cristal="Cristal two"
+        )
         with self.request_context(url, data):
             error = quote_request.edit()
 
@@ -42,23 +49,20 @@ class TestEdit(QuoteTest):
     def test_date(self):
         quote_request = QuoteRequest(self.quote)
         old_date = self.quote.date
-        url = url_for('quote.edit', id=self.quote.id)
-        data = {}
-        with self.request_context(url, data):
-            error = quote_request.edit()
+        quote_request.update_date()
 
-        self.assertEqual(error, None)
         self.assertLess(old_date, self.quote.date)
 
     def test_address(self):
         quote_request = QuoteRequest(self.quote)
         url = url_for('quote.edit', id=self.quote.id)
-        data = {}
+        data = dict(
+            address="New Address"
+        )
         with self.request_context(url, data):
-            error = quote_request.edit()
+            quote_request.update_address()
 
-        self.assertEqual(error, None)
-        self.assertEqual(self.quote.address, self.customer.address)
+        self.assertEqual(self.quote.address, "New Address")
 
     
 class TestValidate(QuoteTest):
@@ -79,38 +83,35 @@ class TestUpdateAddress(QuoteTest):
             address="New Address"
         )
         with self.request_context(url, data):
-            error = quote_request.update_address()
+            quote_request.update_address()
 
-        self.assertEqual(error, None)
         self.assertEqual(self.quote.address, "New Address")
 
 
-class TestUpdateCustomer(QuoteTest):
+class TestValidateCustomer(QuoteTest):
 
-    def test_update_name(self):
+    def test_name(self):
         quote_request = QuoteRequest(self.quote)
         url = url_for('quote.edit', id=self.quote.id)
         data = dict(
             customer_name="New Name"
         )
         with self.request_context(url, data):
-            error = quote_request.update_customer()
+            error = quote_request.validate_customer()
 
-        self.assertEqual(error, None)
-        self.assertEqual(self.customer.name, "New Name")
+        self.assertNotEqual(error, None)
 
 
-    def test_update_email(self):
+    def test_email(self):
         quote_request = QuoteRequest(self.quote)
         url = url_for('quote.edit', id=self.quote.id)
         data = dict(
             email="new@email.com"
         )
         with self.request_context(url, data):
-            error = quote_request.update_customer()
+            error = quote_request.validate_customer()
 
-        self.assertEqual(error, None)
-        self.assertEqual(self.customer.email, "new@email.com")
+        self.assertNotEqual(error, None)
 
 
 class TestAddProduct(QuoteTest):
@@ -122,9 +123,8 @@ class TestAddProduct(QuoteTest):
             name="Test"
         )
         with self.request_context(url, data):
-            error = quote_request.add_product()
+            quote_request.add_product()
 
-        self.assertEqual(error, None)
         self.assertEqual(len(self.quote.products), 2)
 
     def test_add_new_product(self):
@@ -137,9 +137,8 @@ class TestAddProduct(QuoteTest):
             cristal="Cristal two"
         )
         with self.request_context(url, data):
-            error = quote_request.add_product()
+            quote_request.add_product()
 
-        self.assertEqual(error, None)
         self.assertEqual(len(self.quote.products), 2)
 
     def test_invalid_new_product(self):
@@ -152,9 +151,8 @@ class TestAddProduct(QuoteTest):
             cristal=""
         )
         with self.request_context(url, data):
-            error = quote_request.add_product()
+            quote_request.add_product()
 
-        self.assertNotEqual(error, None)
         self.assertEqual(len(self.quote.products), 1)
 
 
@@ -170,9 +168,8 @@ class TestAddNewProduct(QuoteTest):
             cristal="Cristal two"
         )
         with self.request_context(url, data):
-            error = quote_request.add_new_product()
+            quote_request.add_new_product()
 
-        self.assertEqual(error, None)
         self.assertEqual(len(self.quote.products), 2)
         self.assertEqual(self.quote.focused_product_id, 2)
 
@@ -186,9 +183,8 @@ class TestAddNewProduct(QuoteTest):
             cristal=""
         )
         with self.request_context(url, data):
-            error = quote_request.add_product()
+            quote_request.add_product()
 
-        self.assertNotEqual(error, None)
         self.assertEqual(len(self.quote.products), 1)
         self.assertEqual(self.quote.focused_product_id, 0)
 

@@ -4,7 +4,7 @@ from Glastore.models.customer import Customer
 from Glastore.models.customer.request import CustomerRequest
 
 
-class CustomerRequestTest(MyTest):
+class CustomerTest(MyTest):
 
     def setUp(self):
         MyTest.setUp(self)
@@ -17,16 +17,7 @@ class CustomerRequestTest(MyTest):
         self.customer.add()
 
 
-class TestAdd(MyTest):
-
-    def setUp(self):
-        MyTest.setUp(self)
-        self.customer = Customer(
-            name="Test",
-            email="test@email.com",
-            phone="123 456 7890",
-            address="Test address"
-        )
+class TestAdd(CustomerTest):
 
     def test_add(self):
         customer_request = CustomerRequest(self.customer)
@@ -36,7 +27,7 @@ class TestAdd(MyTest):
         self.assertEqual(error, None)
 
 
-class TestUpdate(CustomerRequestTest):
+class TestUpdate(CustomerTest):
 
     def test_update(self):
         customer_request = CustomerRequest(self.customer)
@@ -68,7 +59,7 @@ class TestUpdate(CustomerRequestTest):
         self.assertEqual(self.customer.name, "New Name")
 
 
-class TestValidate(CustomerRequestTest):
+class TestValidate(CustomerTest):
 
     def test_validate(self):
         customer_request = CustomerRequest(self.customer)
@@ -83,6 +74,26 @@ class TestValidate(CustomerRequestTest):
 
         self.assertNotEqual(error, None)
 
+    def test_repeated_value(self):
+        customer = Customer(
+            name="Test",
+            email="test@email.com",
+            phone="123 456 7891",
+            address="Test address"
+        )
+        customer_request = CustomerRequest(customer)
+        url = url_for('customer.add')
+        data = dict(
+            name="Test",
+            email="test@email.com",
+            phone="123 456 7890",
+            address="Test address"
+        )
+        with self.request_context(url, data):
+            error = customer_request.validate()
+
+        self.assertNotEqual(error, None)
+
     def test_invalid_value(self):
         customer_request = CustomerRequest(self.customer)
         self.customer.name = "Test2"
@@ -91,7 +102,7 @@ class TestValidate(CustomerRequestTest):
         self.assertNotEqual(error, None)
 
 
-class TestCheckForEmptyValues(CustomerRequestTest):
+class TestCheckForEmptyValues(CustomerTest):
 
     def test_empty_name(self):
         customer_request = CustomerRequest(self.customer)
@@ -115,7 +126,80 @@ class TestCheckForEmptyValues(CustomerRequestTest):
         self.assertNotEqual(error, None)
 
 
-class TestValidateName(CustomerRequestTest):
+class TestCheckForRepeatedValues(CustomerTest):
+
+    def test_repeated_value_add(self):
+        customer = Customer(
+            name="Test",
+            email="test@email.com",
+            phone="123 456 7891",
+            address="Test address"
+        )
+        customer_request = CustomerRequest(customer)
+        url = url_for('customer.add')
+        data = dict(
+            name="Test",
+            email="test@email.com",
+            phone="123 456 7890",
+            address="Test address"
+        )
+        with self.request_context(url, data):
+            error = customer_request.check_for_repeated_values()
+
+        self.assertNotEqual(error, None)
+
+    def test_repeated_value_update(self):
+        customer = Customer(
+            name="Test two",
+            email="test2@email.com",
+            phone="321 654 0987",
+            address="Test address two"
+        )
+        customer.add()
+        customer_request = CustomerRequest(customer)
+        url = url_for('customer.update', id=customer.id)
+        data = dict(
+            name="Test",
+            email="test@email.com",
+            phone="123 456 7890",
+            address="Test address"
+        )
+        with self.request_context(url, data):
+            error = customer_request.check_for_repeated_values()
+
+        self.assertNotEqual(error, None)
+
+
+class TestCheckForRepeatedValue(CustomerTest):
+
+    def test_value_not_repeated(self):
+        customer = Customer(
+            name="Test two",
+            email="test2@email.com",
+            phone="321 654 0987",
+            address="Test address two"
+        )
+        customer.add()
+        customer_request = CustomerRequest(customer)
+        error = customer_request.check_for_repeated_value("Test two")
+
+        self.assertEqual(error, None)
+
+    def test_repeated_name(self):
+        customer = Customer(
+            name="Test two",
+            email="test2@email.com",
+            phone="321 654 0987",
+            address="Test address two"
+        )
+        customer.add()
+        customer_request = CustomerRequest(customer)
+        error = customer_request.check_for_repeated_value("Test")
+
+        self.assertNotEqual(error, None)
+
+
+class TestValidateName(CustomerTest):
 
     def test_validate_name(self):
         customer_request = CustomerRequest(self.customer)
@@ -132,7 +216,7 @@ class TestValidateName(CustomerRequestTest):
         self.assertNotEqual(error, None)
 
 
-class TestValidateEmail(CustomerRequestTest):
+class TestValidateEmail(CustomerTest):
 
     def test_validate_email(self):
         customer_request = CustomerRequest(self.customer)
@@ -149,7 +233,7 @@ class TestValidateEmail(CustomerRequestTest):
         self.assertNotEqual(error, None)
 
 
-class TestValidatePhone(CustomerRequestTest):
+class TestValidatePhone(CustomerTest):
 
     def test_validate_phone(self):
         customer_request = CustomerRequest(self.customer)
