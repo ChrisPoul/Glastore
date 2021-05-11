@@ -43,7 +43,6 @@ def init_db_command():
 def commit_to_db():
     try:
         db.session.commit()
-        print("commited to db")
     except IntegrityError:
         db.session.rollback()
         raise ValueError from None
