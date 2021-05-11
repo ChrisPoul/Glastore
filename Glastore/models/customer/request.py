@@ -2,8 +2,6 @@ from flask import request
 from Glastore.views import get_form
 from . import Customer, customer_heads
 
-repeated_value_error = "Ese valor no está disponible, intenta usar otra cosa"
-
 
 class CustomerRequest:
 
@@ -57,13 +55,18 @@ class CustomerRequest:
         form = get_form(self.customer.request_heads)
         for head in self.customer.request_heads:
             value = form[head]
-            customer = Customer.search(value)
-            if customer and self.customer is not customer:
-                self.error = repeated_value_error
+            self.check_for_repeated_value(value)
+            if self.error:
                 return self.error
 
         return self.error
 
+    def check_for_repeated_value(self, value):
+        repeated_value_error = "Ese valor no está disponible, intenta usar otra cosa"
+        customer = Customer.search(value)
+        if customer and self.customer is not customer:
+            self.error = repeated_value_error
+            return self.error
 
     def validate_name(self):
         invalid_name_msg = "El nombre del cliente no puede llevar numeros, solo letras"
