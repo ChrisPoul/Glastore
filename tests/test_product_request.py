@@ -36,20 +36,6 @@ class TestAdd(ProductRequestTest):
         self.assertEqual(error, None)
         self.assertIn(product, self.db.session)
 
-    def test_repeated_name(self):
-        product = Product(
-            quote_id=1,
-            name="Test",
-            material="Material",
-            acabado="Acabado",
-            cristal="Cristal"
-        )
-        product_request = ProductRequest(product)
-        error = product_request.add()
-
-        self.assertEqual(error, None)
-        self.assertEqual(Product.get_all(), [self.product, product])
-
 
 class TestUpdate(ProductRequestTest):
 
@@ -67,43 +53,6 @@ class TestUpdate(ProductRequestTest):
 
         self.assertEqual(error, None)
         self.assertEqual(self.product.name, "New Name")
-
-    def test_repeated_name(self):
-        product = Product(
-            quote_id=1,
-            name="Old Name",
-            material="Material",
-            acabado="Acabado",
-            cristal="Cristal"
-        )
-        product.add()
-        product_request = ProductRequest(product)
-        url = url_for('quote.edit', id=product.id)
-        data = dict(
-            name2="Test",
-            material2="Material",
-            acabado2="Acabado",
-            cristal2="Cristal"
-        )
-        with self.request_context(url, data):
-            error = product_request.update()
-
-        self.assertEqual(error, None)
-        self.assertEqual(product.name, "Test")
-
-    def test_empty_value(self):
-        product_request = ProductRequest(self.product)
-        url = url_for('quote.edit', id=self.quote.id)
-        data = dict(
-            name1="",
-            material1="Material",
-            acabado1="Acabado",
-            cristal1="Cristal"
-        )
-        with self.request_context(url, data):
-            error = product_request.update()
-
-        self.assertNotEqual(error, None)
 
     def test_update_attributes(self):
         product_request = ProductRequest(self.product)
@@ -159,17 +108,26 @@ class TestValidate(ProductRequestTest):
 
         self.assertEqual(error, None)
 
-    def test_invalid_product(self):
+    def test_empty_value(self):
+        product_request = ProductRequest(self.product)
+        self.product.name = ""
+        error = product_request.validate()
+
+        self.assertNotEqual(error, None)
+
+    def test_repeated_values(self):
         product = Product(
             quote_id=1,
-            name="",
-            material="",
-            acabado="",
-            cristal="",
-            unit_price="string"
+            name="Test",
+            material="Material",
+            acabado="Acabado",
+            cristal="Cristal"
         )
+        product.add()
         product_request = ProductRequest(product)
         error = product_request.validate()
+
+        self.assertEqual(error, None)
 
 
 class TestValidateAttributes(ProductRequestTest):

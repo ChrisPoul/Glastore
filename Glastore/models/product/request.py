@@ -8,6 +8,15 @@ class ProductRequest:
     def __init__(self, product):
         self.product = product
         self.quote = product.quote
+        self.product_attributes = [
+            "name",
+            "material",
+            "acabado",
+            "cristal",
+            "unit_price",
+            "medidas",
+            "cantidad"
+        ]
         self.error = None
 
     def add(self):
@@ -40,6 +49,8 @@ class ProductRequest:
                 self.error = "No se pueden dejar campos en blanco"
                 return self.error
 
+        return self.error
+
     def validate_unit_price(self):
         if not self.product.unit_price:
             self.product.unit_price = 0
@@ -52,16 +63,7 @@ class ProductRequest:
         return self.error
 
     def update_attributes(self):
-        attributes = [
-            "name",
-            "material",
-            "acabado",
-            "cristal",
-            "unit_price",
-            "medidas",
-            "cantidad"
-        ]
-        for attribute in attributes:
+        for attribute in self.product_attributes:
             self.update_attribute(attribute)
 
     def update_attribute(self, attribute):
