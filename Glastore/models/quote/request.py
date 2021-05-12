@@ -33,9 +33,6 @@ class QuoteRequest:
         }
         self.error = None
 
-    def add(self):
-        pass
-
     def edit(self):
         self.validate()
         if not self.error:

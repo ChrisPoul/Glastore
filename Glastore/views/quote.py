@@ -14,6 +14,11 @@ from Glastore.views.auth import login_required
 
 bp = Blueprint("quote", __name__, url_prefix="/quote")
 
+quote_customer_heads = {
+    "name": "Cliente",
+    "email": "Email",
+    "address": "Dirección"
+}
 customer_placeholders = {
     "name": "Nombre del cliente...",
     "email": "Corréo electrónico...",
@@ -90,11 +95,6 @@ def search_for_customer(form):
 
 @bp.route("/edit/<int:id>", methods=('GET', 'POST'))
 def edit(id):
-    customer_heads = {
-        "name": "Cliente",
-        "email": "Email",
-        "address": "Dirección"
-    }
     quote = Quote.get(id)
     quote.done = False
     if request.method == "POST":
@@ -105,7 +105,7 @@ def edit(id):
     return render_template(
         'quote/edit.html',
         quote=quote,
-        customer_heads=customer_heads,
+        customer_heads=quote_customer_heads,
         product_heads=product_heads,
         product_keys=quote.request.product_keys,
         product_placeholders=product_placeholders,
@@ -123,7 +123,7 @@ def done(id):
     return render_template(
         'quote/done.html',
         quote=quote,
-        customer_heads=customer_heads,
+        customer_heads=quote_customer_heads,
         product_heads=product_heads,
         product_keys=quote.request.product_keys,
         product_placeholders=product_placeholders,
