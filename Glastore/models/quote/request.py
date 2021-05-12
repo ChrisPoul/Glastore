@@ -126,6 +126,11 @@ class QuoteRequest:
         product = Product.search(form["name"])
         if product:
             form = empty_form
+        product = self.make_product(form)
+
+        return product
+
+    def make_product(self, form):
         product = Product(
             quote_id=self.quote.id,
             name=form['name'],
