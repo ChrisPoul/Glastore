@@ -1,7 +1,7 @@
-{% for key in quote.request.autocomplete_data %}
+{% for key in autocomplete.product.data %}
 <datalist id="autocomplete-{{ key }}">
-    {% for data in quote.request.autocomplete_data[key] %}
-    <option>{{ data }}</option>
+    {% for value in autocomplete.product.data[key] %}
+    <option>{{ value }}</option>
     {% endfor %}
 </datalist>
 {% endfor %}
@@ -17,13 +17,13 @@
     {% else %}
     <input name="{{ product.unique_keys[key] }}" id="{{ product.unique_keys[key] }}"
         placeholder="{{ product_placeholders[key] }}" value="{{ product[key] }}" 
-        list="autocomplete-{{ key }}s">
+        list="autocomplete-{{ key }}">
     {% endif %}
     {% else %}
     {% if key != "medidas" %}
     {{ product_keys[key] }}<br>
     <input name="{{ key }}" id="{{ key }}" placeholder="{{ product_placeholders[key] }}"
-        value="{{ quote.request.new_product[key] }}" list="autocomplete-{{ key }}s" 
+        value="{{ quote.request.new_product[key] }}" list="autocomplete-{{ key }}" 
         {% if quote.focused_id==0 %}autofocus{% endif %}>
     {% endif %}
     {% endif %}

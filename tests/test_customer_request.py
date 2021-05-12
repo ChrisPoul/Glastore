@@ -4,7 +4,7 @@ from Glastore.models.customer import Customer
 from Glastore.models.customer.request import CustomerRequest
 
 
-class CustomerTest(MyTest):
+class CustomerRequestTest(MyTest):
 
     def setUp(self):
         MyTest.setUp(self)
@@ -17,7 +17,7 @@ class CustomerTest(MyTest):
         self.customer.add()
 
 
-class TestAdd(CustomerTest):
+class TestAdd(CustomerRequestTest):
 
     def test_add(self):
         customer_request = CustomerRequest(self.customer)
@@ -27,7 +27,7 @@ class TestAdd(CustomerTest):
         self.assertEqual(error, None)
 
 
-class TestUpdate(CustomerTest):
+class TestUpdate(CustomerRequestTest):
 
     def test_update(self):
         customer_request = CustomerRequest(self.customer)
@@ -59,7 +59,7 @@ class TestUpdate(CustomerTest):
         self.assertEqual(self.customer.name, "New Name")
 
 
-class TestValidate(CustomerTest):
+class TestValidate(CustomerRequestTest):
 
     def test_validate(self):
         customer_request = CustomerRequest(self.customer)
@@ -102,7 +102,7 @@ class TestValidate(CustomerTest):
         self.assertNotEqual(error, None)
 
 
-class TestCheckForEmptyValues(CustomerTest):
+class TestCheckForEmptyValues(CustomerRequestTest):
 
     def test_empty_name(self):
         customer_request = CustomerRequest(self.customer)
@@ -126,7 +126,7 @@ class TestCheckForEmptyValues(CustomerTest):
         self.assertNotEqual(error, None)
 
 
-class TestCheckForRepeatedValues(CustomerTest):
+class TestCheckForRepeatedValues(CustomerRequestTest):
 
     def test_repeated_value_add(self):
         customer = Customer(
@@ -170,7 +170,7 @@ class TestCheckForRepeatedValues(CustomerTest):
         self.assertNotEqual(error, None)
 
 
-class TestCheckForRepeatedValue(CustomerTest):
+class TestCheckForRepeatedValue(CustomerRequestTest):
 
     def test_value_not_repeated(self):
         customer = Customer(
@@ -199,7 +199,7 @@ class TestCheckForRepeatedValue(CustomerTest):
         self.assertNotEqual(error, None)
 
 
-class TestValidateName(CustomerTest):
+class TestValidateName(CustomerRequestTest):
 
     def test_validate_name(self):
         customer_request = CustomerRequest(self.customer)
@@ -216,7 +216,7 @@ class TestValidateName(CustomerTest):
         self.assertNotEqual(error, None)
 
 
-class TestValidateEmail(CustomerTest):
+class TestValidateEmail(CustomerRequestTest):
 
     def test_validate_email(self):
         customer_request = CustomerRequest(self.customer)
@@ -233,7 +233,7 @@ class TestValidateEmail(CustomerTest):
         self.assertNotEqual(error, None)
 
 
-class TestValidatePhone(CustomerTest):
+class TestValidatePhone(CustomerRequestTest):
 
     def test_validate_phone(self):
         customer_request = CustomerRequest(self.customer)

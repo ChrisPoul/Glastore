@@ -45,15 +45,6 @@ product_placeholders = {
 @login_required
 def add():
     form = get_form(customer_heads)
-    customer_names = []
-    customer_emails = []
-    customer_phones = []
-    customer_addresses = []
-    for customer in Customer.get_all():
-        customer_names.append(customer.name)
-        customer_emails.append(customer.email)
-        customer_phones.append(customer.phone)
-        customer_addresses.append(customer.address)
     if request.method == "POST":
         error = None
         customer = search_for_customer(form)
@@ -77,10 +68,6 @@ def add():
         form=form,
         customer_heads=customer_heads,
         customer_placeholders=customer_placeholders,
-        customer_names=customer_names,
-        customer_emails=customer_emails,
-        customer_phones=customer_phones,
-        customer_addresses=customer_addresses
     )
 
 

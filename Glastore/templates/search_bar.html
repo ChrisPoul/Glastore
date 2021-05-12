@@ -1,6 +1,6 @@
-<datalist id="autocomplete-sidebar">
-    {% for data in autocomplete_sidebar %}
-    <option>{{ data }}</option>
+<datalist id="autocomplete-search-bar">
+    {% for value in autocomplete.customer.search_bar %}
+    <option>{{ value }}</option>
     {% endfor %}
 </datalist>
 
@@ -9,7 +9,7 @@
         <tr>
             <td>
                 <input name="sidebar-search-term" id="sidebar-search-term"
-                    placeholder="Busca aquí..." list="autocomplete-sidebar">
+                    placeholder="Busca aquí..." list="autocomplete-search-bar">
             </td>
             <td>
                 <button type="submit"><i class="fa fa-search"></i></button>

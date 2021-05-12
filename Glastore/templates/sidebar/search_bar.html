@@ -1,6 +1,6 @@
 <datalist id="autocomplete-sidebar">
-    {% for data in autocomplete_sidebar %}
-    <option>{{ data }}</option>
+    {% for name in autocomplete.customer.names %}
+    <option>{{ name }}</option>
     {% endfor %}
 </datalist>
 
