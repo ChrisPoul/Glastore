@@ -26,7 +26,6 @@ class ProductRequest:
 
         return self.error
 
-
     def update(self):
         self.update_attributes()
         self.validate()

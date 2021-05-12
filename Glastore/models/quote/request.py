@@ -4,6 +4,15 @@ from Glastore.models.customer import Customer
 from Glastore.models.product import Product
 from Glastore.views import get_form
 
+empty_form = {
+    "name": "",
+    "material": "",
+    "acabado": "",
+    "cristal": "",
+    "medidas": "",
+    "unit_price": 0
+}
+
 
 class QuoteRequest:
 
@@ -11,7 +20,6 @@ class QuoteRequest:
         self.quote = quote
         self.customer = quote.author
         self.products = quote.products
-        self.error = None
         self.customer.request_heads = [
             "customer_name",
             "email"
@@ -23,6 +31,7 @@ class QuoteRequest:
             "cristal": "con ",
             "medidas": "Dimenciones"
         }
+        self.error = None
 
     def add(self):
         pass
@@ -36,13 +45,18 @@ class QuoteRequest:
         return self.error
 
     def validate(self):
-        if self.quote.address == "":
-            self.error = "No se pueden dejar campos en blanco"
+        self.validate_address()
         if not self.error:
             self.validate_customer()
         if not self.error:
             self.validate_products()
         
+        return self.error
+
+    def validate_address(self):
+        if self.quote.address == "":
+            self.error = "No se pueden dejar campos en blanco"
+
         return self.error
 
     def validate_customer(self):
@@ -53,10 +67,15 @@ class QuoteRequest:
 
     def validate_products(self):
         for product in self.products:
-            product.request.update_attributes()
-            self.error = product.request.validate()
+            self.validate_product(product)
             if self.error:
                 return self.error
+
+        return self.error
+
+    def validate_product(self, product):
+        product.request.update_attributes()
+        self.error = product.request.validate()
 
         return self.error
 
@@ -152,13 +171,3 @@ def get_autocomplete_data():
         if product.acabado not in set(autocomplete["acabados"]):
             autocomplete["acabados"].append(product.acabado)
     return autocomplete
-
-
-empty_form = {
-    "name": "",
-    "material": "",
-    "acabado": "",
-    "cristal": "",
-    "medidas": "",
-    "unit_price": 0
-}
