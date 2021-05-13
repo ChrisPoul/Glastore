@@ -5,7 +5,7 @@ from Glastore.models.product.validation import ProductValidation
 from Glastore.models.quote import Quote
 
 
-class ProductRequestTest(MyTest):
+class ProductValidationTest(MyTest):
 
     def setUp(self):
         MyTest.setUp(self)
@@ -20,7 +20,7 @@ class ProductRequestTest(MyTest):
         self.quote = Quote.new(1)
 
 
-class TestValidate(ProductRequestTest):
+class TestValidate(ProductValidationTest):
 
     def test_should_not_return_error_given_valid_product(self):
         product = Product(
@@ -67,7 +67,7 @@ class TestValidate(ProductRequestTest):
         self.assertEqual(error, None)
 
 
-class TestCheckForEmptyValues(ProductRequestTest):
+class TestCheckForEmptyValues(ProductValidationTest):
 
     def test_should_not_return_error_given_non_empty_values(self):
         product = Product(
@@ -96,7 +96,7 @@ class TestCheckForEmptyValues(ProductRequestTest):
         self.assertNotEqual(error, None)
 
 
-class TestValidateUnitPrice(ProductRequestTest):
+class TestValidateUnitPrice(ProductValidationTest):
 
     def test_should_not_return_error_given_valid_unit_price(self):
         product = Product(
@@ -127,7 +127,7 @@ class TestValidateUnitPrice(ProductRequestTest):
         self.assertNotEqual(error, None)
 
 
-class TestValidateCantidad(ProductRequestTest):
+class TestValidateCantidad(ProductValidationTest):
 
     def test_should_not_return_error_given_valid_cantidad(self):
         product = Product(
