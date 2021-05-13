@@ -1,6 +1,5 @@
 from flask import request
-from Glastore.views import get_form
-from . import Product, product_heads
+from .validation import ProductValidation
 
 
 class ProductRequest:
@@ -36,44 +35,13 @@ class ProductRequest:
         return self.error
 
     def validate(self):
-        self.check_for_empty_values()
-        if not self.error:
-            self.validate_unit_price()
-        if not self.error:
-            self.validate_cantidad()
+        self.error = self.validation.validate()
 
         return self.error
 
-    def check_for_empty_values(self):
-        for head in product_heads:
-            value = getattr(self.product, head)
-            if value == "":
-                self.error = "No se pueden dejar campos en blanco"
-                return self.error
-
-        return self.error
-
-    def validate_unit_price(self):
-        if not self.product.unit_price:
-            self.product.unit_price = 0
-        try:
-            float(self.product.unit_price)
-        except ValueError:
-            self.error = "Numero invalido"
-            self.product.unit_price = 0
-        
-        return self.error
-
-    def validate_cantidad(self):
-        if not self.product.cantidad:
-            self.product.cantidad = 0
-        try:
-            float(self.product.cantidad)
-        except ValueError:
-            self.error = "Numero invalido"
-            self.product.cantidad = 0
-        
-        return self.error
+    @property
+    def validation(self):
+        return ProductValidation(self.product)
 
     def update_attributes(self):
         for attribute in self.product_attributes:

@@ -1,7 +1,7 @@
 from .setup import MyTest
 from flask import url_for
 from Glastore.models.product import Product
-from Glastore.models.product.request import ProductRequest
+from Glastore.models.product.validation import ProductValidation
 from Glastore.models.quote import Quote
 
 
@@ -32,8 +32,8 @@ class TestValidate(ProductRequestTest):
             unit_price=10,
             cantidad=1
         )
-        product_request = ProductRequest(product)
-        error = product_request.validate()
+        product_validation = ProductValidation(product)
+        error = product_validation.validate()
 
         self.assertEqual(error, None)
 
@@ -47,8 +47,8 @@ class TestValidate(ProductRequestTest):
             unit_price="invalid price",
             cantidad="invalid cantidad"
         )
-        product_request = ProductRequest(product)
-        error = product_request.validate()
+        product_validation = ProductValidation(product)
+        error = product_validation.validate()
 
         self.assertNotEqual(error, None)
 
@@ -61,8 +61,8 @@ class TestValidate(ProductRequestTest):
             cristal="Cristal"
         )
         product.add()
-        product_request = ProductRequest(product)
-        error = product_request.validate()
+        product_validation = ProductValidation(product)
+        error = product_validation.validate()
 
         self.assertEqual(error, None)
 
@@ -77,8 +77,8 @@ class TestCheckForEmptyValues(ProductRequestTest):
             acabado="Acabado",
             cristal="Cristal"
         )
-        product_request = ProductRequest(product)
-        error = product_request.check_for_empty_values()
+        product_validation = ProductValidation(product)
+        error = product_validation.check_for_empty_values()
 
         self.assertEqual(error, None)
 
@@ -90,8 +90,8 @@ class TestCheckForEmptyValues(ProductRequestTest):
             acabado="",
             cristal=""
         )
-        product_request = ProductRequest(product)
-        error = product_request.check_for_empty_values()
+        product_validation = ProductValidation(product)
+        error = product_validation.check_for_empty_values()
 
         self.assertNotEqual(error, None)
 
@@ -107,8 +107,8 @@ class TestValidateUnitPrice(ProductRequestTest):
             cristal="Cristal",
             unit_price=10.0
         )
-        product_request = ProductRequest(product)
-        error = product_request.validate_unit_price()
+        product_validation = ProductValidation(product)
+        error = product_validation.validate_unit_price()
 
         self.assertEqual(error, None)
 
@@ -121,8 +121,8 @@ class TestValidateUnitPrice(ProductRequestTest):
             cristal="Cristal",
             unit_price="invalid unit_price"
         )
-        product_request = ProductRequest(product)
-        error = product_request.validate_unit_price()
+        product_validation = ProductValidation(product)
+        error = product_validation.validate_unit_price()
 
         self.assertNotEqual(error, None)
 
@@ -138,8 +138,8 @@ class TestValidateCantidad(ProductRequestTest):
             cristal="Cristal",
             cantidad=1
         )
-        product_request = ProductRequest(product)
-        error = product_request.validate_cantidad()
+        product_validation = ProductValidation(product)
+        error = product_validation.validate_cantidad()
 
         self.assertEqual(error, None)
 
@@ -152,7 +152,7 @@ class TestValidateCantidad(ProductRequestTest):
             cristal="Cristal",
             cantidad="invalid cantidad"
         )
-        product_request = ProductRequest(product)
-        error = product_request.validate_cantidad()
+        product_validation = ProductValidation(product)
+        error = product_validation.validate_cantidad()
 
         self.assertNotEqual(error, None)
