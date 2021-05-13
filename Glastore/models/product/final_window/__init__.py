@@ -19,8 +19,8 @@ class FinalWindowImage:
         return temporary_uri
 
     def update_sub_windows(self):
-        windows = SubWindows(self.product)
-        windows.update()
+        sub_windows = SubWindows(self.product)
+        sub_windows.update()
 
     def make_figure(self):
         figure = plt.Figure(dpi=150, figsize=(4.5, 4.5))
