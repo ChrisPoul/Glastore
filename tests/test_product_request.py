@@ -22,7 +22,7 @@ class ProductRequestTest(MyTest):
 
 class TestAdd(ProductRequestTest):
 
-    def test_add(self):
+    def test_should_add_product_given_valid_product(self):
         product = Product(
             quote_id=1,
             name="Test two",
@@ -31,160 +31,156 @@ class TestAdd(ProductRequestTest):
             cristal="Cristal"
         )
         product_request = ProductRequest(product)
-        error = product_request.add()
+        product_request.add()
 
-        self.assertEqual(error, None)
         self.assertIn(product, self.db.session)
 
-
-class TestUpdate(ProductRequestTest):
-
-    def test_update(self):
-        product_request = ProductRequest(self.product)
-        url = url_for('quote.edit', id=self.quote.id)
-        data = dict(
-            name1="New Name",
-            material1="Material",
-            acabado1="Acabado",
-            cristal1="Cristal"
-        )
-        with self.request_context(url, data):
-            error = product_request.update()
-
-        self.assertEqual(error, None)
-        self.assertEqual(self.product.name, "New Name")
-
-    def test_update_attributes(self):
-        product_request = ProductRequest(self.product)
-        url = url_for('quote.edit', id=self.quote.id)
-        data = dict(
-            name1="New Name",
-            material1="New Material",
-            acabado1="Acabado",
-            cristal1="Cristal"
-        )
-        with self.request_context(url, data):
-            product_request.update_attributes()
-
-        self.assertEqual(self.product.name, "New Name")
-        self.assertEqual(self.product.material, "New Material")
-
-    def test_update_attribute(self):
-        product_request = ProductRequest(self.product)
-        url = url_for('quote.edit', id=self.quote.id)
-        data = dict(
-            name1="New Name",
-            material1="New Material",
-            acabado1="Acabado",
-            cristal1="Cristal"
-        )
-        with self.request_context(url, data):
-            product_request.update_attribute("name")
-
-        self.assertEqual(self.product.name, "New Name")
-        self.assertEqual(self.product.material, "Material")
-
-    def update_total(self):
-        product_request = ProductRequest(self.product)
-        self.product.cantidad = "2"
-        self.product.unit_price = 10
-        product_request.update_total()
-
-        self.assertEqual(self.product.total, 20)
-
-
-class TestValidate(ProductRequestTest):
-
-    def test_valid_product(self):
-        product = Product(
-            quote_id=1,
-            name="Test",
-            material="Material",
-            acabado="Acabado",
-            cristal="Cristal"
-        )
-        product_request = ProductRequest(product)
-        error = product_request.validate()
-
-        self.assertEqual(error, None)
-
-    def test_empty_value(self):
-        product_request = ProductRequest(self.product)
-        self.product.name = ""
-        error = product_request.validate()
-
-        self.assertNotEqual(error, None)
-
-    def test_repeated_values(self):
-        product = Product(
-            quote_id=1,
-            name="Test",
-            material="Material",
-            acabado="Acabado",
-            cristal="Cristal"
-        )
-        product.add()
-        product_request = ProductRequest(product)
-        error = product_request.validate()
-
-        self.assertEqual(error, None)
-
-
-class TestValidateAttributes(ProductRequestTest):
-
-    def test_empty_name(self):
+    def test_should_not_add_product_given_invalid_product(self):
         product = Product(
             quote_id=1,
             name="",
-            material="Material",
-            acabado="Acabado",
-            cristal="Cristal"
-        )
-        product_request = ProductRequest(product)
-        error = product_request.validate_attributes()
-
-        self.assertNotEqual(error, None)
-
-    def test_emtpy_values(self):
-        product = Product(
-            quote_id=1,
-            name="Test",
             material="",
             acabado="",
             cristal=""
         )
         product_request = ProductRequest(product)
-        error = product_request.validate_attributes()
+        product_request.add()
 
-        self.assertNotEqual(error, None)
+        self.assertNotIn(product, self.db.session)
 
 
-class TestValidateUnitPrice(ProductRequestTest):
+class TestUpdate(ProductRequestTest):
 
-    def test_valid_unit_price(self):
-        product = Product(
+    def setUp(self):
+        ProductRequestTest.setUp(self)
+        self.product2 = Product(
             quote_id=1,
-            name="",
-            material="Material",
-            acabado="Acabado",
-            cristal="Cristal",
-            unit_price=10.0
+            name="Test2",
+            material="Material2",
+            acabado="Acabado2",
+            cristal="Cristal2"
         )
-        product_request = ProductRequest(product)
-        error = product_request.validate_unit_price()
+        self.product2.add()
 
-        self.assertEqual(error, None)
-
-    def test_invalid_unit_price(self):
-        product = Product(
-            quote_id=1,
-            name="",
-            material="Material",
-            acabado="Acabado",
-            cristal="Cristal",
-            unit_price="string"
+    def test_should_update_product_given_valid_data(self):
+        product_request = ProductRequest(self.product)
+        url = url_for('quote.edit', id=self.quote.id)
+        product_data = dict(
+            name1="New Name",
+            material1="Material",
+            acabado1="Acabado",
+            cristal1="Cristal"
         )
-        product_request = ProductRequest(product)
-        error = product_request.validate_unit_price()
+        with self.request_context(url, product_data):
+            product_request.update()
+        self.db.session.rollback()
 
-        self.assertNotEqual(error, None)
+        self.assertEqual(self.product.name, "New Name")
+
+    def test_should_not_update_product_given_invalid_data(self):
+        product_request = ProductRequest(self.product)
+        url = url_for('quote.edit', id=self.quote.id)
+        product_data = dict(
+            name1="",
+            material1="",
+            acabado1="",
+            cristal1=""
+        )
+        with self.request_context(url, product_data):
+            product_request.update()
+        self.db.session.rollback()
+
+        self.assertEqual(self.product.name, "Test")
+
+
+class TestUpdateAttributes(ProductRequestTest):
+
+    def test_should_update_attributes_given_valid_data(self):
+        product_request = ProductRequest(self.product)
+        url = url_for('quote.edit', id=self.quote.id)
+        product_data = dict(
+            name1="New Name",
+            material1="New Material",
+            acabado1="New Acabado",
+            cristal1="New Cristal"
+        )
+        with self.request_context(url, product_data):
+            product_request.update_attributes()
+
+        self.assertEqual(self.product.name, "New Name")
+        self.assertEqual(self.product.material, "New Material")
+        self.assertEqual(self.product.acabado, "New Acabado")
+        self.assertEqual(self.product.cristal, "New Cristal")
+
+    def test_should_update_attributes_given_invalid_data(self):
+        product_request = ProductRequest(self.product)
+        url = url_for('quote.edit', id=self.quote.id)
+        product_data = dict(
+            name1="",
+            material1="",
+            acabado1="",
+            cristal1=""
+        )
+        with self.request_context(url, product_data):
+            product_request.update_attributes()
+
+        self.assertEqual(self.product.name, "")
+        self.assertEqual(self.product.material, "")
+        self.assertEqual(self.product.acabado, "")
+        self.assertEqual(self.product.cristal, "")
+
+    def test_should_not_save_changes(self):
+        product_request = ProductRequest(self.product)
+        url = url_for('quote.edit', id=self.quote.id)
+        product_data = dict(
+            name1="New Name"
+        )
+        with self.request_context(url, product_data):
+            product_request.update_attributes()
+        self.db.session.rollback()
+
+        self.assertEqual(self.product.name, "Test")
+
+
+class TestUpdateAttribute(ProductRequestTest):
+
+    def test_should_update_name_given_name_as_argument(self):
+        product_request = ProductRequest(self.product)
+        url = url_for('quote.edit', id=self.quote.id)
+        product_data = dict(
+            name1="New Name",
+            material1="New Material",
+            acabado1="Acabado",
+            cristal1="Cristal"
+        )
+        with self.request_context(url, product_data):
+            product_request.update_attribute("name")
+
+        self.assertEqual(self.product.name, "New Name")
+        self.assertEqual(self.product.material, "Material")
+
+    def test_should_update_name_given_material_as_argument(self):
+        product_request = ProductRequest(self.product)
+        url = url_for('quote.edit', id=self.quote.id)
+        product_data = dict(
+            name1="New Name",
+            material1="New Material",
+            acabado1="Acabado",
+            cristal1="Cristal"
+        )
+        with self.request_context(url, product_data):
+            product_request.update_attribute("material")
+
+        self.assertEqual(self.product.name, "Test")
+        self.assertEqual(self.product.material, "New Material")
+
+
+class TestUpdateTotal(ProductRequestTest):
+
+    def test_should_update_total_given_valid_numbers(self):
+        self.product.unit_price = 10
+        product_request = ProductRequest(self.product)
+        self.product.cantidad = 5
+        product_request.update_total()
+
+        self.assertEqual(self.product.total, 50)

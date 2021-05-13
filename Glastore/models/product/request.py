@@ -36,12 +36,15 @@ class ProductRequest:
         return self.error
 
     def validate(self):
-        self.validate_attributes()
-        self.validate_unit_price()
+        self.check_for_empty_values()
+        if not self.error:
+            self.validate_unit_price()
+        if not self.error:
+            self.validate_cantidad()
 
         return self.error
 
-    def validate_attributes(self):
+    def check_for_empty_values(self):
         for head in product_heads:
             value = getattr(self.product, head)
             if value == "":
@@ -61,18 +64,29 @@ class ProductRequest:
         
         return self.error
 
+    def validate_cantidad(self):
+        if not self.product.cantidad:
+            self.product.cantidad = 0
+        try:
+            float(self.product.cantidad)
+        except ValueError:
+            self.error = "Numero invalido"
+            self.product.cantidad = 0
+        
+        return self.error
+
     def update_attributes(self):
         for attribute in self.product_attributes:
             self.update_attribute(attribute)
 
     def update_attribute(self, attribute):
         try:
-            request_value = request.form[self.product.unique_keys[attribute]]
-            setattr(self.product, attribute, request_value)
+            value = request.form[self.product.unique_keys[attribute]]
+            setattr(self.product, attribute, value)
         except KeyError:
             pass
 
     def update_total(self):
-        cantidad = float(self.product.cantidad)
-        unit_price = float(self.product.unit_price)
+        cantidad = self.product.cantidad
+        unit_price = self.product.unit_price
         self.product.total = cantidad * unit_price
