@@ -101,7 +101,6 @@ class Window(db.Model, MyModel):
 
     def update_description(self, description):
         self.description = description
-        self.update()
 
     def draw(self, axis, xy):
         self.handle_door()
