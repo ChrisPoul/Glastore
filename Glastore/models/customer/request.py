@@ -44,17 +44,16 @@ class CustomerRequest:
 
     def check_for_emtpy_values(self):
         for head in customer_heads:
-            attribute = getattr(self.customer, head)
-            if attribute == "":
+            value = getattr(self.customer, head)
+            if value == "":
                 self.error = "No se pueden dejar campos en blanco"
                 return self.error
         
         return self.error
 
     def check_for_repeated_values(self):
-        form = get_form(self.customer.request_heads)
-        for head in self.customer.request_heads:
-            value = form[head]
+        for head in customer_heads:
+            value = getattr(self.customer, head)
             self.check_for_repeated_value(value)
             if self.error:
                 return self.error
