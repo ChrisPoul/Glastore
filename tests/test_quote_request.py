@@ -1,12 +1,12 @@
 from .setup import MyTest
 from flask import url_for
-from Glastore.models.quote import Quote, SoldQuote
+from Glastore.models.quote import Quote
 from Glastore.models.customer import Customer
 from Glastore.models.product import Product
 from Glastore.models.quote.request import QuoteRequest
 
 
-class QuoteTest(MyTest):
+class QuoteRequestTest(MyTest):
 
     def setUp(self):
         MyTest.setUp(self)
@@ -28,278 +28,334 @@ class QuoteTest(MyTest):
         self.product.add()
 
 
-class TestEdit(QuoteTest):
+class TestEdit(QuoteRequestTest):
 
-    def test_edit(self):
+    def test_should_save_changes_given_valid_data(self):
         quote_request = QuoteRequest(self.quote)
         url = url_for('quote.edit', id=self.quote.id)
-        data = dict(
+        quote_data = dict(
             customer_name="Chris",
             email="test@email.com",
-            name="Test two",
+            address="New address",
+            name1="New Name",
+            material1="New Material",
+            acabado1="New Acabado",
+            cristal1="New Cristal",
+            name="Test Two",
             material="Material two",
             acabado="Acabado two",
             cristal="Cristal two"
         )
-        with self.request_context(url, data):
-            error = quote_request.edit()
+        with self.request_context(url, quote_data):
+            quote_request.edit()
+        self.db.session.rollback()
 
-        self.assertEqual(error, None)
+        self.assertEqual(self.customer.name, "Chris")
+        self.assertEqual(self.product.name, "New Name")
+        self.assertEqual(self.quote.address, "New address")
+        self.assertEqual(len(Product.get_all()), 2)
+
+    def test_should_not_save_changes_given_invalid_data(self):
+        quote_request = QuoteRequest(self.quote)
+        url = url_for('quote.edit', id=self.quote.id)
+        quote_data = dict(
+            customer_name="",
+            email="test.email.com",
+            address="New address",
+            name1="",
+            material1="New Material",
+            acabado1="",
+            cristal1="New Cristal",
+            name="Test Two",
+            material="",
+            acabado="Acabado two",
+            cristal="Cristal two"
+        )
+        with self.request_context(url, quote_data):
+            quote_request.edit()
+        self.db.session.rollback()
+
+        self.assertEqual(self.customer.name, "Test")
+        self.assertEqual(self.product.name, "Test")
+        self.assertNotEqual(self.quote.address, "New address")
+        self.assertEqual(len(Product.get_all()), 1)
 
 
-class TestDone(QuoteTest):
+class TestDone(QuoteRequestTest):
 
-    def test_done(self):
+    def test_should_create_new_sold_quote(self):
         self.assertEqual(len(self.quote.sold_quotes), 0)
         self.quote.request.done()
         self.assertEqual(len(self.quote.sold_quotes), 1)
 
 
-class TestValidate(QuoteTest):
+class TestUpdateAttributes(QuoteRequestTest):
 
-    def test_invalid_address(self):
-        self.quote.address = ""
-        error = self.quote.request.validate()
-
-        self.assertNotEqual(error, None)
-
-
-class TestValidateAddress(QuoteTest):
-
-    def test_invalid_address(self):
-        quote_request = QuoteRequest(self.quote)
-        self.quote.address = ""
-        error = quote_request.validate_address()
-
-        self.assertNotEqual(error, None)
-
-
-class TestValidateCustomer(QuoteTest):
-
-    def test_name(self):
+    def test_should_update_quote_given_valid_quote_data(self):
         quote_request = QuoteRequest(self.quote)
         url = url_for('quote.edit', id=self.quote.id)
-        data = dict(
-            customer_name="New Name"
-        )
-        with self.request_context(url, data):
-            error = quote_request.validate_customer()
-
-        self.assertNotEqual(error, None)
-
-
-    def test_email(self):
-        quote_request = QuoteRequest(self.quote)
-        url = url_for('quote.edit', id=self.quote.id)
-        data = dict(
-            email="new@email.com"
-        )
-        with self.request_context(url, data):
-            error = quote_request.validate_customer()
-
-        self.assertNotEqual(error, None)
-
-
-class TestValidateProducts(QuoteTest):
-
-    def test_invalid_product(self):
-        quote_request = QuoteRequest(self.quote)
-        url = url_for('quote.edit', id=self.quote.id)
-        data = dict(
-            name1="",
-            material1="",
-            acabado1="",
-            cristal1=""
-        )
-        with self.request_context(url, data):
-            error = quote_request.validate_products()
-
-        self.assertNotEqual(error, None)
-
-    def test_validate_product(self):
-        quote_request = QuoteRequest(self.quote)
-        url = url_for('quote.edit', id=self.quote.id)
-        data = dict(
-            name1="",
-            material1="",
-            acabado1="",
-            cristal1=""
-        )
-        with self.request_context(url, data):
-            error = quote_request.validate_product(self.product)
-
-        self.assertNotEqual(error, None)
-
-
-class TestUpdate(QuoteTest):
-
-    def test_update(self):
-        quote_request = QuoteRequest(self.quote)
-        url = url_for('quote.edit', id=self.quote.id)
-        data = dict(
+        quote_data = dict(
             address="New Address"
         )
         old_date = self.quote.date
-        with self.request_context(url, data):
-            quote_request.update()
+        with self.request_context(url, quote_data):
+            quote_request.update_attributes()
 
         self.assertEqual(self.quote.address, "New Address")
         self.assertLess(old_date, self.quote.date)
 
-    def test_update_date(self):
+    def test_should_update_quote_given_invalid_quote_data(self):
+        quote_request = QuoteRequest(self.quote)
+        url = url_for('quote.edit', id=self.quote.id)
+        quote_data = dict(
+            address=""
+        )
+        old_date = self.quote.date
+        with self.request_context(url, quote_data):
+            quote_request.update_attributes()
+
+        self.assertEqual(self.quote.address, "")
+        self.assertLess(old_date, self.quote.date)
+
+    def test_should_not_save_changes(self):
+        quote_request = QuoteRequest(self.quote)
+        url = url_for('quote.edit', id=self.quote.id)
+        quote_data = dict(
+            address="New Address"
+        )
+        old_date = self.quote.date
+        with self.request_context(url, quote_data):
+            quote_request.update_attributes()
+        self.db.session.rollback()
+
+        self.assertNotEqual(self.quote.address, "New Address")
+        self.assertEqual(old_date, self.quote.date)
+
+
+class TestUpdateDate(QuoteRequestTest):
+
+    def test_should_update_date(self):
         quote_request = QuoteRequest(self.quote)
         old_date = self.quote.date
         quote_request.update_date()
 
         self.assertLess(old_date, self.quote.date)
 
-    def test_update_address(self):
+    def test_should_not_save_changes(self):
+        quote_request = QuoteRequest(self.quote)
+        old_date = self.quote.date
+        quote_request.update_date()
+        self.db.session.rollback()
+
+        self.assertEqual(old_date, self.quote.date)
+
+
+class TestUpdateAddress(QuoteRequestTest):
+
+    def test_should_update_address(self):
         quote_request = QuoteRequest(self.quote)
         url = url_for('quote.edit', id=self.quote.id)
-        data = dict(
+        quote_data = dict(
             address="New Address"
         )
-        with self.request_context(url, data):
+        with self.request_context(url, quote_data):
             quote_request.update_address()
 
         self.assertEqual(self.quote.address, "New Address")
 
-    def test_attempt_update_address(self):
+    def test_should_set_address_to_customer_address_given_no_address_has_been_set(self):
+        quote_request = QuoteRequest(self.quote)
+        quote_request.update_address()
+
+        self.assertEqual(self.quote.address, self.customer.address)
+
+    def test_should_not_save_changes(self):
         quote_request = QuoteRequest(self.quote)
         url = url_for('quote.edit', id=self.quote.id)
-        data = dict(
+        quote_data = dict(
             address="New Address"
         )
-        with self.request_context(url, data):
+        with self.request_context(url, quote_data):
+            quote_request.update_address()
+        self.db.session.rollback()
+
+        self.assertNotEqual(self.quote.address, "New Address")
+
+
+class TestAttemptUpdateAddress(QuoteRequestTest):
+
+    def test_should_update_address(self):
+        quote_request = QuoteRequest(self.quote)
+        url = url_for('quote.edit', id=self.quote.id)
+        quote_data = dict(
+            address="New Address"
+        )
+        with self.request_context(url, quote_data):
             quote_request.attempt_update_address()
 
         self.assertEqual(self.quote.address, "New Address")
 
+    def test_should_not_update_address_if_no_address_is_given(self):
+        quote_request = QuoteRequest(self.quote)
+        quote_request.attempt_update_address()
 
-class TestAddProduct(QuoteTest):
-
-    def test_add_existing_product(self):
+        self.assertEqual(self.quote.address, None)
+    
+    def test_should_not_save_changes(self):
         quote_request = QuoteRequest(self.quote)
         url = url_for('quote.edit', id=self.quote.id)
-        data = dict(
+        quote_data = dict(
+            address="New Address"
+        )
+        with self.request_context(url, quote_data):
+            quote_request.attempt_update_address()
+        self.db.session.rollback()
+
+        self.assertNotEqual(self.quote.address, "New Address")
+
+
+class TestAddProduct(QuoteRequestTest):
+
+    def test_should_duplicate_and_add_existing_product_given_product_name_exists(self):
+        quote_request = QuoteRequest(self.quote)
+        url = url_for('quote.edit', id=self.quote.id)
+        product_data = dict(
             name="Test"
         )
-        with self.request_context(url, data):
+        with self.request_context(url, product_data):
             quote_request.add_product()
 
         self.assertEqual(len(self.quote.products), 2)
 
-    def test_add_new_product(self):
+    def test_should_create_and_add_new_product_given_valid_product_data(self):
         quote_request = QuoteRequest(self.quote)
         url = url_for('quote.edit', id=self.quote.id)
-        data = dict(
+        product_data = dict(
             name="Test two",
             material="Material two",
             acabado="Acabado two",
             cristal="Cristal two"
         )
-        with self.request_context(url, data):
+        with self.request_context(url, product_data):
             quote_request.add_product()
 
         self.assertEqual(len(self.quote.products), 2)
 
-    def test_invalid_new_product(self):
+    def test_should_not_create_and_add_new_product_given_invalid_product_data(self):
         quote_request = QuoteRequest(self.quote)
         url = url_for('quote.edit', id=self.quote.id)
-        data = dict(
+        product_data = dict(
             name="Test two",
             material="",
             acabado="",
             cristal=""
         )
-        with self.request_context(url, data):
+        with self.request_context(url, product_data):
             quote_request.add_product()
 
         self.assertEqual(len(self.quote.products), 1)
 
 
-class TestAddNewProduct(QuoteTest):
+class TestAddNewProduct(QuoteRequestTest):
 
-    def test_add_new_product(self):
+    def test_should_create_and_add_new_product_given_valid_product_data(self):
         quote_request = QuoteRequest(self.quote)
         url = url_for('quote.edit', id=self.quote.id)
-        data = dict(
+        product_data = dict(
             name="Test two",
             material="Material two",
             acabado="Acabado two",
             cristal="Cristal two"
         )
-        with self.request_context(url, data):
+        with self.request_context(url, product_data):
             quote_request.add_new_product()
 
         self.assertEqual(len(self.quote.products), 2)
         self.assertEqual(self.quote.focused_product_id, 2)
 
-    def test_invalid_product(self):
+    def test_should_not_create_and_add_new_product_given_invalid_product_data(self):
         quote_request = QuoteRequest(self.quote)
         url = url_for('quote.edit', id=self.quote.id)
-        data = dict(
+        product_data = dict(
             name="Test two",
             material="",
             acabado="",
             cristal=""
         )
-        with self.request_context(url, data):
-            quote_request.add_product()
+        with self.request_context(url, product_data):
+            quote_request.add_new_product()
 
         self.assertEqual(len(self.quote.products), 1)
         self.assertEqual(self.quote.focused_product_id, 0)
 
 
-class TestNewProduct(QuoteTest):
+class TestNewProduct(QuoteRequestTest):
 
-    def test_new_product(self):
+    def test_should_return_new_product_given_valid_product_data(self):
         quote_request = QuoteRequest(self.quote)
         url = url_for('quote.edit', id=self.quote.id)
-        data = dict(
+        product_data = dict(
             name="Test two",
             material="Material two",
             acabado="Acabado two",
             cristal="Cristal two"
         )
-        with self.request_context(url, data):
+        with self.request_context(url, product_data):
             product = quote_request.new_product
 
         self.assertEqual(product.name, "Test two")
 
-    def test_make_product(self):
+    def test_should_return_new_product_given_invalid_product_data(self):
+        quote_request = QuoteRequest(self.quote)
+        url = url_for('quote.edit', id=self.quote.id)
+        product_data = dict(
+            name="",
+            material="",
+            acabado="",
+            cristal=""
+        )
+        with self.request_context(url, product_data):
+            product = quote_request.new_product
+
+        self.assertEqual(product.name, "")
+
+
+class TestMakeProduct(QuoteRequestTest):
+
+    def test_should_return_product_created_using_form_data(self):
         quote_request = QuoteRequest(self.quote)
         form = dict(
             name="Test two",
-            material="Material two",
+            material="",
             acabado="Acabado two",
             cristal="Cristal two"
         )
         product = quote_request.make_product(form)
 
         self.assertEqual(product.name, "Test two")
+        self.assertEqual(product.material, "")
 
 
-class TestGetProduct(QuoteTest):
+class TestGetProduct(QuoteRequestTest):
 
-    def test_get_existing(self):
+    def test_should_return_product_given_existing_product_name(self):
         quote_request = QuoteRequest(self.quote)
         url = url_for('quote.edit', id=self.quote.id)
-        data = dict(
+        product_data = dict(
             name="Test"
         )
-        with self.request_context(url, data):
+        with self.request_context(url, product_data):
             product = quote_request.get_product()
 
         self.assertEqual(product, self.product)
 
-    def test_non_existing_product(self):
+    def test_should_return_none_given_non_existent_product_name(self):
         quote_request = QuoteRequest(self.quote)
         url = url_for('quote.edit', id=self.quote.id)
-        data = dict(
+        product_data = dict(
             name="Test two"
         )
-        with self.request_context(url, data):
+        with self.request_context(url, product_data):
             product = quote_request.get_product()
 
         self.assertEqual(product, None)

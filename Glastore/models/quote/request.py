@@ -1,8 +1,8 @@
 from datetime import datetime
 from flask import request
-from Glastore.models.customer import Customer
 from Glastore.models.product import Product
 from Glastore.views import get_form
+from .validation import QuoteValidation
 
 empty_form = {
     "name": "",
@@ -34,52 +34,35 @@ class QuoteRequest:
         self.error = None
 
     def edit(self):
+        self.update_attributes()
         self.validate()
         if not self.error:
-            self.update()
+            self.quote.update()
             self.add_product()
 
         return self.error
 
     def validate(self):
-        self.validate_address()
-        if not self.error:
-            self.validate_customer()
-        if not self.error:
-            self.validate_products()
-        
-        return self.error
-
-    def validate_address(self):
-        if self.quote.address == "":
-            self.error = "No se pueden dejar campos en blanco"
+        self.error = self.validation.validate()
 
         return self.error
 
-    def validate_customer(self):
-        self.customer.request.update_attributes()
-        self.error = self.customer.request.validate()
+    @property
+    def validation(self):
+        return QuoteValidation(self.quote)
 
-        return self.error
-
-    def validate_products(self):
-        for product in self.products:
-            self.validate_product(product)
-            if self.error:
-                return self.error
-
-        return self.error
-
-    def validate_product(self, product):
-        product.request.update_attributes()
-        self.error = product.request.validate()
-
-        return self.error
-
-    def update(self):
+    def update_attributes(self):
         self.update_address()
         self.update_date()
-        self.quote.update()
+        self.update_customer()
+        self.update_products()
+
+    def update_customer(self):
+        self.customer.request.update_attributes()
+
+    def update_products(self):
+        for product in self.products:
+            product.request.update_attributes()
 
     def update_address(self):
         if not self.quote.address:

@@ -15,7 +15,7 @@ class QuoteTest(MyTest):
 
 class TestAdd(QuoteTest):
 
-    def test_add(self):
+    def test_should_add_quote(self):
         quote = Quote(
             customer_id=1
         )
@@ -26,16 +26,16 @@ class TestAdd(QuoteTest):
 
 class TestUpdate(QuoteTest):
 
-    def test_update(self):
-        self.quote.address = "Another address"
+    def test_should_update_quote(self):
+        self.quote.address = "New address"
         self.quote.update()
 
-        self.assertEqual(self.quote.address, "Another address")
+        self.assertEqual(self.quote.address, "New address")
 
     
 class TestDelete(QuoteTest):
 
-    def test_delete(self):
+    def test_should_delete_quote(self):
         self.quote.delete()
 
         self.assertNotIn(self.quote, self.db.session)
