@@ -40,7 +40,7 @@ class ProductValidation:
         if not self.product.cantidad:
             self.product.cantidad = 0
         try:
-            float(self.product.cantidad)
+            int(self.product.cantidad)
         except ValueError:
             self.error = "Numero invalido"
             self.product.cantidad = 0
