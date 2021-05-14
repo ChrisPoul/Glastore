@@ -81,6 +81,7 @@ def search_for_customer(form):
 
 
 @bp.route("/edit/<int:id>", methods=('GET', 'POST'))
+@login_required
 def edit(id):
     quote = Quote.get(id)
     quote.done = False
@@ -102,6 +103,7 @@ def edit(id):
 
 
 @bp.route("/done/<int:id>")
+@login_required
 def done(id):
     quote = Quote.get(id)
     quote.request.done()

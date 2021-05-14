@@ -27,6 +27,7 @@ def home():
 
 
 @bp.route('/sidebar')
+@login_required
 def sidebar():
     search_term = request.args["sidebar-search-term"]
     customer = Customer.search(search_term)
